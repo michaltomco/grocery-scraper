@@ -278,65 +278,92 @@ def build() -> str:
 <title>Grocery Prices</title>
 <style>
 * {{ box-sizing: border-box; }}
+/* Theme tokens. Default = dark. [data-theme="light"] forces light.
+   "system" = no data-theme attr, so the media query below follows the OS. */
+:root {{
+  --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
+  --border: #1e293b; --track: #334155; --surface: #1e293b; --chip-off-bg: #0f172a;
+  --accent: #4ade80; --price: #cbd5e1; --slider: #60a5fa; --th-bg: #0f172a;
+  --toggle-bg: #0f172a; --thumb-border: #0f172a;
+}}
+:root[data-theme="light"] {{
+  --bg: #f8fafc; --fg: #0f172a; --muted: #64748b; --dim: #94a3b8;
+  --border: #e2e8f0; --track: #cbd5e1; --surface: #e2e8f0; --chip-off-bg: #f1f5f9;
+  --accent: #16a34a; --price: #334155; --slider: #2563eb; --th-bg: #f1f5f9;
+  --toggle-bg: #ffffff; --thumb-border: #ffffff;
+}}
+@media (prefers-color-scheme: light) {{
+  :root:not([data-theme="dark"]) {{
+    --bg: #f8fafc; --fg: #0f172a; --muted: #64748b; --dim: #94a3b8;
+    --border: #e2e8f0; --track: #cbd5e1; --surface: #e2e8f0; --chip-off-bg: #f1f5f9;
+    --accent: #16a34a; --price: #334155; --slider: #2563eb; --th-bg: #f1f5f9;
+    --toggle-bg: #ffffff; --thumb-border: #ffffff;
+  }}
+}}
 body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
-  background: #0f172a; color: #e2e8f0; padding: 16px; }}
+  background: var(--bg); color: var(--fg); padding: 16px; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
-.meta {{ color: #94a3b8; font-size: .85rem; margin-bottom: 14px; }}
+.meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
 table {{ width: 100%; border-collapse: collapse; font-size: .9rem; }}
-th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid #1e293b;
+th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
   vertical-align: top; }}
-th {{ color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none;
-  position: sticky; top: 0; background: #0f172a; }}
-th:hover {{ color: #e2e8f0; }}
+th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
+  position: sticky; top: 0; background: var(--th-bg); }}
+th:hover {{ color: var(--fg); }}
 td.prod {{ font-weight: 600; white-space: nowrap; max-width: 180px; }}
 td.prod .thumb {{ width: 40px; height: 40px; object-fit: contain; border-radius: 6px;
-  vertical-align: middle; margin-right: 6px; background: #1e293b; }}
+  vertical-align: middle; margin-right: 6px; background: var(--surface); }}
 td.prod .pname {{ vertical-align: middle; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-.drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums;
+.drange {{ color: var(--price); white-space: nowrap; font-variant-numeric: tabular-nums;
   vertical-align: middle; }}
 .dcell {{ padding: 1px 0 1px 6px; font-size: .82rem; }}
 .spark {{ width: 130px; }}
-.dim {{ color: #64748b; font-size: .8rem; }}
+.dim {{ color: var(--dim); font-size: .8rem; }}
 /* muted = filtered-out store: dimmed for comparison, not removed */
 .ppcell.muted {{ opacity: .3; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-  padding: 4px 10px; border-radius: 999px; border: 1px solid #334155;
-  background: #1e293b; user-select: none; transition: opacity .15s, background .15s; }}
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--track);
+  background: var(--surface); user-select: none; transition: opacity .15s, background .15s; }}
 .legend .chip .logo {{ width: 18px; height: 18px; }}
-.legend .chip.off {{ opacity: .35; background: #0f172a; border-color: #1e293b; }}
-.legend .chip:hover {{ border-color: #64748b; }}
+.legend .chip.off {{ opacity: .35; background: var(--chip-off-bg); border-color: var(--surface); }}
+.legend .chip:hover {{ border-color: var(--dim); }}
 .controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
-  margin: 0 0 14px; padding: 10px 14px; background: #1e293b; border-radius: 8px; }}
+  margin: 0 0 14px; padding: 10px 14px; background: var(--surface); border-radius: 8px; }}
 .toggle {{ cursor: pointer; padding: 6px 14px; border-radius: 999px;
-  border: 1px solid #334155; background: #0f172a; color: #e2e8f0; font-size: .85rem;
+  border: 1px solid var(--track); background: var(--toggle-bg); color: var(--fg); font-size: .85rem;
   user-select: none; transition: background .15s, border-color .15s; }}
-.toggle.on {{ background: #4ade80; color: #0f172a; border-color: #4ade80; font-weight: 600; }}
+.toggle.on {{ background: var(--accent); color: var(--thumb-border); border-color: var(--accent); font-weight: 600; }}
+.theme {{ display: inline-flex; border: 1px solid var(--track); border-radius: 999px; overflow: hidden; }}
+.theme button {{ cursor: pointer; border: 0; background: var(--toggle-bg); color: var(--fg);
+  font-size: .85rem; padding: 6px 12px; }}
+.theme button + button {{ border-left: 1px solid var(--track); }}
+.theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
 .rangewrap {{ display: flex; flex-direction: column; gap: 4px; min-width: 320px; }}
 .rangewrap .rlabels {{ display: flex; justify-content: space-between;
-  font-size: .75rem; color: #94a3b8; }}
+  font-size: .75rem; color: var(--muted); }}
 .dualslider {{ position: relative; height: 30px; }}
 .dualslider input[type=range] {{ position: absolute; left: 0; top: 8px; width: 100%;
   margin: 0; pointer-events: none; -webkit-appearance: none; background: none;
   height: 4px; }}
 .dualslider input[type=range]::-webkit-slider-thumb {{ -webkit-appearance: none;
   pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
-  background: #60a5fa; border: 2px solid #0f172a; cursor: pointer; }}
+  background: var(--slider); border: 2px solid var(--thumb-border); cursor: pointer; }}
 .dualslider input[type=range]::-moz-range-thumb {{ pointer-events: auto;
-  width: 16px; height: 16px; border-radius: 50%; background: #60a5fa;
-  border: 2px solid #0f172a; cursor: pointer; }}
+  width: 16px; height: 16px; border-radius: 50%; background: var(--slider);
+  border: 2px solid var(--thumb-border); cursor: pointer; }}
 .dualslider .track {{ position: absolute; left: 0; top: 14px; width: 100%;
-  height: 4px; background: #334155; border-radius: 2px; }}
-.dualslider .fill {{ position: absolute; top: 14px; height: 4px; background: #60a5fa;
+  height: 4px; background: var(--track); border-radius: 2px; }}
+.dualslider .fill {{ position: absolute; top: 14px; height: 4px; background: var(--slider);
   border-radius: 2px; }}
-.banner {{ background: #1e293b; border-radius: 8px; padding: 10px 14px;
+.banner {{ background: var(--surface); border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
-.banner b {{ color: #4ade80; }}
+.banner b {{ color: var(--accent); }}
 </style></head>
 <body>
 <h1>🪸 Grocery Prices</h1>
@@ -349,6 +376,11 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 </div>
 <div class="controls">
   <span class="toggle" id="todayToggle">Today</span>
+  <div class="theme" id="themeSwitch">
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button data-theme="system">System</button>
+  </div>
   <div class="rangewrap">
     <div class="dualslider">
       <div class="track"></div>
@@ -477,6 +509,30 @@ function syncSlider() {{
 rs.addEventListener('input', syncSlider);
 re.addEventListener('input', syncSlider);
 syncSlider();
+
+// Light / Dark / System theme switcher (persisted in localStorage).
+const themeSwitch = document.getElementById('themeSwitch');
+const THEME_KEY = 'grocery-theme';
+function applyTheme(mode) {{
+  if (mode === 'light' || mode === 'dark') {{
+    document.documentElement.setAttribute('data-theme', mode);
+  }} else {{
+    document.documentElement.removeAttribute('data-theme'); // follow OS
+  }}
+  themeSwitch.querySelectorAll('button').forEach(b => {{
+    b.classList.toggle('active', b.dataset.theme === mode);
+  }});
+}}
+themeSwitch.querySelectorAll('button').forEach(b => {{
+  b.onclick = () => {{
+    const mode = b.dataset.theme;
+    applyTheme(mode);
+    try {{ localStorage.setItem(THEME_KEY, mode); }} catch (e) {{}}
+  }};
+}});
+let saved = 'system';
+try {{ saved = localStorage.getItem(THEME_KEY) || 'system'; }} catch (e) {{}}
+applyTheme(saved);
 </script>
 </body></html>"""
     return html
