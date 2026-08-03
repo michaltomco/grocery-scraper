@@ -3,6 +3,7 @@ import re
 import unicodedata
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from pathlib import Path
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
@@ -11,6 +12,8 @@ from bs4 import BeautifulSoup
 
 
 LOCAL_TIMEZONE = ZoneInfo("Europe/Prague")
+ROOT = Path(__file__).resolve().parent.parent
+HISTORY_CSV = ROOT / "history.csv"
 KUPI_BASE_URL = "https://www.kupi.cz"
 KUPI_HEADERS = {
     "User-Agent": (
@@ -22,9 +25,6 @@ KUPI_HEADERS = {
 
 FIELDNAMES = [
     "store",
-    "city",
-    "store_location",
-    "category",
     "product_id",
     "product_name",
     "canonical_product_name",
@@ -37,11 +37,7 @@ FIELDNAMES = [
     "loyalty_required",
     "loyalty_program",
     "loyalty_price",
-    "loyalty_old_price",
     "discount_label",
-    "availability",
-    "start_date",
-    "end_date",
     "date_range",
     "url",
     "scraped_at",
@@ -140,7 +136,7 @@ CZECH_MONTHS = {
 class KupiStoreConfig:
     store: str
     url: str
-    csv_path: str
+    csv_path: Path
     store_location: str
     loyalty_program: str
 
@@ -397,9 +393,6 @@ def extract_kupi_discount(
 
     return {
         "store": config.store,
-        "city": "Prague",
-        "store_location": config.store_location,
-        "category": "Ovoce a zelenina",
         "product_id": product_id,
         "product_name": product_name,
         "canonical_product_name": canonical_product_name(product_name),
@@ -412,11 +405,7 @@ def extract_kupi_discount(
         "loyalty_required": loyalty_required,
         "loyalty_program": config.loyalty_program if loyalty_required else "",
         "loyalty_price": price if loyalty_required else "",
-        "loyalty_old_price": old_price if loyalty_required else "",
         "discount_label": discount_label,
-        "availability": f"Kupi.cz source; {validity}".strip("; "),
-        "start_date": start_date,
-        "end_date": end_date,
         "date_range": format_date_range(start_date, end_date),
         "url": kupi_row_url(row, config.url),
         "scraped_at": scraped_at,
@@ -483,21 +472,43 @@ def run_kupi_scraper(config: KupiStoreConfig) -> None:
     print(f"Found {len(products)} products")
     print_products_by_date(products)
     write_csv(config.csv_path, products)
+    append_history(HISTORY_CSV, products)
 
 
-def write_csv(path: str, rows: list[dict]) -> None:
-    with open(path, "w", newline="", encoding="utf-8") as f:
+def write_csv(path: str | Path, rows: list[dict]) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
         writer.writeheader()
         writer.writerows(rows)
 
 
-def read_csv(path: str) -> list[dict]:
-    with open(path, newline="", encoding="utf-8") as f:
+def read_csv(path: str | Path) -> list[dict]:
+    with Path(path).open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
-def merge_csvs(input_paths: list[str], output_path: str) -> list[dict]:
+def history_key(row: dict) -> tuple[str, ...]:
+    return tuple(row.get(field, "") for field in ("store", "product_id", "date_range", "price", "unit_price"))
+
+
+def append_history(path: str | Path, new_rows: list[dict]) -> list[dict]:
+    path = Path(path)
+    existing = read_csv(path) if path.exists() else []
+    rows = [{field: str(row.get(field, "")) for field in FIELDNAMES} for row in existing]
+    seen = {history_key(row) for row in rows}
+    for row in new_rows:
+        normalized = {field: str(row.get(field, "")) for field in FIELDNAMES}
+        if history_key(normalized) not in seen:
+            rows.append(normalized)
+            seen.add(history_key(normalized))
+    rows.sort(key=lambda row: (row["store"], row["date_range"], row["product_name"], row["price"]))
+    write_csv(path, rows)
+    return rows
+
+
+def merge_csvs(input_paths: list[str | Path], output_path: str | Path) -> list[dict]:
     rows = []
     seen = set()
 
