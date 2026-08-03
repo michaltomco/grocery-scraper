@@ -415,13 +415,18 @@ function isToday(row) {{
 function applyFilters() {{
   rows.forEach(r => {{
     // store mute (dim, keep for comparison)
+    let visibleStores = 0;
     r.querySelectorAll('.scell, .pcell').forEach(c => {{
       const st = c.dataset.store;
-      c.classList.toggle('muted', st && hidden.has(st));
+      const muted = !!(st && hidden.has(st));
+      c.classList.toggle('muted', muted);
+      if (!muted) visibleStores++;
     }});
     // date filters (hide whole row)
     let show = inRange(r);
     if (onlyToday) show = show && isToday(r);
+    // hide rows with no visible store (every store muted via legend)
+    if (show && visibleStores === 0) show = false;
     r.style.display = show ? '' : 'none';
   }});
 }}
