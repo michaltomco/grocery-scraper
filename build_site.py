@@ -404,6 +404,9 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   border: 1px solid var(--track); background: var(--toggle-bg); color: var(--fg); font-size: .85rem;
   user-select: none; transition: background .15s, border-color .15s; }}
 .toggle.on {{ background: var(--accent); color: var(--thumb-border); border-color: var(--accent); font-weight: 600; }}
+.topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  margin: 0 0 10px; }}
+.topbar h1 {{ margin: 0; font-size: 1.5rem; }}
 .theme {{ display: inline-flex; border: 1px solid var(--track); border-radius: 999px; overflow: hidden; }}
 .theme button {{ cursor: pointer; border: 0; background: var(--toggle-bg); color: var(--fg);
   font-size: .85rem; padding: 6px 12px; }}
@@ -431,7 +434,14 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .banner b {{ color: var(--accent); }}
 </style></head>
 <body>
-<h1>🪸 Grocery Prices</h1>
+<div class="topbar">
+  <h1>🪸 Grocery Prices</h1>
+  <div class="theme" id="themeSwitch">
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button data-theme="system">System</button>
+  </div>
+</div>
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
 <div class="legend">
@@ -441,11 +451,6 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 </div>
 <div class="controls">
   <span class="toggle" id="pickerToggle" title="Switch between a date range and a single date">Range</span>
-  <div class="theme" id="themeSwitch">
-    <button data-theme="light">Light</button>
-    <button data-theme="dark">Dark</button>
-    <button data-theme="system">System</button>
-  </div>
   <div class="rangewrap">
     <div class="sliderwrap" id="rangeSlider">
       <div class="track"></div>
