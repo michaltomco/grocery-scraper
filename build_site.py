@@ -342,26 +342,26 @@ def build() -> str:
 <title>Grocery Prices</title>
 <style>
 * {{ box-sizing: border-box; }}
-/* Theme tokens. Default = dark. [data-theme="light"] forces light.
+/* Theme tokens. Dark = Tokyo Night; light = Catppuccin Latte.
    "system" = no data-theme attr, so the media query below follows the OS. */
 :root {{
-  --bg: #0f172a; --fg: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
-  --border: #1e293b; --track: #334155; --surface: #1e293b; --chip-off-bg: #0f172a;
-  --accent: #4ade80; --price: #cbd5e1; --slider: #60a5fa; --th-bg: #0f172a;
-  --toggle-bg: #0f172a; --thumb-border: #0f172a;
+  --bg: #1a1b26; --fg: #c0caf5; --muted: #565f89; --dim: #3b4261;
+  --border: #292e42; --track: #3b4261; --surface: #24283b; --chip-off-bg: #1a1b26;
+  --accent: #7aa2f7; --price: #bb9af7; --slider: #7dcfff; --th-bg: #1a1b26;
+  --toggle-bg: #1a1b26; --thumb-border: #1a1b26;
 }}
 :root[data-theme="light"] {{
-  --bg: #f8fafc; --fg: #0f172a; --muted: #64748b; --dim: #94a3b8;
-  --border: #e2e8f0; --track: #cbd5e1; --surface: #e2e8f0; --chip-off-bg: #f1f5f9;
-  --accent: #16a34a; --price: #334155; --slider: #2563eb; --th-bg: #f1f5f9;
-  --toggle-bg: #ffffff; --thumb-border: #ffffff;
+  --bg: #eff1f5; --fg: #4c4f69; --muted: #6c6f85; --dim: #9ca0b0;
+  --border: #ccd0da; --track: #9ca0b0; --surface: #e6e9ef; --chip-off-bg: #eff1f5;
+  --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #e6e9ef;
+  --toggle-bg: #eff1f5; --thumb-border: #eff1f5;
 }}
 @media (prefers-color-scheme: light) {{
   :root:not([data-theme="dark"]) {{
-    --bg: #f8fafc; --fg: #0f172a; --muted: #64748b; --dim: #94a3b8;
-    --border: #e2e8f0; --track: #cbd5e1; --surface: #e2e8f0; --chip-off-bg: #f1f5f9;
-    --accent: #16a34a; --price: #334155; --slider: #2563eb; --th-bg: #f1f5f9;
-    --toggle-bg: #ffffff; --thumb-border: #ffffff;
+    --bg: #eff1f5; --fg: #4c4f69; --muted: #6c6f85; --dim: #9ca0b0;
+    --border: #ccd0da; --track: #9ca0b0; --surface: #e6e9ef; --chip-off-bg: #eff1f5;
+    --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #e6e9ef;
+    --toggle-bg: #eff1f5; --thumb-border: #eff1f5;
   }}
 }}
 body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
