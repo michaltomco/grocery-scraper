@@ -440,7 +440,9 @@ def extract_kupi_products(html: str, config: KupiStoreConfig) -> list[dict]:
         discount_id = row["data-discount"]
         if (
             discount_id in seen_discount_ids
-            or kupi_shop_name(row).lower() != config.store.lower()
+            # kupi.cz lists the shop as e.g. "Albert Supermarket" /
+            # "Albert Hypermarket", so match by containment, not exact equality.
+            or config.store.lower() not in kupi_shop_name(row).lower()
         ):
             continue
 
