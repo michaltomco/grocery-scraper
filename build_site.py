@@ -425,9 +425,9 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .sliderwrap input[type=range]::-moz-range-thumb {{ pointer-events: auto;
   width: 16px; height: 16px; border-radius: 50%; background: var(--slider);
   border: 2px solid var(--thumb-border); cursor: pointer; }}
-.sliderwrap .track {{ position: absolute; left: 0; top: 14px; width: 100%;
+.sliderwrap .track {{ position: absolute; left: 0; top: 8px; width: 100%;
   height: 4px; background: var(--track); border-radius: 2px; }}
-.sliderwrap .fill {{ position: absolute; top: 14px; height: 4px; background: var(--slider);
+.sliderwrap .fill {{ position: absolute; top: 8px; height: 4px; background: var(--slider);
   border-radius: 2px; }}
 /* In Date mode the fill is a single-day pick, not a range, so render it neutral
    (no blue "active range" bar). */
