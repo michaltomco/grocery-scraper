@@ -129,9 +129,29 @@ def main() -> None:
 
     write_report(report_rows)
     print("BEST PRICES")
-    for row in report_rows:
-        unit = f"{row['best_price_per_kg']} / kg" if row["best_price_per_kg"] != "—" else row["best_price"]
-        print(f"  {row['canonical_product_name']}: {unit} ({row['best_store']}; {row['best_date_range']})")
+    for product in sorted(products.keys()):
+        entries = []
+        for row in products[product]:
+            store = row.get("store", "")
+            kg = number(row.get("price_per_kg", ""))
+            if kg is not None:
+                disp = f"{kg:.2f} / kg"
+                comp = kg
+            else:
+                comp = number(row.get("price", ""))
+                disp = money(comp)
+            if comp is None:
+                comp = float("inf")
+            entries.append((store, disp, comp))
+        if not entries:
+            continue
+        best_comp = min(e[2] for e in entries)
+        entries.sort(key=lambda e: e[2])
+        parts = [
+            f"{store} {disp}{' (best)' if comp == best_comp else ''}"
+            for store, disp, comp in entries
+        ]
+        print(f"  {product}: " + " | ".join(parts))
     print("\nNOTABLE PRICE DROPS")
     drops = [item for item in changes if item[2] == "dropped"]
     if drops:
