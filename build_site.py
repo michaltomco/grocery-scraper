@@ -103,6 +103,21 @@ def parse_range(date_range: str) -> tuple[str, str]:
     return date_range.strip(), date_range.strip()
 
 
+def fmt_cz(iso: str) -> str:
+    """Format an ISO date or an ISO 'start - end' range as Czech D.M.YYYY
+    (day first). Falls back to the raw string if not a parseable ISO date."""
+    if not iso:
+        return ""
+    if " - " in iso:
+        a, b = iso.split(" - ", 1)
+        return f"{fmt_cz(a)} – {fmt_cz(b)}"
+    try:
+        d = date.fromisoformat(iso.strip())
+    except ValueError:
+        return iso
+    return f"{d.day}.{d.month}.{d.year}"
+
+
 def sparkline(series: list[tuple[datetime, float]]) -> str:
     """Return an inline SVG sparkline for a per-store price series."""
     if len(series) < 1:
@@ -231,7 +246,7 @@ def build() -> str:
             )
             date_cells.append(
                 f'<div class="dcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'{esc(dr) or "&mdash;"}</div>'
+                f'{esc(fmt_cz(dr)) or "&mdash;"}</div>'
             )
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
@@ -346,7 +361,7 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
       <input type="range" id="rangeStart" min="{date_min}" max="{date_max}" value="{date_min}">
       <input type="range" id="rangeEnd" min="{date_min}" max="{date_max}" value="{date_max}">
     </div>
-    <div class="rlabels"><span id="lblStart">{date_min}</span><span id="lblEnd">{date_max}</span></div>
+    <div class="rlabels"><span id="lblStart">{fmt_cz(date_min)}</span><span id="lblEnd">{fmt_cz(date_max)}</span></div>
   </div>
 </div>
 <div class="banner">{'Prices update daily. Trend lines need 2+ runs to show movement.'
@@ -433,13 +448,19 @@ const re = document.getElementById('rangeEnd');
 const fill = document.getElementById('rangeFill');
 const lblS = document.getElementById('lblStart');
 const lblE = document.getElementById('lblEnd');
+// ISO YYYY-MM-DD -> Czech D.M.YYYY for display only (inputs keep ISO values).
+function fmtCz(iso) {{
+  const m = /^(\\d{{4}})-(\\d{{2}})-(\\d{{2}})$/.exec(iso);
+  if (!m) return iso;
+  return `${{parseInt(m[3],10)}}.${{parseInt(m[2],10)}}.${{m[1]}}`;
+}}
 function syncSlider() {{
   if (rs.value > re.value) {{            // keep handles from crossing
     if (document.activeElement === rs) re.value = rs.value;
     else rs.value = re.value;
   }}
   rangeStart = rs.value; rangeEnd = re.value;
-  lblS.textContent = rangeStart; lblE.textContent = rangeEnd;
+  lblS.textContent = fmtCz(rangeStart); lblE.textContent = fmtCz(rangeEnd);
   const min = rs.min, max = rs.max, span = (max - min) || 1;
   const a = (rangeStart - min) / span * 100;
   const b = (rangeEnd - min) / span * 100;
