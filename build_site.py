@@ -355,7 +355,7 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
   <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
 </div>
 <div class="controls">
-  <span class="toggle" id="todayToggle">Only today</span>
+  <span class="toggle" id="todayToggle">Today</span>
   <div class="rangewrap">
     <div class="dualslider">
       <div class="track"></div>
