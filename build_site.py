@@ -226,8 +226,8 @@ def build() -> str:
                 f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
             store_cells.append(
-                f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
+                f'<div class="scell" data-store="{esc(e["store"])}">'
+                f'{logo}</div>'
             )
             date_cells.append(
                 f'<div class="dcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
@@ -285,9 +285,8 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
 td.stores {{ white-space: nowrap; vertical-align: middle; }}
-.scell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
-.scell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
-.scell .sname {{ font-size: .82rem; color: #cbd5e1; }}
+.scell {{ padding: 1px 0; line-height: 0; }}
+.scell .logo {{ width: 22px; height: 22px; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums;
   vertical-align: middle; }}
 .dcell {{ padding: 1px 0 1px 6px; font-size: .82rem; }}
