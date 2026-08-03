@@ -216,12 +216,12 @@ def build() -> str:
             f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
             if img_path else '<span class="dim">no img</span>'
         )
-        # stacked store / price / date cells, one per store (kept aligned).
-        # Each store carries its OWN discount date range; the row-level
-        # data-start/data-end is the union (min start, max end) so the date
-        # filter shows the row if ANY store's deal falls in the window.
-        store_cells = []
-        price_cells = []
+        # Combined price+store cells, one per store (kept aligned). The logo
+        # lives inside the Price column now (store toggling is done via the
+        # legend, so a separate Store column is redundant). Each store carries
+        # its OWN discount date range; row-level data-start/data-end is the
+        # union (min start, max end) for the date filter.
+        pp_cells = []
         date_cells = []
         union_start, union_end = None, None
         for e in entries:
@@ -236,13 +236,9 @@ def build() -> str:
                 union_start = s
             if en and (union_end is None or en > union_end):
                 union_end = en
-            price_cells.append(
-                f'<div class="pcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
-            )
-            store_cells.append(
-                f'<div class="scell" data-store="{esc(e["store"])}">'
-                f'{logo}</div>'
+            pp_cells.append(
+                f'<div class="ppcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
+                f'{logo}<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
             date_cells.append(
                 f'<div class="dcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
@@ -251,8 +247,7 @@ def build() -> str:
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
-            f'<td class="pricelist">{"".join(price_cells)}</td>'
-            f'<td class="stores">{"".join(store_cells)}</td>'
+            f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
             f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
             f"</tr>"
@@ -298,19 +293,17 @@ td.prod .thumb {{ width: 40px; height: 40px; object-fit: contain; border-radius:
   vertical-align: middle; margin-right: 6px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
-.pcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
-.pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
+.ppcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+.ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
+.ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-td.stores {{ white-space: nowrap; vertical-align: middle; }}
-.scell {{ padding: 1px 0; line-height: 0; }}
-.scell .logo {{ width: 22px; height: 22px; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums;
   vertical-align: middle; }}
 .dcell {{ padding: 1px 0 1px 6px; font-size: .82rem; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
 /* muted = filtered-out store: dimmed for comparison, not removed */
-.scell.muted, .pcell.muted {{ opacity: .3; }}
+.ppcell.muted {{ opacity: .3; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   padding: 4px 10px; border-radius: 999px; border: 1px solid #334155;
@@ -372,7 +365,6 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
-<th data-k="stores">Store</th>
 <th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
@@ -425,7 +417,7 @@ function applyFilters() {{
   rows.forEach(r => {{
     // store mute (dim, keep for comparison)
     let visibleStores = 0;
-    r.querySelectorAll('.scell, .pcell').forEach(c => {{
+    r.querySelectorAll('.ppcell').forEach(c => {{
       const st = c.dataset.store;
       const muted = !!(st && hidden.has(st));
       c.classList.toggle('muted', muted);
