@@ -250,6 +250,8 @@ td.stores, td.pricelist {{ white-space: nowrap; vertical-align: top; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
+/* muted = filtered-out store: dimmed for comparison, not removed */
+.scell.muted, .pcell.muted {{ opacity: .3; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   padding: 4px 10px; border-radius: 999px; border: 1px solid #334155;
@@ -301,17 +303,16 @@ document.querySelectorAll('th').forEach(th => {{
   }};
 }});
 
-// Legend toggle: clicking a store chip shows/hides that store's rows.
+// Legend toggle: clicking a store chip mutes that store's cells (dimmed, kept
+// for comparison) instead of removing them, so other store prices stay visible.
 const hidden = new Set();
 const chips = [...document.querySelectorAll('.legend .chip')];
 function applyFilter() {{
   rows.forEach(r => {{
     r.querySelectorAll('.scell, .pcell').forEach(c => {{
       const s = c.dataset.store;
-      c.style.display = s && hidden.has(s) ? 'none' : '';
+      c.classList.toggle('muted', s && hidden.has(s));
     }});
-    const names = [...r.querySelectorAll('.scell')].map(c => c.dataset.store);
-    r.style.display = names.length && names.every(n => hidden.has(n)) ? 'none' : '';
   }});
 }}
 chips.forEach(chip => {{
