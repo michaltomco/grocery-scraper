@@ -201,15 +201,26 @@ def build() -> str:
             f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
             if img_path else '<span class="dim">no img</span>'
         )
-        # stacked store names + prices in separate columns (kept aligned)
+        # stacked store / price / date cells, one per store (kept aligned).
+        # Each store carries its OWN discount date range; the row-level
+        # data-start/data-end is the union (min start, max end) so the date
+        # filter shows the row if ANY store's deal falls in the window.
         store_cells = []
         price_cells = []
+        date_cells = []
+        union_start, union_end = None, None
         for e in entries:
             v = e["val"]
             if v is None:
                 continue
             logo = STORE_LOGO.get(e["store"], "")
             color = STORE_COLOR.get(e["store"], "#64748b")
+            dr = e.get("date_range", "") or ""
+            s, en = parse_range(dr)
+            if s and (union_start is None or s < union_start):
+                union_start = s
+            if en and (union_end is None or en > union_end):
+                union_end = en
             price_cells.append(
                 f'<div class="pcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
@@ -218,13 +229,16 @@ def build() -> str:
                 f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
             )
-        rs, re_ = parse_range(first.get("date_range", ""))
+            date_cells.append(
+                f'<div class="dcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
+                f'{esc(dr) or "&mdash;"}</div>'
+            )
         table_rows.append(
-            f"<tr data-start=\"{esc(rs)}\" data-end=\"{esc(re_)}\">"
+            f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
             f'<td class="pricelist">{"".join(price_cells)}</td>'
             f'<td class="stores">{"".join(store_cells)}</td>'
-            f'<td class="drange">{esc(first.get("date_range", "")) or "&mdash;"}</td>'
+            f'<td class="drange">{"".join(date_cells)}</td>'
             f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
             f"</tr>"
         )
@@ -274,7 +288,9 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
 .scell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .scell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .scell .sname {{ font-size: .82rem; color: #cbd5e1; }}
-.drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
+.drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums;
+  vertical-align: middle; }}
+.dcell {{ padding: 1px 0 1px 6px; font-size: .82rem; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
 /* muted = filtered-out store: dimmed for comparison, not removed */
