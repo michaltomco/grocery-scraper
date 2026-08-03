@@ -290,7 +290,8 @@ def parse_validity(text: str) -> tuple[str, str]:
     if "dnes končí" in normalized:
         return "", today.isoformat()
     if "zítra končí" in normalized:
-        return "", (today + timedelta(days=1)).isoformat()
+        # "ends tomorrow": still valid today, so start = today, end = tomorrow.
+        return today.isoformat(), (today + timedelta(days=1)).isoformat()
 
     if "platí do" in normalized:
         # "valid until <date>": the offer is active now, so start = today.
