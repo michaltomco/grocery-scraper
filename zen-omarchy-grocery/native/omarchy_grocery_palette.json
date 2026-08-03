@@ -1,0 +1,7 @@
+{
+  "name": "omarchy_grocery_palette",
+  "description": "Reads the active Omarchy palette for the grocery-scraper extension.",
+  "path": "/home/mito/Projects/grocery-scraper/zen-omarchy-grocery/native/omarchy_grocery_palette.py",
+  "type": "stdio",
+  "allowed_extensions": ["omarchy-grocery@local"]
+}
