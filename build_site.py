@@ -379,7 +379,8 @@ td.prod .thumb {{ width: 40px; height: 40px; object-fit: contain; border-radius:
   vertical-align: middle; margin-right: 6px; background: var(--surface); }}
 td.prod .pname {{ vertical-align: middle; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
-.ppcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+.ppcell {{ display: flex; flex-direction: row-reverse; justify-content: flex-start;
+  align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
