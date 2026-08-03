@@ -292,7 +292,7 @@ th {{ color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: #0f172a; }}
 th:hover {{ color: #e2e8f0; }}
 td.prod {{ font-weight: 600; white-space: nowrap; max-width: 180px; }}
-td.prod .thumb {{ width: 30px; height: 30px; object-fit: cover; border-radius: 6px;
+td.prod .thumb {{ width: 40px; height: 40px; object-fit: contain; border-radius: 6px;
   vertical-align: middle; margin-right: 6px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
