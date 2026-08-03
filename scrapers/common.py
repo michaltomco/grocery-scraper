@@ -293,13 +293,14 @@ def parse_validity(text: str) -> tuple[str, str]:
         return "", (today + timedelta(days=1)).isoformat()
 
     if "platí do" in normalized:
-        return "", parse_partial_date(normalized, today)
+        # "valid until <date>": the offer is active now, so start = today.
+        return today.isoformat(), parse_partial_date(normalized, today)
 
     parts = [part.strip() for part in re.split(r"\s+[–-]\s+", normalized, maxsplit=1)]
     if len(parts) == 2:
         return parse_partial_date(parts[0], today), parse_partial_date(parts[1], today)
 
-    return "", parse_partial_date(normalized, today)
+    return today.isoformat(), parse_partial_date(normalized, today)
 
 
 def kupi_product_name(wrap) -> str:
