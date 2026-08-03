@@ -439,7 +439,6 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
 </div>
 <div class="controls">
-  <span class="toggle" id="todayToggle">Today</span>
   <span class="toggle" id="pickerToggle" title="Switch between a date range and a single date">Range</span>
   <div class="theme" id="themeSwitch">
     <button data-theme="light">Light</button>
@@ -491,10 +490,9 @@ document.querySelectorAll('th').forEach(th => {{
   }};
 }});
 
-// Combined filters: store mute + "only today" + date-range slider.
+// Combined filters: store mute + date-range / single-date slider.
 const hidden = new Set();
 const chips = [...document.querySelectorAll('.legend .chip')];
-let onlyToday = false;
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
@@ -515,11 +513,6 @@ function inRange(row) {{
   const e = row.dataset.end || rangeEnd;
   return s <= rangeEnd && e >= rangeStart;   // overlap test
 }}
-function isToday(row) {{
-  const s = row.dataset.start || rangeStart;
-  const e = row.dataset.end || rangeEnd;
-  return s <= "{today_iso}" && e >= "{today_iso}";
-}}
 function applyFilters() {{
   rows.forEach(r => {{
     // store mute (dim, keep for comparison)
@@ -532,7 +525,6 @@ function applyFilters() {{
     }});
     // date filters (hide whole row)
     let show = inRange(r);
-    if (onlyToday) show = show && isToday(r);
     // hide rows with no visible store (every store muted via legend)
     if (show && visibleStores === 0) show = false;
     r.style.display = show ? '' : 'none';
@@ -546,14 +538,6 @@ chips.forEach(chip => {{
     applyFilters();
   }};
 }});
-
-// "Only today" toggle
-const todayBtn = document.getElementById('todayToggle');
-todayBtn.onclick = () => {{
-  onlyToday = !onlyToday;
-  todayBtn.classList.toggle('on', onlyToday);
-  applyFilters();
-}};
 
 // Dual-handle date-range slider (far-left = today, far-right = latest end).
 const rs = document.getElementById('rangeStart');
