@@ -2,9 +2,9 @@
 
 Reads history.csv (cumulative) and produces index.html:
   - summary header (last run, # items, # stores)
-  - sortable table: each product, all stores with normalized /kg or /ks price,
-    best store highlighted green, worst red, a mini price-bar per store,
-    and a price-trend sparkline (populates as more daily runs accumulate)
+  - sortable table: one row per product; Store and Price are separate columns
+    with each store stacked vertically; clickable legend toggles stores;
+    plus a price-trend sparkline (populates as more daily runs accumulate)
 No third-party deps; pure stdlib. Output is a single file with inline CSS/JS.
 """
 import csv
@@ -190,23 +190,28 @@ def build() -> str:
             f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
             if img_path else '<span class="dim">no img</span>'
         )
-        # stacked store prices in the column next to the name
-        store_lines = []
+        # stacked store names + prices in separate columns (kept aligned)
+        store_cells = []
+        price_cells = []
         for e in entries:
             v = e["val"]
             if v is None:
                 continue
             logo = STORE_LOGO.get(e["store"], "")
             color = STORE_COLOR.get(e["store"], "#64748b")
-            store_lines.append(
-                f'<div class="pline" style="border-left:3px solid {color}">'
-                f'{logo}<span class="pstore">{esc(e["store"])}</span>'
+            store_cells.append(
+                f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
+                f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
+            )
+            price_cells.append(
+                f'<div class="pcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
         table_rows.append(
             f"<tr>"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
-            f'<td class="prices">{"".join(store_lines)}</td>'
+            f'<td class="stores">{"".join(store_cells)}</td>'
+            f'<td class="pricelist">{"".join(price_cells)}</td>'
             f'<td class="drange">{esc(first.get("date_range", "")) or "&mdash;"}</td>'
             f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
             f"</tr>"
@@ -237,16 +242,21 @@ td.prod {{ font-weight: 600; white-space: nowrap; }}
 td.prod .thumb {{ width: 34px; height: 34px; object-fit: cover; border-radius: 6px;
   vertical-align: middle; margin-right: 8px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
-td.prices {{ white-space: nowrap; }}
-.pline {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
-.pline .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
-.pline .pstore {{ font-size: .78rem; color: #94a3b8; width: 56px; }}
-.pline .pprice {{ font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }}
+td.stores, td.pricelist {{ white-space: nowrap; vertical-align: top; }}
+.scell, .pcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+.scell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
+.scell .sname {{ font-size: .82rem; color: #cbd5e1; }}
+.pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
-.legend {{ display: flex; gap: 14px; margin: 6px 0 14px; font-size: .82rem; color: #94a3b8; }}
-.legend span {{ display: inline-flex; align-items: center; gap: 5px; }}
+.legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
+.legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid #334155;
+  background: #1e293b; user-select: none; transition: opacity .15s, background .15s; }}
+.legend .chip .logo {{ width: 18px; height: 18px; }}
+.legend .chip.off {{ opacity: .35; background: #0f172a; border-color: #1e293b; }}
+.legend .chip:hover {{ border-color: #64748b; }}
 .banner {{ background: #1e293b; border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
 .banner b {{ color: #4ade80; }}
@@ -256,16 +266,17 @@ td.prices {{ white-space: nowrap; }}
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
 <div class="legend">
-  <span>{STORE_LOGO['Lidl']} Lidl</span>
-  <span>{STORE_LOGO['Tesco']} Tesco</span>
-  <span>{STORE_LOGO['Albert']} Albert</span>
+  <span class="chip" data-store="Lidl">{STORE_LOGO['Lidl']} Lidl</span>
+  <span class="chip" data-store="Tesco">{STORE_LOGO['Tesco']} Tesco</span>
+  <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
 </div>
 <div class="banner">{'Prices update daily. Trend lines need 2+ runs to show movement.'
  if not has_history else 'Trend lines show price movement across runs.'}</div>
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
-<th data-k="prices">Prices</th>
+<th data-k="stores">Store</th>
+<th data-k="pricelist">Price /kg|ks</th>
 <th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
@@ -287,6 +298,28 @@ document.querySelectorAll('th').forEach(th => {{
       return x.localeCompare(y)*dir;
     }});
     rows.forEach(r => tb.appendChild(r));
+  }};
+}});
+
+// Legend toggle: clicking a store chip shows/hides that store's rows.
+const hidden = new Set();
+const chips = [...document.querySelectorAll('.legend .chip')];
+function applyFilter() {{
+  rows.forEach(r => {{
+    r.querySelectorAll('.scell, .pcell').forEach(c => {{
+      const s = c.dataset.store;
+      c.style.display = s && hidden.has(s) ? 'none' : '';
+    }});
+    const names = [...r.querySelectorAll('.scell')].map(c => c.dataset.store);
+    r.style.display = names.length && names.every(n => hidden.has(n)) ? 'none' : '';
+  }});
+}}
+chips.forEach(chip => {{
+  chip.onclick = () => {{
+    const s = chip.dataset.store;
+    if (hidden.has(s)) {{ hidden.delete(s); chip.classList.remove('off'); }}
+    else {{ hidden.add(s); chip.classList.add('off'); }}
+    applyFilter();
   }};
 }});
 </script>
