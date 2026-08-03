@@ -371,7 +371,7 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
-<th data-k="pricelist">Price /kg|ks</th>
+<th data-k="pricelist">Price</th>
 <th data-k="stores">Store</th>
 <th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
