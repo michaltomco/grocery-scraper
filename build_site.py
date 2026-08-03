@@ -199,19 +199,19 @@ def build() -> str:
                 continue
             logo = STORE_LOGO.get(e["store"], "")
             color = STORE_COLOR.get(e["store"], "#64748b")
-            store_cells.append(
-                f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
-            )
             price_cells.append(
                 f'<div class="pcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
+            store_cells.append(
+                f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
+                f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
+            )
         table_rows.append(
             f"<tr>"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
-            f'<td class="stores">{"".join(store_cells)}</td>'
             f'<td class="pricelist">{"".join(price_cells)}</td>'
+            f'<td class="stores">{"".join(store_cells)}</td>'
             f'<td class="drange">{esc(first.get("date_range", "")) or "&mdash;"}</td>'
             f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
             f"</tr>"
@@ -238,15 +238,18 @@ th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid #1e293b;
 th {{ color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: #0f172a; }}
 th:hover {{ color: #e2e8f0; }}
-td.prod {{ font-weight: 600; white-space: nowrap; }}
-td.prod .thumb {{ width: 34px; height: 34px; object-fit: cover; border-radius: 6px;
-  vertical-align: middle; margin-right: 8px; background: #1e293b; }}
+td.prod {{ font-weight: 600; white-space: nowrap; max-width: 180px; }}
+td.prod .thumb {{ width: 30px; height: 30px; object-fit: cover; border-radius: 6px;
+  vertical-align: middle; margin-right: 6px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
-td.stores, td.pricelist {{ white-space: nowrap; vertical-align: top; }}
-.scell, .pcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+td.pricelist {{ white-space: nowrap; vertical-align: top; width: 1%; }}
+.pcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+.pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
+  font-size: .95rem; }}
+td.stores {{ white-space: nowrap; vertical-align: top; }}
+.scell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .scell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .scell .sname {{ font-size: .82rem; color: #cbd5e1; }}
-.pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
@@ -277,8 +280,8 @@ td.stores, td.pricelist {{ white-space: nowrap; vertical-align: top; }}
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
-<th data-k="stores">Store</th>
 <th data-k="pricelist">Price /kg|ks</th>
+<th data-k="stores">Store</th>
 <th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
