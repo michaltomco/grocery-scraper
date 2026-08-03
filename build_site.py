@@ -5,7 +5,9 @@ Reads history.csv (cumulative) and produces index.html:
   - sortable table: one row per product; Store and Price are separate columns
     with each store stacked vertically; clickable legend toggles stores;
     plus a price-trend sparkline (populates as more daily runs accumulate)
-No third-party deps; pure stdlib. Output is a single file with inline CSS/JS.
+Depends on Pillow to normalize product images (white square canvas) so every
+thumbnail shares the same aspect ratio without cropping. Output is a single
+file with inline CSS/JS.
 """
 import csv
 import re
@@ -26,23 +28,66 @@ IMG_DIR = SITE_DIR / "img"
 INDEX_HTML = SITE_DIR / "index.html"
 
 # Download each product image exactly once, keyed by product_id. Already-cached
-# files are never re-fetched. Returns a web path relative to the site root.
+# files are never re-fetched. Each image is normalized onto a square white
+# canvas (largest-side scaled to 220px, centered, no cropping) so every
+# thumbnail shares one aspect ratio and the white padding blends with the
+# product's own white background. Returns a web path relative to the site root.
+THUMB = 220  # px, size of the normalized square canvas
+
+
+def normalize_image_file(path: Path) -> bool:
+    """Normalize an existing image file onto a white square canvas in place.
+    Returns True if it was processed (or already square), False on error."""
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            if im.size == (THUMB, THUMB):
+                return True
+            im = im.convert("RGB")
+            im.thumbnail((THUMB, THUMB), Image.LANCZOS)
+            canvas = Image.new("RGB", (THUMB, THUMB), (255, 255, 255))
+            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
+            canvas.save(path, "JPEG", quality=90)
+        return True
+    except Exception:
+        return False
+
+
 def cache_image(product_id: str, image_url: str) -> str:
     if not image_url:
         return ""
     IMG_DIR.mkdir(parents=True, exist_ok=True)
     ext = Path(image_url.split("?")[0]).suffix or ".jpg"
     dest = IMG_DIR / f"{product_id}{ext}"
-    if not dest.exists():
-        try:
-            req = urllib.request.Request(
-                image_url,
-                headers={"User-Agent": "Mozilla/5.0 (grocery-scraper)"},
-            )
-            with urllib.request.urlopen(req, timeout=20) as resp, dest.open("wb") as out:
-                out.write(resp.read())
-        except Exception:
-            return ""
+    # If already cached, re-normalize the cached file itself (idempotent,
+    # no re-download). Otherwise fetch to a temp raw file first.
+    src = dest if dest.exists() else None
+    raw = IMG_DIR / f".raw_{product_id}{ext}"
+    try:
+        if src is None:
+            if not raw.exists():
+                req = urllib.request.Request(
+                    image_url,
+                    headers={"User-Agent": "Mozilla/5.0 (grocery-scraper)"},
+                )
+                with urllib.request.urlopen(req, timeout=20) as resp, raw.open("wb") as out:
+                    out.write(resp.read())
+            src = raw
+        from PIL import Image
+        with Image.open(src) as im:
+            im = im.convert("RGB")
+            im.thumbnail((THUMB, THUMB), Image.LANCZOS)
+            canvas = Image.new("RGB", (THUMB, THUMB), (255, 255, 255))
+            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
+            canvas.save(dest, "JPEG", quality=90)
+    except Exception:
+        return ""
+    finally:
+        if raw.exists():
+            try:
+                raw.unlink()
+            except OSError:
+                pass
     return f"img/{dest.name}"
 
 
@@ -159,6 +204,15 @@ def sparkline(series: list[tuple[datetime, float]]) -> str:
 def build() -> str:
     if not HISTORY_CSV.exists():
         return "<p>No history.csv — run the scraper first.</p>"
+
+    # Normalize any already-cached images onto white square canvases, so every
+    # thumbnail shares one aspect ratio (covers stale files whose product no
+    # longer has an image_url in the latest run).
+    if IMG_DIR.exists():
+        for f in IMG_DIR.glob("*.*"):
+            if f.name.startswith(".raw_"):
+                continue
+            normalize_image_file(f)
 
     rows = read_csv(HISTORY_CSV)
     if not rows:
