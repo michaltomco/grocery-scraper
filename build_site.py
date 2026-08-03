@@ -8,6 +8,7 @@ Reads history.csv (cumulative) and produces index.html:
 No third-party deps; pure stdlib. Output is a single file with inline CSS/JS.
 """
 import csv
+import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,7 +21,28 @@ except ModuleNotFoundError:
 ROOT = Path(__file__).resolve().parent
 HISTORY_CSV = ROOT / "history.csv"
 SITE_DIR = ROOT / "site"
+IMG_DIR = SITE_DIR / "img"
 INDEX_HTML = SITE_DIR / "index.html"
+
+# Download each product image exactly once, keyed by product_id. Already-cached
+# files are never re-fetched. Returns a web path relative to the site root.
+def cache_image(product_id: str, image_url: str) -> str:
+    if not image_url:
+        return ""
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    ext = Path(image_url.split("?")[0]).suffix or ".jpg"
+    dest = IMG_DIR / f"{product_id}{ext}"
+    if not dest.exists():
+        try:
+            req = urllib.request.Request(
+                image_url,
+                headers={"User-Agent": "Mozilla/5.0 (grocery-scraper)"},
+            )
+            with urllib.request.urlopen(req, timeout=20) as resp, dest.open("wb") as out:
+                out.write(resp.read())
+        except Exception:
+            return ""
+    return f"img/{dest.name}"
 
 
 def number(value: str) -> float | None:
@@ -90,10 +112,13 @@ def build() -> str:
     if not rows:
         return "<p>history.csv is empty.</p>"
 
-    # current run = latest scraped_at across all rows
-    timestamps = sorted({r.get("scraped_at", "") for r in rows}, reverse=True)
-    current_ts = timestamps[0] if timestamps else ""
-    prev_ts = timestamps[1] if len(timestamps) > 1 else None
+    # current run = latest RUN DATE (YYYY-MM-DD). All three scrapers run in the
+    # same daily cron, so a run spans several scraped_at timestamps within one
+    # day — grouping by date keeps Albert/Lidl/Tesco together instead of
+    # dropping all but the last-finished store.
+    run_dates = sorted({r.get("scraped_at", "")[:10] for r in rows if r.get("scraped_at")}, reverse=True)
+    current_run = run_dates[0] if run_dates else ""
+    prev_run = run_dates[1] if len(run_dates) > 1 else None
 
     # per (product, store) -> current entry; per (product, store) -> time series
     current_entries: dict[tuple[str, str], dict] = {}
@@ -107,7 +132,7 @@ def build() -> str:
         ts = parse_ts(r.get("scraped_at", ""))
         if val is not None:
             series[(product, store)].append((ts, val))
-        if r.get("scraped_at", "") == current_ts:
+        if r.get("scraped_at", "").startswith(current_run):
             # keep cheapest normalized entry for the store (some items list twice)
             lp = number(r.get("loyalty_price", ""))
             disp_val = val
@@ -125,63 +150,44 @@ def build() -> str:
     for (product, store), e in current_entries.items():
         products[product].append(e)
 
-    # rank colors: best=green, worst=red, middle=neutral
+    # Store brand colors (not price-ranked): Lidl=yellow, Tesco=red, Albert=blue.
+    STORE_COLOR = {"Lidl": "#facc15", "Tesco": "#f87171", "Albert": "#60a5fa"}
+    # Small brand-colored logo per store (letter badge on brand color).
+    STORE_LOGO = {
+        "Lidl": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Lidl"><rect x="2" y="2" width="20" height="20" rx="5" fill="#facc15"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">L</text></svg>',
+        "Tesco": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Tesco"><rect x="2" y="2" width="20" height="20" rx="5" fill="#f87171"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">T</text></svg>',
+        "Albert": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Albert"><rect x="2" y="2" width="20" height="20" rx="5" fill="#60a5fa"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">A</text></svg>',
+    }
     table_rows = []
     for product in sorted(products):
-        entries = products[product]
-        if not entries:
-            continue
-        vals = [e["val"] for e in entries if e["val"] is not None]
-        if not vals:
-            continue
-        best = min(vals)
-        worst = max(vals)
-        cells = []
-        multi = len(vals) > 1
-        for e in sorted(entries, key=lambda x: (x["val"] is None, x["val"] or 0)):
+        for e in sorted(products[product], key=lambda x: (x["val"] is None, x["val"] or 0)):
             v = e["val"]
             if v is None:
                 continue
-            if not multi:
-                color = "#64748b"  # neutral: only one store carries it
-            elif v == best:
-                color = "#16a34a"
-            elif v == worst:
-                color = "#dc2626"
-            else:
-                color = "#d97706"
-            bar_w = 100  # full width base; we show price as text + colored chip
-            cells.append(
-                f'<div class="storecell" style="border-left:4px solid {color}">'
-                f'<span class="st">{esc(e["store"])}</span> '
-                f'<span class="pr">{v:.2f}/{e["unit"]}</span></div>'
+            store = e["store"]
+            logo = STORE_LOGO.get(store, "")
+            color = STORE_COLOR.get(store, "#64748b")
+            # trend = this product+store price series over time
+            spark = sparkline(series.get((product, store), []))
+            img_path = cache_image(e.get("product_id", product), e.get("image_url", ""))
+            img_tag = (
+                f'<img class="thumb" src="{img_path}" alt="{esc(product)}" loading="lazy">'
+                if img_path else '<span class="dim">no img</span>'
             )
-        spread = worst - best
-        save = spread  # vs worst; but "save vs 2nd" is more useful
-        sorted_vals = sorted(vals)
-        save_vs_2nd = sorted_vals[1] - sorted_vals[0] if len(sorted_vals) > 1 else 0.0
-        # combined sparkline: overlay all stores' series for this product
-        combo = []
-        for (p, s), ser in series.items():
-            if p == product:
-                combo.extend(ser)
-        spark = sparkline(combo) if len(combo) >= 1 else ""
-        n_stores = len(entries)
-        table_rows.append(
-            f"<tr>"
-            f'<td class="prod">{esc(product)}</td>'
-            f'<td class="stores">{"".join(cells)}</td>'
-            f'<td class="num">{best:.2f}</td>'
-            f'<td class="num">{save_vs_2nd:.2f}</td>'
-            f'<td class="num">{n_stores}</td>'
-            f'<td class="spark">{spark or "<span class=dim>1 run</span>"}</td>'
-            f"</tr>"
-        )
+            table_rows.append(
+                f'<tr style="border-left:4px solid {color}">'
+                f'<td class="prod">{img_tag}<span class="pname">{esc(product)}</span></td>'
+                f'<td class="store">{logo}</td>'
+                f'<td class="num">{v:.2f}/{e["unit"]}</td>'
+                f'<td class="drange">{esc(e["date_range"]) or "&mdash;"}</td>'
+                f'<td class="spark">{spark or "<span class=dim>1 run</span>"}</td>'
+                f"</tr>"
+            )
 
-    last_run = current_ts or "unknown"
+    last_run = current_run or "unknown"
     n_products = len(table_rows)
     n_stores = len(stores_seen)
-    has_history = prev_ts is not None
+    has_history = prev_run is not None
 
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -200,30 +206,38 @@ th {{ color: #94a3b8; font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: #0f172a; }}
 th:hover {{ color: #e2e8f0; }}
 td.prod {{ font-weight: 600; white-space: nowrap; }}
+td.prod .thumb {{ width: 34px; height: 34px; object-fit: cover; border-radius: 6px;
+  vertical-align: middle; margin-right: 8px; background: #1e293b; }}
+td.prod .pname {{ vertical-align: middle; }}
 td.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
-.stores {{ min-width: 220px; }}
-.storecell {{ padding: 2px 0; }}
-.storecell .st {{ display: inline-block; width: 64px; color: #cbd5e1; }}
-.storecell .pr {{ font-variant-numeric: tabular-nums; }}
+.store {{ width: 40px; }}
+.logo {{ width: 22px; height: 22px; vertical-align: middle; }}
+.drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
+.legend {{ display: flex; gap: 14px; margin: 6px 0 14px; font-size: .82rem; color: #94a3b8; }}
+.legend span {{ display: inline-flex; align-items: center; gap: 5px; }}
 .banner {{ background: #1e293b; border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
 .banner b {{ color: #4ade80; }}
 </style></head>
 <body>
 <h1>🪸 Grocery Prices</h1>
-<div class="meta">Last run: {esc(last_run)} &middot; {n_products} items &middot;
- {n_stores} stores (Albert / Lidl / Tesco)</div>
+<div class="meta">Last run: {esc(last_run)} &middot; {n_products} price rows &middot;
+ {n_stores} stores</div>
+<div class="legend">
+  <span>{STORE_LOGO['Lidl']} Lidl</span>
+  <span>{STORE_LOGO['Tesco']} Tesco</span>
+  <span>{STORE_LOGO['Albert']} Albert</span>
+</div>
 <div class="banner">{'Prices update daily. Trend lines need 2+ runs to show movement.'
  if not has_history else 'Trend lines show price movement across runs.'}</div>
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
-<th data-k="stores">Stores (best = green)</th>
-<th data-k="best" class="num">Best /kg|ks</th>
-<th data-k="save" class="num">Save vs 2nd</th>
-<th data-k="n" class="num">#Stores</th>
+<th data-k="store">Store</th>
+<th data-k="price" class="num">Price /kg|ks</th>
+<th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
 <tbody>
@@ -241,7 +255,7 @@ document.querySelectorAll('th').forEach(th => {{
     rows.sort((a,b) => {{
       let x = a.children[th.cellIndex].textContent.trim();
       let y = b.children[th.cellIndex].textContent.trim();
-      if (k==='best'||k==='save'||k==='n') {{
+      if (k==='price') {{
         x = parseFloat(x)||0; y = parseFloat(y)||0;
         return (x-y)*dir;
       }}
