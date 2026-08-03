@@ -8,6 +8,7 @@ Reads history.csv (cumulative) and produces index.html:
 No third-party deps; pure stdlib. Output is a single file with inline CSS/JS.
 """
 import csv
+import re
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -74,6 +75,21 @@ def parse_ts(value: str) -> datetime:
 def esc(text: str) -> str:
     return (str(text).replace("&", "&amp;").replace("<", "&lt;")
             .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+STORE_WORDS_RE = re.compile(r"\b(albert|lidl|tesco)\b", re.IGNORECASE)
+QTY_RE = re.compile(r"\b\d+(?:[,.]\d+)?\s*(?:kg|g|ks|l)\b", re.IGNORECASE)
+
+
+def pretty_name(name: str) -> str:
+    """Make the raw Czech product name readable: strip store words and trailing
+    quantity, collapse whitespace, capitalize the first letter."""
+    n = STORE_WORDS_RE.sub("", name)
+    n = QTY_RE.sub("", n)
+    n = " ".join(n.split()).strip()
+    if n:
+        n = n[0].upper() + n[1:]
+    return n or name
 
 
 def sparkline(series: list[tuple[datetime, float]]) -> str:
@@ -146,6 +162,7 @@ def build() -> str:
                     "unit": unit, "date_range": r.get("date_range", ""),
                     "product_id": r.get("product_id", ""),
                     "image_url": r.get("image_url", ""),
+                    "raw_name": r.get("product_name", product),
                 }
 
     products: dict[str, list[dict]] = defaultdict(list)
@@ -162,29 +179,38 @@ def build() -> str:
     }
     table_rows = []
     for product in sorted(products):
-        for e in sorted(products[product], key=lambda x: (x["val"] is None, x["val"] or 0)):
+        entries = sorted(
+            products[product],
+            key=lambda x: (x["val"] is None, x["val"] or 0),
+        )
+        first = entries[0] if entries else {}
+        pretty = pretty_name(first.get("raw_name", product))
+        img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
+        img_tag = (
+            f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
+            if img_path else '<span class="dim">no img</span>'
+        )
+        # stacked store prices in the column next to the name
+        store_lines = []
+        for e in entries:
             v = e["val"]
             if v is None:
                 continue
-            store = e["store"]
-            logo = STORE_LOGO.get(store, "")
-            color = STORE_COLOR.get(store, "#64748b")
-            # trend = this product+store price series over time
-            spark = sparkline(series.get((product, store), []))
-            img_path = cache_image(e.get("product_id", product), e.get("image_url", ""))
-            img_tag = (
-                f'<img class="thumb" src="{img_path}" alt="{esc(product)}" loading="lazy">'
-                if img_path else '<span class="dim">no img</span>'
+            logo = STORE_LOGO.get(e["store"], "")
+            color = STORE_COLOR.get(e["store"], "#64748b")
+            store_lines.append(
+                f'<div class="pline" style="border-left:3px solid {color}">'
+                f'{logo}<span class="pstore">{esc(e["store"])}</span>'
+                f'<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
-            table_rows.append(
-                f'<tr style="border-left:4px solid {color}">'
-                f'<td class="prod">{img_tag}<span class="pname">{esc(product)}</span></td>'
-                f'<td class="store">{logo}</td>'
-                f'<td class="num">{v:.2f}/{e["unit"]}</td>'
-                f'<td class="drange">{esc(e["date_range"]) or "&mdash;"}</td>'
-                f'<td class="spark">{spark or "<span class=dim>1 run</span>"}</td>'
-                f"</tr>"
-            )
+        table_rows.append(
+            f"<tr>"
+            f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
+            f'<td class="prices">{"".join(store_lines)}</td>'
+            f'<td class="drange">{esc(first.get("date_range", "")) or "&mdash;"}</td>'
+            f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
+            f"</tr>"
+        )
 
     last_run = current_run or "unknown"
     n_products = len(table_rows)
@@ -211,9 +237,11 @@ td.prod {{ font-weight: 600; white-space: nowrap; }}
 td.prod .thumb {{ width: 34px; height: 34px; object-fit: cover; border-radius: 6px;
   vertical-align: middle; margin-right: 8px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
-td.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
-.store {{ width: 40px; }}
-.logo {{ width: 22px; height: 22px; vertical-align: middle; }}
+td.prices {{ white-space: nowrap; }}
+.pline {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+.pline .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
+.pline .pstore {{ font-size: .78rem; color: #94a3b8; width: 56px; }}
+.pline .pprice {{ font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }}
 .drange {{ color: #cbd5e1; white-space: nowrap; font-variant-numeric: tabular-nums; }}
 .spark {{ width: 130px; }}
 .dim {{ color: #64748b; font-size: .8rem; }}
@@ -225,7 +253,7 @@ td.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: no
 </style></head>
 <body>
 <h1>🪸 Grocery Prices</h1>
-<div class="meta">Last run: {esc(last_run)} &middot; {n_products} price rows &middot;
+<div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
 <div class="legend">
   <span>{STORE_LOGO['Lidl']} Lidl</span>
@@ -237,8 +265,7 @@ td.num {{ text-align: right; font-variant-numeric: tabular-nums; white-space: no
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
-<th data-k="store">Store</th>
-<th data-k="price" class="num">Price /kg|ks</th>
+<th data-k="prices">Prices</th>
 <th data-k="drange">Discount dates</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
@@ -257,10 +284,6 @@ document.querySelectorAll('th').forEach(th => {{
     rows.sort((a,b) => {{
       let x = a.children[th.cellIndex].textContent.trim();
       let y = b.children[th.cellIndex].textContent.trim();
-      if (k==='price') {{
-        x = parseFloat(x)||0; y = parseFloat(y)||0;
-        return (x-y)*dir;
-      }}
       return x.localeCompare(y)*dir;
     }});
     rows.forEach(r => tb.appendChild(r));
