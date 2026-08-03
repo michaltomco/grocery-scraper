@@ -11,7 +11,7 @@ import csv
 import re
 import urllib.request
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 try:
@@ -90,6 +90,17 @@ def pretty_name(name: str) -> str:
     if n:
         n = n[0].upper() + n[1:]
     return n or name
+
+
+def parse_range(date_range: str) -> tuple[str, str]:
+    """Return (start_iso, end_iso) for a date_range like '2026-08-04' or
+    '2026-08-06 - 2026-08-09'. Missing end defaults to the start."""
+    if not date_range:
+        return "", ""
+    if " - " in date_range:
+        start, end = date_range.split(" - ", 1)
+        return start.strip(), end.strip()
+    return date_range.strip(), date_range.strip()
 
 
 def sparkline(series: list[tuple[datetime, float]]) -> str:
@@ -207,8 +218,9 @@ def build() -> str:
                 f'<div class="scell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'{logo}<span class="sname">{esc(e["store"])}</span></div>'
             )
+        rs, re_ = parse_range(first.get("date_range", ""))
         table_rows.append(
-            f"<tr>"
+            f"<tr data-start=\"{esc(rs)}\" data-end=\"{esc(re_)}\">"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
             f'<td class="pricelist">{"".join(price_cells)}</td>'
             f'<td class="stores">{"".join(store_cells)}</td>'
@@ -221,6 +233,18 @@ def build() -> str:
     n_products = len(table_rows)
     n_stores = len(stores_seen)
     has_history = prev_run is not None
+
+    # Date bounds for the range slider. Far-left = today, far-right = latest
+    # discount end date seen. Rows without a parseable date default to today.
+    today_iso = date.today().isoformat()
+    all_ends = []
+    for r in rows:
+        s, e = parse_range(r.get("date_range", ""))
+        for d in (s, e):
+            if d:
+                all_ends.append(d)
+    date_min = today_iso
+    date_max = max([today_iso] + all_ends) if all_ends else today_iso
 
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -262,6 +286,29 @@ td.stores {{ white-space: nowrap; vertical-align: top; }}
 .legend .chip .logo {{ width: 18px; height: 18px; }}
 .legend .chip.off {{ opacity: .35; background: #0f172a; border-color: #1e293b; }}
 .legend .chip:hover {{ border-color: #64748b; }}
+.controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+  margin: 0 0 14px; padding: 10px 14px; background: #1e293b; border-radius: 8px; }}
+.toggle {{ cursor: pointer; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #334155; background: #0f172a; color: #e2e8f0; font-size: .85rem;
+  user-select: none; transition: background .15s, border-color .15s; }}
+.toggle.on {{ background: #4ade80; color: #0f172a; border-color: #4ade80; font-weight: 600; }}
+.rangewrap {{ display: flex; flex-direction: column; gap: 4px; min-width: 320px; }}
+.rangewrap .rlabels {{ display: flex; justify-content: space-between;
+  font-size: .75rem; color: #94a3b8; }}
+.dualslider {{ position: relative; height: 30px; }}
+.dualslider input[type=range] {{ position: absolute; left: 0; top: 8px; width: 100%;
+  margin: 0; pointer-events: none; -webkit-appearance: none; background: none;
+  height: 4px; }}
+.dualslider input[type=range]::-webkit-slider-thumb {{ -webkit-appearance: none;
+  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
+  background: #60a5fa; border: 2px solid #0f172a; cursor: pointer; }}
+.dualslider input[type=range]::-moz-range-thumb {{ pointer-events: auto;
+  width: 16px; height: 16px; border-radius: 50%; background: #60a5fa;
+  border: 2px solid #0f172a; cursor: pointer; }}
+.dualslider .track {{ position: absolute; left: 0; top: 14px; width: 100%;
+  height: 4px; background: #334155; border-radius: 2px; }}
+.dualslider .fill {{ position: absolute; top: 14px; height: 4px; background: #60a5fa;
+  border-radius: 2px; }}
 .banner {{ background: #1e293b; border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
 .banner b {{ color: #4ade80; }}
@@ -274,6 +321,18 @@ td.stores {{ white-space: nowrap; vertical-align: top; }}
   <span class="chip" data-store="Lidl">{STORE_LOGO['Lidl']} Lidl</span>
   <span class="chip" data-store="Tesco">{STORE_LOGO['Tesco']} Tesco</span>
   <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
+</div>
+<div class="controls">
+  <span class="toggle" id="todayToggle">Only today</span>
+  <div class="rangewrap">
+    <div class="dualslider">
+      <div class="track"></div>
+      <div class="fill" id="rangeFill"></div>
+      <input type="range" id="rangeStart" min="{date_min}" max="{date_max}" value="{date_min}">
+      <input type="range" id="rangeEnd" min="{date_min}" max="{date_max}" value="{date_max}">
+    </div>
+    <div class="rlabels"><span id="lblStart">{date_min}</span><span id="lblEnd">{date_max}</span></div>
+  </div>
 </div>
 <div class="banner">{'Prices update daily. Trend lines need 2+ runs to show movement.'
  if not has_history else 'Trend lines show price movement across runs.'}</div>
@@ -306,16 +365,34 @@ document.querySelectorAll('th').forEach(th => {{
   }};
 }});
 
-// Legend toggle: clicking a store chip mutes that store's cells (dimmed, kept
-// for comparison) instead of removing them, so other store prices stay visible.
+// Combined filters: store mute + "only today" + date-range slider.
 const hidden = new Set();
 const chips = [...document.querySelectorAll('.legend .chip')];
-function applyFilter() {{
+let onlyToday = false;
+let rangeStart = "{date_min}";
+let rangeEnd = "{date_max}";
+
+function inRange(row) {{
+  const s = row.dataset.start || rangeStart;
+  const e = row.dataset.end || rangeEnd;
+  return s <= rangeEnd && e >= rangeStart;   // overlap test
+}}
+function isToday(row) {{
+  const s = row.dataset.start || rangeStart;
+  const e = row.dataset.end || rangeEnd;
+  return s <= "{today_iso}" && e >= "{today_iso}";
+}}
+function applyFilters() {{
   rows.forEach(r => {{
+    // store mute (dim, keep for comparison)
     r.querySelectorAll('.scell, .pcell').forEach(c => {{
-      const s = c.dataset.store;
-      c.classList.toggle('muted', s && hidden.has(s));
+      const st = c.dataset.store;
+      c.classList.toggle('muted', st && hidden.has(st));
     }});
+    // date filters (hide whole row)
+    let show = inRange(r);
+    if (onlyToday) show = show && isToday(r);
+    r.style.display = show ? '' : 'none';
   }});
 }}
 chips.forEach(chip => {{
@@ -323,9 +400,40 @@ chips.forEach(chip => {{
     const s = chip.dataset.store;
     if (hidden.has(s)) {{ hidden.delete(s); chip.classList.remove('off'); }}
     else {{ hidden.add(s); chip.classList.add('off'); }}
-    applyFilter();
+    applyFilters();
   }};
 }});
+
+// "Only today" toggle
+const todayBtn = document.getElementById('todayToggle');
+todayBtn.onclick = () => {{
+  onlyToday = !onlyToday;
+  todayBtn.classList.toggle('on', onlyToday);
+  applyFilters();
+}};
+
+// Dual-handle date-range slider (far-left = today, far-right = latest end).
+const rs = document.getElementById('rangeStart');
+const re = document.getElementById('rangeEnd');
+const fill = document.getElementById('rangeFill');
+const lblS = document.getElementById('lblStart');
+const lblE = document.getElementById('lblEnd');
+function syncSlider() {{
+  if (rs.value > re.value) {{            // keep handles from crossing
+    if (document.activeElement === rs) re.value = rs.value;
+    else rs.value = re.value;
+  }}
+  rangeStart = rs.value; rangeEnd = re.value;
+  lblS.textContent = rangeStart; lblE.textContent = rangeEnd;
+  const min = rs.min, max = rs.max, span = (max - min) || 1;
+  const a = (rangeStart - min) / span * 100;
+  const b = (rangeEnd - min) / span * 100;
+  fill.style.left = a + '%'; fill.style.width = (b - a) + '%';
+  applyFilters();
+}}
+rs.addEventListener('input', syncSlider);
+re.addEventListener('input', syncSlider);
+syncSlider();
 </script>
 </body></html>"""
     return html
