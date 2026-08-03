@@ -274,6 +274,8 @@ def build() -> str:
                 all_ends.append(d)
     date_min = today_iso
     date_max = max([today_iso] + all_ends) if all_ends else today_iso
+    # Slider uses integer day offsets: 0 = today, days_span = last discount day.
+    days_span = (date.fromisoformat(date_max) - date.fromisoformat(today_iso)).days
 
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -358,8 +360,8 @@ td.stores {{ white-space: nowrap; vertical-align: middle; }}
     <div class="dualslider">
       <div class="track"></div>
       <div class="fill" id="rangeFill"></div>
-      <input type="range" id="rangeStart" min="{date_min}" max="{date_max}" value="{date_min}">
-      <input type="range" id="rangeEnd" min="{date_min}" max="{date_max}" value="{date_max}">
+      <input type="range" id="rangeStart" min="0" max="{days_span}" step="1" value="0">
+      <input type="range" id="rangeEnd" min="0" max="{days_span}" step="1" value="{days_span}">
     </div>
     <div class="rlabels"><span id="lblStart">{fmt_cz(date_min)}</span><span id="lblEnd">{fmt_cz(date_max)}</span></div>
   </div>
@@ -399,8 +401,15 @@ document.querySelectorAll('th').forEach(th => {{
 const hidden = new Set();
 const chips = [...document.querySelectorAll('.legend .chip')];
 let onlyToday = false;
-let rangeStart = "{date_min}";
-let rangeEnd = "{date_max}";
+// Today as a JS Date; slider works in integer day offsets from today.
+const today = new Date("{today_iso}T00:00:00");
+function offsetToIso(off) {{
+  const d = new Date(today);
+  d.setDate(d.getDate() + off);
+  return d.toISOString().slice(0, 10);
+}}
+let rangeStart = offsetToIso(0);
+let rangeEnd = offsetToIso({days_span});
 
 function inRange(row) {{
   const s = row.dataset.start || rangeStart;
@@ -464,11 +473,12 @@ function syncSlider() {{
     if (document.activeElement === rs) re.value = rs.value;
     else rs.value = re.value;
   }}
-  rangeStart = rs.value; rangeEnd = re.value;
+  const offS = +rs.value, offE = +re.value;
+  rangeStart = offsetToIso(offS); rangeEnd = offsetToIso(offE);
   lblS.textContent = fmtCz(rangeStart); lblE.textContent = fmtCz(rangeEnd);
-  const min = rs.min, max = rs.max, span = (max - min) || 1;
-  const a = (rangeStart - min) / span * 100;
-  const b = (rangeEnd - min) / span * 100;
+  const span = ({days_span}) || 1;
+  const a = offS / span * 100;
+  const b = offE / span * 100;
   fill.style.left = a + '%'; fill.style.width = (b - a) + '%';
   applyFilters();
 }}
