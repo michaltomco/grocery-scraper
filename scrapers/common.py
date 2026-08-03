@@ -40,6 +40,7 @@ FIELDNAMES = [
     "discount_label",
     "date_range",
     "url",
+    "image_url",
     "scraped_at",
 ]
 
@@ -324,9 +325,16 @@ def kupi_product_lookup(soup: BeautifulSoup, fallback_url: str) -> dict[str, dic
     products = {}
     for wrap in soup.select(".product--wrap[data-product-id]"):
         product_id = wrap["data-product-id"]
+        img = wrap.select_one(".product_image img")
+        image_url = ""
+        if img:
+            # kupi.cz lazy-loads: real URL is in data-src, src is a placeholder
+            raw = img.get("data-src") or img.get("src") or ""
+            image_url = str(raw)
         products[product_id] = {
             "name": kupi_product_name(wrap),
             "url": kupi_product_url(wrap, fallback_url),
+            "image": urljoin(KUPI_BASE_URL, image_url) if image_url else "",
         }
 
     return products
@@ -408,6 +416,7 @@ def extract_kupi_discount(
         "discount_label": discount_label,
         "date_range": format_date_range(start_date, end_date),
         "url": kupi_row_url(row, config.url),
+        "image_url": product.get("image", ""),
         "scraped_at": scraped_at,
     }
 

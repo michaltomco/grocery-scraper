@@ -77,16 +77,25 @@ def main() -> None:
     for row in history:
         by_store[row.get("store", "")].append(row)
 
+    # A "run" = a calendar day. All three scrapers execute in the same daily
+    # cron, finishing at slightly different timestamps, so group by date to
+    # keep every store's current snapshot together.
+    all_dates = sorted(
+        {row.get("scraped_at", "")[:10] for row in history if row.get("scraped_at")},
+        reverse=True,
+    )
+    current_run = all_dates[0] if all_dates else ""
+    previous_run = all_dates[1] if len(all_dates) > 1 else None
+
     current_rows = []
     previous_by_key = {}
     for store, rows in by_store.items():
-        timestamps = sorted({row.get("scraped_at", "") for row in rows}, reverse=True)
-        current_timestamp = timestamps[0] if timestamps else ""
-        previous_timestamp = timestamps[1] if len(timestamps) > 1 else None
-        current_rows.extend(row for row in rows if row.get("scraped_at", "") == current_timestamp)
-        if previous_timestamp:
+        current_rows.extend(
+            row for row in rows if row.get("scraped_at", "").startswith(current_run)
+        )
+        if previous_run:
             for row in rows:
-                if row.get("scraped_at", "") == previous_timestamp:
+                if row.get("scraped_at", "").startswith(previous_run):
                     key = (store, row.get("product_id", ""))
                     price = number(row.get("price", ""))
                     if price is not None and (key not in previous_by_key or price < previous_by_key[key]):
