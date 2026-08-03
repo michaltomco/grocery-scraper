@@ -13,7 +13,7 @@ import csv
 import re
 import urllib.request
 from collections import defaultdict
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 try:
@@ -267,6 +267,8 @@ def build() -> str:
         "Tesco": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Tesco"><rect x="2" y="2" width="20" height="20" rx="5" fill="#f87171"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">T</text></svg>',
         "Albert": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Albert"><rect x="2" y="2" width="20" height="20" rx="5" fill="#60a5fa"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">A</text></svg>',
     }
+    today_iso = date.today().isoformat()
+    timeline_days = [date.fromisoformat(today_iso) + timedelta(days=i) for i in range(14)]
     table_rows = []
     for product in sorted(products):
         entries = sorted(
@@ -304,9 +306,25 @@ def build() -> str:
                 f'<div class="ppcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
                 f'{logo}<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
             )
+            active_start = date.fromisoformat(s) if s else None
+            active_end = date.fromisoformat(en) if en else None
+            day_cells = []
+            for day_index, day in enumerate(timeline_days):
+                if day_index == 7:
+                    day_cells.append('<span class="week-gap" aria-hidden="true"></span>')
+                active = active_start and active_end and active_start <= day <= active_end
+                classes = "day"
+                if active:
+                    classes += " active"
+                if day.isoformat() == today_iso:
+                    classes += " today"
+                day_cells.append(
+                    f'<span class="{classes}" title="{esc(e["store"])} · {fmt_cz(day.isoformat())}"></span>'
+                )
             date_cells.append(
-                f'<div class="dcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'{esc(fmt_cz(dr)) or "&mdash;"}</div>'
+                f'<div class="dcell" data-store="{esc(e["store"])}" '
+                f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr)) or "no dates"}" '
+                f'style="--store-color:{color}"><div class="timeline">{"".join(day_cells)}</div></div>'
             )
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
@@ -324,7 +342,6 @@ def build() -> str:
 
     # Date bounds for the range slider. Far-left = today, far-right = latest
     # discount end date seen. Rows without a parseable date default to today.
-    today_iso = date.today().isoformat()
     all_ends = []
     for r in rows:
         s, e = parse_range(r.get("date_range", ""))
@@ -384,9 +401,19 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-.drange {{ color: var(--price); white-space: nowrap; font-variant-numeric: tabular-nums;
-  vertical-align: middle; }}
-.dcell {{ padding: 1px 0 1px 6px; font-size: .82rem; }}
+.drange {{ vertical-align: middle; min-width: 250px; }}
+.dcell {{ padding: 2px 0 2px 6px; }}
+.timeline {{ display: grid; grid-template-columns: repeat(7, 13px) 8px repeat(7, 13px); gap: 3px; }}
+.day {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track); opacity: .28; }}
+.day.active {{ background: var(--store-color); opacity: 1; }}
+.day.today {{ outline: 2px solid var(--fg); outline-offset: 1px; }}
+.week-gap {{ width: 8px; }}
+.timeline-head {{ min-width: 250px; }}
+.timeline-head .weeks, .timeline-head .weekdays {{ display: grid; grid-template-columns: repeat(7, 13px) 8px repeat(7, 13px); gap: 3px; }}
+.timeline-head .weeks {{ margin-bottom: 3px; color: var(--muted); font-size: .68rem; }}
+.timeline-head .weeks span:first-child {{ grid-column: span 7; text-align: center; }}
+.timeline-head .weeks span:last-child {{ grid-column: 9 / span 7; text-align: center; }}
+.timeline-head .weekdays {{ color: var(--muted); font-size: .65rem; text-align: center; }}
 .spark {{ width: 130px; }}
 .dim {{ color: var(--dim); font-size: .8rem; }}
 /* muted = filtered-out store: dimmed for comparison, not removed */
@@ -475,7 +502,10 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
-<th data-k="drange">Date</th>
+<th data-k="drange" title="Discount days for the next two weeks"><div class="timeline-head">
+  <div class="weeks"><span>Week 1</span><span>Week 2</span></div>
+  <div class="weekdays">{''.join(('<span class="week-gap" aria-hidden="true"></span>' if i == 7 else '') + f'<span>{day.strftime("%a")[0]}</span>' for i, day in enumerate(timeline_days))}</div>
+</div></th>
 <th data-k="spark">Trend</th>
 </tr></thead>
 <tbody>
