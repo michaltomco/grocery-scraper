@@ -429,6 +429,9 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   height: 4px; background: var(--track); border-radius: 2px; }}
 .sliderwrap .fill {{ position: absolute; top: 14px; height: 4px; background: var(--slider);
   border-radius: 2px; }}
+/* In Date mode the fill is a single-day pick, not a range, so render it neutral
+   (no blue "active range" bar). */
+.sliderwrap.single .fill {{ background: var(--track); }}
 .banner {{ background: var(--surface); border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
 .banner b {{ color: var(--accent); }}
@@ -609,6 +612,7 @@ pickerBtn.onclick = () => {{
     sd.value = rs.value;
     rangeSlider.style.display = 'none';
     singleSlider.style.display = '';
+    singleSlider.classList.add('single');
     pickerBtn.textContent = 'Date';
     pickerBtn.classList.add('on');
     syncSingle();
@@ -619,6 +623,7 @@ pickerBtn.onclick = () => {{
     re.value = ({days_span});
     rangeSlider.style.display = '';
     singleSlider.style.display = 'none';
+    singleSlider.classList.remove('single');
     pickerBtn.textContent = 'Range';
     pickerBtn.classList.remove('on');
     syncSlider();
