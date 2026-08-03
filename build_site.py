@@ -365,7 +365,7 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
-<th data-k="drange">Discount dates</th>
+<th data-k="drange">Date</th>
 <th data-k="spark">Trend</th>
 </tr></thead>
 <tbody>
