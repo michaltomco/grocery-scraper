@@ -411,19 +411,19 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .rangewrap {{ display: flex; flex-direction: column; gap: 4px; min-width: 320px; }}
 .rangewrap .rlabels {{ display: flex; justify-content: space-between;
   font-size: .75rem; color: var(--muted); }}
-.dualslider {{ position: relative; height: 30px; }}
-.dualslider input[type=range] {{ position: absolute; left: 0; top: 8px; width: 100%;
+.sliderwrap {{ position: relative; height: 30px; }}
+.sliderwrap input[type=range] {{ position: absolute; left: 0; top: 8px; width: 100%;
   margin: 0; pointer-events: none; -webkit-appearance: none; background: none;
   height: 4px; }}
-.dualslider input[type=range]::-webkit-slider-thumb {{ -webkit-appearance: none;
+.sliderwrap input[type=range]::-webkit-slider-thumb {{ -webkit-appearance: none;
   pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
   background: var(--slider); border: 2px solid var(--thumb-border); cursor: pointer; }}
-.dualslider input[type=range]::-moz-range-thumb {{ pointer-events: auto;
+.sliderwrap input[type=range]::-moz-range-thumb {{ pointer-events: auto;
   width: 16px; height: 16px; border-radius: 50%; background: var(--slider);
   border: 2px solid var(--thumb-border); cursor: pointer; }}
-.dualslider .track {{ position: absolute; left: 0; top: 14px; width: 100%;
+.sliderwrap .track {{ position: absolute; left: 0; top: 14px; width: 100%;
   height: 4px; background: var(--track); border-radius: 2px; }}
-.dualslider .fill {{ position: absolute; top: 14px; height: 4px; background: var(--slider);
+.sliderwrap .fill {{ position: absolute; top: 14px; height: 4px; background: var(--slider);
   border-radius: 2px; }}
 .banner {{ background: var(--surface); border-radius: 8px; padding: 10px 14px;
   margin-bottom: 14px; font-size: .9rem; }}
@@ -440,17 +440,23 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 </div>
 <div class="controls">
   <span class="toggle" id="todayToggle">Today</span>
+  <span class="toggle" id="pickerToggle" title="Switch between a date range and a single date">Range</span>
   <div class="theme" id="themeSwitch">
     <button data-theme="light">Light</button>
     <button data-theme="dark">Dark</button>
     <button data-theme="system">System</button>
   </div>
   <div class="rangewrap">
-    <div class="dualslider">
+    <div class="sliderwrap" id="rangeSlider">
       <div class="track"></div>
       <div class="fill" id="rangeFill"></div>
       <input type="range" id="rangeStart" min="0" max="{days_span}" step="1" value="0">
       <input type="range" id="rangeEnd" min="0" max="{days_span}" step="1" value="{days_span}">
+    </div>
+    <div class="sliderwrap" id="singleSlider" style="display:none">
+      <div class="track"></div>
+      <div class="fill" id="singleFill"></div>
+      <input type="range" id="singleDate" min="0" max="{days_span}" step="1" value="0">
     </div>
     <div class="rlabels"><span id="lblStart">{fmt_cz(date_min)}</span><span id="lblEnd">{fmt_cz(date_max)}</span></div>
   </div>
@@ -489,12 +495,17 @@ document.querySelectorAll('th').forEach(th => {{
 const hidden = new Set();
 const chips = [...document.querySelectorAll('.legend .chip')];
 let onlyToday = false;
-// Today as a JS Date; slider works in integer day offsets from today.
-const today = new Date("{today_iso}T00:00:00");
+// Today = the build-day anchor (server's date.today()). Slider works in
+// integer day offsets from it. Compute via UTC date parts so the local
+// timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
+// would shift by the UTC offset).
+const todayParts = "{today_iso}".split("-").map(Number);  // [Y, M, D]
 function offsetToIso(off) {{
-  const d = new Date(today);
-  d.setDate(d.getDate() + off);
-  return d.toISOString().slice(0, 10);
+  const d = new Date(Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2] + off));
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${{y}}-${{m}}-${{day}}`;
 }}
 let rangeStart = offsetToIso(0);
 let rangeEnd = offsetToIso({days_span});
@@ -573,6 +584,56 @@ function syncSlider() {{
 rs.addEventListener('input', syncSlider);
 re.addEventListener('input', syncSlider);
 syncSlider();
+
+// Range <-> Date picker toggle.
+// Range mode: two-handle slider (rangeStart..rangeEnd), begins at today (0).
+// Date mode: single-handle slider (singleDate). Switching to Date seeds it
+// from the range's left handle; switching back to Range re-opens from that
+// single day to the max (today..latest).
+const pickerBtn = document.getElementById('pickerToggle');
+const rangeSlider = document.getElementById('rangeSlider');
+const singleSlider = document.getElementById('singleSlider');
+const sd = document.getElementById('singleDate');
+const singleFill = document.getElementById('singleFill');
+let mode = 'range';
+
+function syncSingle() {{
+  const off = +sd.value;
+  rangeStart = offsetToIso(off);
+  rangeEnd = offsetToIso(off);
+  lblS.textContent = fmtCz(rangeStart);
+  lblE.textContent = fmtCz(rangeEnd);
+  const span = ({days_span}) || 1;
+  const a = off / span * 100;
+  singleFill.style.left = a + '%';
+  singleFill.style.width = (100 - a) + '%';
+  applyFilters();
+}}
+
+sd.addEventListener('input', syncSingle);
+
+pickerBtn.onclick = () => {{
+  if (mode === 'range') {{
+    // -> Date: seed single handle from the range's left handle, hide range.
+    mode = 'date';
+    sd.value = rs.value;
+    rangeSlider.style.display = 'none';
+    singleSlider.style.display = '';
+    pickerBtn.textContent = 'Date';
+    pickerBtn.classList.add('on');
+    syncSingle();
+  }} else {{
+    // -> Range: re-open from the single day (left) to the max (right).
+    mode = 'range';
+    rs.value = sd.value;
+    re.value = ({days_span});
+    rangeSlider.style.display = '';
+    singleSlider.style.display = 'none';
+    pickerBtn.textContent = 'Range';
+    pickerBtn.classList.remove('on');
+    syncSlider();
+  }}
+}};
 
 // Light / Dark / System theme switcher (persisted in localStorage).
 const themeSwitch = document.getElementById('themeSwitch');
