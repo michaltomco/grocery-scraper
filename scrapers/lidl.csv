@@ -1,0 +1,17 @@
+title,price,old_price,currency,base_price,is_lidl_plus_offer,lidl_plus_price,lidl_plus_old_price,lidl_plus_text,lidl_plus_prefix,lidl_plus_highlight,availability,start_date,end_date,date_range,url
+Třešně,8.9,14.9,Kč,"cena za 100 g,",False,,,,,,Pouze v prodejnách od 10.07. - 12.07.,2026-07-10,2026-07-12,2026-07-10 - 2026-07-12,https://www.lidl.cz/p/tresne/p10053710
+Ředkvičky,7.9,12.9,Kč,,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/redkvicky/p10053725
+Meruňky,69.9,,Kč,1 kg,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/merunky/p10053801
+Cherry rajčata datlová,69.9,99.9,Kč,"500 g - balení, 1 kg = 139,80 Kč",False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/cherry-rajcata-datlova/p10053596
+Cherry rajčata keříčková koktejlová,24.9,,Kč,"500 g - balení, 1 kg = 49,80 Kč",False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/cherry-rajcata-kerickova-koktejlova/p10052682
+Kedlubna,9.9,18.9,Kč,kus,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/kedlubna/p10049117
+Zelí bílé rané,9.9,19.9,Kč,1 kg,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/zeli-bile-rane/p10050236
+Brambory přílohové,12.9,24.9,Kč,1 kg,False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/brambory-prilohove/p10052856
+Kiwi žluté,12.9,19.9,Kč,,False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/kiwi-zlute/p10051169
+Vodní meloun,14.9,29.9,Kč,,False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/vodni-meloun/p10049994
+Žampiony zahradní,34.9,47.9,Kč,"400 g - balení, 1 kg = 87,25 Kč",False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/zampiony-zahradni/p10053724
+Nektarinky,34.9,69.9,Kč,1 kg - balení,True,34.9,69.9,s Lidl Plus,"39,90 Kč bez Lidl Plus",-50%,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/nektarinky/p10053871
+Bílé hrozny stolní bezsemenné,34.9,69.9,Kč,"500 g - balení, 1 kg = 69,80 Kč",False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/bile-hrozny-stolni-bezsemenne/p10053798
+Waikiki meloun,39.9,,Kč,1 kg,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/waikiki-meloun/p10054761
+Broskve,49.9,69.9,Kč,1 kg,False,,,,,,V prodejnách pouze 06.07. - 08.07.,2026-07-06,2026-07-08,2026-07-06 - 2026-07-08,https://www.lidl.cz/p/broskve/p10054623
+Paprika červená,49.9,89.9,Kč,1 kg,False,,,,,,Pouze v prodejnách od 09.07. - 12.07.,2026-07-09,2026-07-12,2026-07-09 - 2026-07-12,https://www.lidl.cz/p/paprika-cervena/p10052384
