@@ -266,11 +266,11 @@ td.prod {{ font-weight: 600; white-space: nowrap; max-width: 180px; }}
 td.prod .thumb {{ width: 30px; height: 30px; object-fit: cover; border-radius: 6px;
   vertical-align: middle; margin-right: 6px; background: #1e293b; }}
 td.prod .pname {{ vertical-align: middle; }}
-td.pricelist {{ white-space: nowrap; vertical-align: top; width: 1%; }}
+td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .pcell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .pcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-td.stores {{ white-space: nowrap; vertical-align: top; }}
+td.stores {{ white-space: nowrap; vertical-align: middle; }}
 .scell {{ display: flex; align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
 .scell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .scell .sname {{ font-size: .82rem; color: #cbd5e1; }}
