@@ -103,17 +103,27 @@ def parse_range(date_range: str) -> tuple[str, str]:
     return date_range.strip(), date_range.strip()
 
 
+def _iso(d: str):
+    try:
+        return date.fromisoformat(d.strip())
+    except ValueError:
+        return None
+
+
 def fmt_cz(iso: str) -> str:
     """Format an ISO date or an ISO 'start - end' range as Czech D.M.YYYY
-    (day first). Falls back to the raw string if not a parseable ISO date."""
+    (day first). For a same-year range the start year is omitted, e.g.
+    '6.8 – 9.8.2026'. Falls back to the raw string if not a parseable ISO date."""
     if not iso:
         return ""
     if " - " in iso:
         a, b = iso.split(" - ", 1)
+        da, db = _iso(a), _iso(b)
+        if da and db and da.year == db.year:
+            return f"{da.day}.{da.month} – {db.day}.{db.month}.{db.year}"
         return f"{fmt_cz(a)} – {fmt_cz(b)}"
-    try:
-        d = date.fromisoformat(iso.strip())
-    except ValueError:
+    d = _iso(iso)
+    if not d:
         return iso
     return f"{d.day}.{d.month}.{d.year}"
 
