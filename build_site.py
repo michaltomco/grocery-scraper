@@ -144,6 +144,8 @@ def build() -> str:
                     "product": product, "store": store,
                     "val": disp_val if disp_val is not None else val,
                     "unit": unit, "date_range": r.get("date_range", ""),
+                    "product_id": r.get("product_id", ""),
+                    "image_url": r.get("image_url", ""),
                 }
 
     products: dict[str, list[dict]] = defaultdict(list)

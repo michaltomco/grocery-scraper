@@ -506,12 +506,20 @@ def append_history(path: str | Path, new_rows: list[dict]) -> list[dict]:
     path = Path(path)
     existing = read_csv(path) if path.exists() else []
     rows = [{field: str(row.get(field, "")) for field in FIELDNAMES} for row in existing]
-    seen = {history_key(row) for row in rows}
+    seen: dict[tuple, dict] = {history_key(row): row for row in rows}
     for row in new_rows:
         normalized = {field: str(row.get(field, "")) for field in FIELDNAMES}
-        if history_key(normalized) not in seen:
+        key = history_key(normalized)
+        if key not in seen:
             rows.append(normalized)
-            seen.add(history_key(normalized))
+            seen[key] = normalized
+        else:
+            # Keep the richer row: prefer one that has an image_url so a
+            # later re-scrape backfills images instead of being dropped.
+            if normalized.get("image_url") and not seen[key].get("image_url"):
+                idx = next(i for i, r in enumerate(rows) if history_key(r) == key)
+                rows[idx] = normalized
+                seen[key] = normalized
     rows.sort(key=lambda row: (row["store"], row["date_range"], row["product_name"], row["price"]))
     write_csv(path, rows)
     return rows
