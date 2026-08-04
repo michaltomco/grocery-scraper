@@ -506,7 +506,9 @@ body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
   background: var(--bg); color: var(--fg); padding: 16px; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
+table {{ width: max-content; max-width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
+/* max-content keeps each column at its set width (no leftover space to
+   balloon a column); max-width:100% prevents overflow on small screens. */
 th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
   vertical-align: top; overflow: hidden; }}
 th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
@@ -520,22 +522,21 @@ th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
    last day square. Without that, the wide column let clicks far right of the
    dates Voronoi-map onto the last day (wireBodyDrag). The product column (auto)
    absorbs the table's leftover width instead. */
-th[data-k="prod"] {{ width: auto; }}
+th[data-k="prod"] {{ width: 220px; }}
 th[data-k="pricelist"] {{ width: 120px; }}
 th[data-k="drange"] {{ width: auto; }}
 th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
-td.prod {{ font-weight: 600; vertical-align: middle; display: flex; align-items: center;
-  gap: 6px; overflow: visible; }}
-td.prod .thumb {{ width: 40px; height: 40px; flex: 0 0 auto; object-fit: contain;
-  border-radius: 6px; background: var(--surface); }}
-td.prod .dim {{ flex: 0 0 auto; }}
-/* Long names wrap instead of truncating on a single line: allow up to two
-   lines, then ellipsis. The full name stays reachable via the hover tooltip
-   (syncNameTitles adds a title when the text is clamped). */
-td.prod .pname {{ min-width: 0; line-height: 1.2; display: -webkit-box;
-  -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
-  overflow-wrap: anywhere; }}
+th[data-k="prod"], td.prod {{ width: 220px; min-width: 220px; max-width: 220px; }}
+td.prod {{ font-weight: 600; vertical-align: middle; overflow: visible; }}
+td.prod .thumb {{ width: 40px; height: 40px; display: inline-block; vertical-align: middle;
+  object-fit: contain; border-radius: 6px; background: var(--surface); }}
+td.prod .dim {{ display: inline-block; vertical-align: middle; }}
+/* Long names wrap to as many lines as they need instead of being truncated.
+   overflow-wrap:anywhere lets long single words (or concatenated Czech names)
+   break so they never overflow the 220px column. */
+td.prod .pname {{ display: inline-block; vertical-align: middle; max-width: calc(100% - 46px);
+  line-height: 1.2; overflow-wrap: anywhere; word-break: break-word; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell {{ display: flex; flex-direction: row-reverse; justify-content: flex-start;
   align-items: center; gap: 6px; padding: 1px 0; cursor: pointer; }}
@@ -545,7 +546,7 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   font-size: .95rem; }}
 .drange {{ vertical-align: middle; width: auto; }}
 .dcell {{ padding: 2px 0 2px 6px; }}
-.timeline {{ display: flex; gap: 8px; align-items: center; }}
+.timeline {{ display: flex; gap: 8px; align-items: center; width: max-content; }}
 .timeline .wk {{ display: flex; gap: 3px; }}
 .day {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track); opacity: .28; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1; font-weight: 700; color: var(--logo-ink); }}
