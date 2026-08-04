@@ -429,12 +429,15 @@ def fetch_kupi_html(url: str) -> str:
     return response.text
 
 
-def extract_kupi_products(html: str, config: KupiStoreConfig) -> list[dict]:
+def extract_kupi_products(
+    html: str, config: KupiStoreConfig, seen_discount_ids: set | None = None
+) -> list[dict]:
     soup = BeautifulSoup(html, "html.parser")
     products = kupi_product_lookup(soup, config.url)
     scraped_at = today_timestamp()
     rows = []
-    seen_discount_ids = set()
+    if seen_discount_ids is None:
+        seen_discount_ids = set()
 
     for row in soup.select(".discount_row[data-product][data-discount]"):
         discount_id = row["data-discount"]
@@ -452,8 +455,38 @@ def extract_kupi_products(html: str, config: KupiStoreConfig) -> list[dict]:
     return rows
 
 
+def _with_page_param(url: str, page: int) -> str:
+    sep = "&" if "?" in url else "?"
+    return f"{url}{sep}page={page}"
+
+
 def fetch_kupi_products(config: KupiStoreConfig) -> list[dict]:
-    return extract_kupi_products(fetch_kupi_html(config.url), config)
+    """Fetch every page of the Kupi category listing.
+
+    Kupi paginates discounted products (the category page only shows the first
+    page), so a single request silently misses everything on later pages. We
+    walk `?page=N` until a page yields no new discounts, with a hard cap to
+    avoid looping if pagination wraps.
+    """
+    all_rows: list[dict] = []
+    seen_discount_ids: set = set()
+    for page in range(1, 16):
+        url = config.url if page == 1 else _with_page_param(config.url, page)
+        try:
+            html = fetch_kupi_html(url)
+        except requests.RequestException as error:
+            if page == 1:
+                raise  # caller's handler reports the failure and aborts
+            print(f"  stopped at page {page}: {error}")
+            break
+
+        page_rows = extract_kupi_products(html, config, seen_discount_ids)
+        if not page_rows:
+            break
+        all_rows.extend(page_rows)
+        print(f"  page {page}: +{len(page_rows)} (total {len(all_rows)})")
+
+    return all_rows
 
 
 def print_products_by_date(products: list[dict]) -> None:
@@ -503,7 +536,14 @@ def read_csv(path: str | Path) -> list[dict]:
 
 
 def history_key(row: dict) -> tuple[str, ...]:
-    return tuple(row.get(field, "") for field in ("store", "product_id", "date_range", "price", "unit_price"))
+    # Include scraped_at so a genuine per-day re-scrape is never treated as a
+    # duplicate of an earlier day's row (same product/price/range). Without it,
+    # a store that re-scrapes today would be dropped against yesterday's identical
+    # key, leaving the newest run with no rows for that store.
+    return tuple(
+        row.get(field, "")
+        for field in ("store", "product_id", "date_range", "price", "unit_price", "scraped_at")
+    )
 
 
 def append_history(path: str | Path, new_rows: list[dict]) -> list[dict]:

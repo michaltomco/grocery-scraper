@@ -36,10 +36,14 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--bor
 th { color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: var(--th-bg); }
 th:hover { color: var(--fg); }
-td.prod { font-weight: 600; white-space: nowrap; max-width: 180px; }
-td.prod .thumb { width: 40px; height: 40px; object-fit: contain; border-radius: 6px;
-  vertical-align: middle; margin-right: 6px; background: var(--surface); }
-td.prod .pname { vertical-align: middle; }
+td.prod { font-weight: 600; vertical-align: middle; display: flex; align-items: center;
+  gap: 6px; max-width: 180px; overflow: visible; }
+td.prod .thumb { width: 40px; height: 40px; flex: 0 0 auto; object-fit: contain;
+  border-radius: 6px; background: var(--surface); }
+td.prod .dim { flex: 0 0 auto; }
+td.prod .pname { min-width: 0; line-height: 1.2; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  overflow-wrap: anywhere; }
 td.pricelist { white-space: nowrap; vertical-align: middle; width: 1%; }
 .ppcell { display: flex; flex-direction: row-reverse; justify-content: flex-start;
   align-items: center; gap: 6px; padding: 1px 0 1px 6px; }
