@@ -529,14 +529,14 @@ th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
    or showing a date with no matches — no reflow / left-shift. The product column
    is wide enough to show full Czech product names without truncation; the date
    column absorbs the remaining width. */
-/* The date column is pinned to the timeline width (14 day-squares × 13px +
-   13 gaps × 8px ≈ 286px, rounded up) so there is no empty clickable strip to
-   the right of the last day. Without this, the wide "auto" column let clicks
-   far right of the dates Voronoi-map onto the last day (wireBodyDrag). The
-   product column (auto) absorbs the table's leftover width instead. */
+/* The date column is pinned (by JS, fitDateColumn) to the real timeline width +
+   a few px of slack so there is no empty clickable strip to the right of the
+   last day square. Without that, the wide column let clicks far right of the
+   dates Voronoi-map onto the last day (wireBodyDrag). The product column (auto)
+   absorbs the table's leftover width instead. */
 th[data-k="prod"] {{ width: auto; }}
 th[data-k="pricelist"] {{ width: 120px; }}
-th[data-k="drange"] {{ width: 300px; }}
+th[data-k="drange"] {{ width: auto; }}
 th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
 td.prod {{ font-weight: 600; vertical-align: middle; display: flex; align-items: center;
@@ -557,7 +557,7 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-.drange {{ vertical-align: middle; width: 300px; }}
+.drange {{ vertical-align: middle; width: auto; }}
 .dcell {{ padding: 2px 0 2px 6px; }}
 .timeline {{ display: flex; gap: 8px; align-items: center; }}
 .timeline .wk {{ display: flex; gap: 3px; }}
@@ -960,6 +960,29 @@ hideBtn.onclick = () => {{
   hideBtn.classList.toggle('on', hideIrrelevant);
   applyFilters();
 }};
+
+// Pin the date column to the real timeline width (+ a few px slack) so there
+// is no empty clickable strip to the right of the last day square. The body
+// drag handler (wireBodyDrag) maps any X right of the timeline to the nearest
+// day square by center, so a wide "auto" column let far-right clicks collapse
+// the selection onto the last day. We measure the CONTENT span (first -> last
+// day square), not the .timeline box, because .timeline is display:flex and
+// stretches to fill the cell — its box width would be the (wrong) full column.
+function fitDateColumn() {{
+  const ref = document.querySelector('#t tbody .dcell .timeline') || document.querySelector('#rangePicker');
+  const th = document.querySelector('th[data-k="drange"]');
+  if (!ref || !th) return;
+  const days = ref.querySelectorAll('.day, .pkday');
+  let w = 0;
+  if (days.length) {{
+    const a = days[0].getBoundingClientRect();
+    const b = days[days.length - 1].getBoundingClientRect();
+    w = b.right - a.left;
+  }}
+  th.style.width = (Math.ceil(w) + 32) + 'px';
+}}
+fitDateColumn();
+window.addEventListener('resize', fitDateColumn);
 
 // Light / Dark / System theme switcher (persisted in localStorage).
 const themeSwitch = document.getElementById('themeSwitch');
