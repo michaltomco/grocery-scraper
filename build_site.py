@@ -597,7 +597,7 @@ tr.rowout .ppcell {{ opacity: .35; }}
 .theme button + button {{ border-left: 1px solid var(--track); }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
-.date-label {{ font-weight: 600; color: var(--fg); font-size: .9rem; }}
+.date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
 </style></head>
 <body>
 <div class="topbar">
