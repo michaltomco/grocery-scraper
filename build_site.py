@@ -839,7 +839,10 @@ function isoToOffset(iso) {{
   }};
   const ondown = (e) => {{
     if (e.button !== 0) return;   // primary/left only; ignore middle (1) / right (2)
-    const cell = e.target.closest('.dcell');
+    // Whole date-column cell is the hit target (mirrors the old header picker):
+    // gaps between squares AND the slack to the right of the last square all
+    // Voronoi-map onto the nearest day, so nothing in the column is dead.
+    const cell = e.target.closest('td.drange');
     if (!cell) return;
     e.preventDefault();
     const i = idxFromX(e.clientX);
@@ -891,7 +894,7 @@ function fitDateColumn() {{
     const b = days[days.length - 1].getBoundingClientRect();
     w = b.right - a.left;
   }}
-  th.style.width = (Math.ceil(w) + 32) + 'px';
+  th.style.width = (Math.ceil(w) + 10) + 'px';
 }}
 fitDateColumn();
 window.addEventListener('resize', fitDateColumn);
