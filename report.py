@@ -1,5 +1,6 @@
 import csv
 from collections import defaultdict
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 try:
@@ -73,33 +74,50 @@ def main() -> None:
         print("history.csv is empty; no price report was generated.")
         return
 
-    by_store = defaultdict(list)
-    for row in history:
-        by_store[row.get("store", "")].append(row)
+    today_iso = date.today().isoformat()
+    today_date = date.fromisoformat(today_iso)
+    STALE_HORIZON = today_date + timedelta(days=14)
 
-    # A "run" = a calendar day. All three scrapers execute in the same daily
-    # cron, finishing at slightly different timestamps, so group by date to
-    # keep every store's current snapshot together.
-    all_dates = sorted(
+    all_scrape_dates = sorted(
         {row.get("scraped_at", "")[:10] for row in history if row.get("scraped_at")},
         reverse=True,
     )
-    current_run = all_dates[0] if all_dates else ""
-    previous_run = all_dates[1] if len(all_dates) > 1 else None
+    has_history = len(all_scrape_dates) > 1
+    previous_day = (
+        max(
+            d
+            for d in all_scrape_dates
+            if date.fromisoformat(d) < today_date
+        )
+        if any(date.fromisoformat(d) < today_date for d in all_scrape_dates)
+        else None
+    )
 
+    # ACTIVE-WINDOW model (mirrors build_site.py): show every discount still
+    # valid today — not only rows from the single global latest scrape day.
+    # Stores finish their daily cron on different calendar days and Kupi flyers
+    # are forward-dated, so a product scraped a few days ago with a range
+    # covering today is a current offer and must be reported. For previous-day
+    # price comparison we use the most-recent scrape day that is strictly before
+    # today (so a store whose latest scrape was yesterday still gets a baseline).
     current_rows = []
     previous_by_key = {}
-    for store, rows in by_store.items():
-        current_rows.extend(
-            row for row in rows if row.get("scraped_at", "").startswith(current_run)
-        )
-        if previous_run:
-            for row in rows:
-                if row.get("scraped_at", "").startswith(previous_run):
-                    key = (store, row.get("product_id", ""))
-                    price = number(row.get("price", ""))
-                    if price is not None and (key not in previous_by_key or price < previous_by_key[key]):
-                        previous_by_key[key] = price
+    for row in history:
+        store = row.get("store", "")
+        s, en = (row.get("date_range", "") or "").split(" - ", 1) if " - " in (row.get("date_range", "") or "") else (row.get("date_range", ""), row.get("date_range", ""))
+        end = date.fromisoformat(en) if en else None
+        start = date.fromisoformat(s) if s else None
+        if end is None:
+            active = True
+        else:
+            active = end >= today_date and (start is None or start <= STALE_HORIZON)
+        if active:
+            current_rows.append(row)
+        if previous_day and row.get("scraped_at", "").startswith(previous_day):
+            key = (store, row.get("product_id", ""))
+            price = number(row.get("price", ""))
+            if price is not None and (key not in previous_by_key or price < previous_by_key[key]):
+                previous_by_key[key] = price
 
     products = defaultdict(list)
     for row in current_rows:
@@ -141,20 +159,24 @@ def main() -> None:
     write_report(report_rows)
     print("BEST PRICES")
     for product in sorted(products.keys()):
-        entries = []
+        # One entry per store, taking the cheapest still-active offer (a store
+        # may list the same item on multiple active flyers).
+        best_per_store: dict[str, tuple[float, str]] = {}
         for row in products[product]:
             val, unit = normalized_price(row)
             if val is None:
                 continue
             store = row.get("store", "")
-            # loyalty members get the member price when required
             if is_true(row.get("loyalty_required", "")):
                 lp = number(row.get("loyalty_price", ""))
                 if lp is not None:
                     val = lp
-            entries.append((store, val, unit))
-        if not entries:
+            prev = best_per_store.get(store)
+            if prev is None or val < prev[0]:
+                best_per_store[store] = (val, unit)
+        if not best_per_store:
             continue
+        entries = [(store, v, u) for store, (v, u) in best_per_store.items()]
         best_val = min(e[1] for e in entries)
         parts = [
             f"{store} {val:.2f}/{unit}{' (best)' if val == best_val else ''}"

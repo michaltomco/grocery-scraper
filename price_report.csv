@@ -1,30 +1,35 @@
 canonical_product_name,best_store,best_price,best_unit,best_date_range,dropped_count,increased_count
 ananas,Lidl,27.90,/kg,2026-08-06 - 2026-08-09,0,0
-banany,Lidl,19.90,/kg,2026-08-05,0,0
-boruvky,Tesco,159.60,/kg,2026-08-04,0,0
-brambory,Tesco,14.95,/kg,2026-08-04,0,0
-brokolice,Tesco,59.80,/kg,2026-08-04,0,0
-cesnek,Lidl,9.90,/ks,2026-08-05,0,0
+banany,Lidl,19.90,/kg,2026-08-03 - 2026-08-05,0,0
+boruvky,Tesco,159.60,/kg,2026-08-03 - 2026-08-04,0,0
+brambory,Albert,11.90,/kg,2026-08-03 - 2026-08-04,0,1
+brokolice,Tesco,59.80,/kg,2026-08-03 - 2026-08-04,0,0
+broskve,Albert,39.90,/kg,2026-08-03 - 2026-08-04,0,0
+cervena_repa,Albert,15.90,/kg,2026-08-05 - 2026-08-11,0,0
+cesnek,Lidl,9.90,/ks,2026-08-03 - 2026-08-05,0,0
 cibule_kuchynska_zluta,Lidl,11.90,/kg,2026-08-06 - 2026-08-09,0,0
-cuketa,Tesco,24.90,/kg,2026-08-04,0,0
-hrozny,Lidl,59.80,/kg,2026-08-05,0,0
+cuketa,Tesco,24.90,/kg,2026-08-03 - 2026-08-04,0,0
+hrozny,Lidl,59.80,/kg,2026-08-03 - 2026-08-05,0,0
 jablka,Albert,18.90,/kg,2026-08-08 - 2026-08-09,0,0
-kedlubna,Tesco,9.90,/ks,2026-08-04,0,0
+kedlubna,Tesco,9.90,/ks,2026-08-03 - 2026-08-04,0,0
 kiwi,Lidl,9.90,/ks,2026-08-06 - 2026-08-09,0,0
 kopr_cerstvy_svazek,Lidl,29.90,/ks,2026-08-06 - 2026-08-09,0,0
-kukurice_klas,Tesco,12.90,/ks,2026-08-04,0,0
-kukurice_predvarena,Lidl,14.95,/ks,2026-08-05,0,0
-kvetak,Lidl,29.90,/ks,2026-08-05,0,0
-mandarinky,Tesco,39.90,/kg,2026-08-04,0,0
-mango,Tesco,24.90,/ks,2026-08-04,0,0
-meloun,Albert,7.90,/kg,2026-08-05 - 2026-08-11,0,0
-merunky,Tesco,49.90,/kg,2026-08-04,0,0
-nektarinky,Albert,29.90,/kg,2026-08-05 - 2026-08-11,0,0
-okurka,Lidl,39.90,/kg,2026-08-06 - 2026-08-09,0,0
-paprika_bila,Tesco,34.90,/kg,2026-08-04,0,0
-paprika_cervena,Lidl,79.80,/kg,2026-08-06 - 2026-08-09,0,0
-pomerance,Lidl,34.90,/kg,2026-08-05,0,0
-rajcata_cherry,Tesco,133.00,/kg,2026-08-04,0,0
-rajcata_cherry_kerikova,Lidl,126.33,/kg,2026-08-05,0,0
-rajcata_kerikova,Tesco,29.90,/kg,2026-08-04,0,0
+kukurice_klas,Tesco,12.90,/ks,2026-08-03 - 2026-08-04,0,0
+kukurice_predvarena,Lidl,14.95,/ks,2026-08-03 - 2026-08-05,0,0
+kvetak,Lidl,29.90,/ks,2026-08-03 - 2026-08-05,0,0
+mandarinky,Tesco,39.90,/kg,2026-08-03 - 2026-08-04,0,0
+mango,Tesco,24.90,/ks,2026-08-03 - 2026-08-04,0,0
+meloun,Albert,7.90,/kg,2026-08-05 - 2026-08-11,0,1
+merunky,Albert,49.90,/kg,2026-08-03 - 2026-08-04,0,0
+mrkev,Albert,19.90,/ks,2026-08-03 - 2026-08-04,0,0
+nektarinky,Albert,29.90,/kg,2026-08-05 - 2026-08-11,0,3
+okurka,Albert,14.90,/ks,2026-08-05 - 2026-08-11,0,2
+paprika,Albert,34.90,/kg,2026-08-03 - 2026-08-04,0,0
+paprika_bila,Tesco,34.90,/kg,2026-08-03 - 2026-08-04,0,0
+paprika_cervena,Albert,44.90,/kg,2026-08-05 - 2026-08-11,0,1
+pomerance,Lidl,34.90,/kg,2026-08-03 - 2026-08-05,0,0
+porek,Albert,19.90,/ks,2026-08-03 - 2026-08-04,0,0
+rajcata_cherry,Tesco,133.00,/kg,2026-08-03 - 2026-08-04,0,0
+rajcata_cherry_kerikova,Lidl,126.33,/kg,2026-08-03 - 2026-08-05,0,0
+rajcata_kerikova,Tesco,29.90,/kg,2026-08-03 - 2026-08-04,0,0
 svestky,Lidl,29.90,/kg,2026-08-07 - 2026-08-09,0,0

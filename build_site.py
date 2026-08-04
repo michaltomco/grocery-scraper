@@ -158,12 +158,15 @@ def _iso(d: str):
 def fmt_cz(iso: str) -> str:
     """Format an ISO date or an ISO 'start - end' range as Czech D.M.YYYY
     (day first). For a same-year range the start year is omitted, e.g.
-    '6.8 – 9.8.2026'. Falls back to the raw string if not a parseable ISO date."""
+    '6.8 – 9.8.2026'. A single-day range collapses to one date, e.g.
+    '5.8.2026'. Falls back to the raw string if not a parseable ISO date."""
     if not iso:
         return ""
     if " - " in iso:
         a, b = iso.split(" - ", 1)
         da, db = _iso(a), _iso(b)
+        if da and db and da == db:
+            return fmt_cz(a)
         if da and db and da.year == db.year:
             return f"{da.day}.{da.month} – {db.day}.{db.month}.{db.year}"
         return f"{fmt_cz(a)} – {fmt_cz(b)}"
@@ -171,6 +174,32 @@ def fmt_cz(iso: str) -> str:
     if not d:
         return iso
     return f"{d.day}.{d.month}.{d.year}"
+
+
+def fmt_md(iso: str) -> str:
+    """Format an ISO date as Czech D.M (day first), no year. Used for the
+    date-range picker labels, which only span a couple of weeks so the year
+    is just noise."""
+    d = _iso(iso)
+    if not d:
+        return iso
+    return f"{d.day}.{d.month}"
+
+
+# Czech 2-letter day-of-week abbreviations (Po/Út/St/Čt/Pá/So/Ne), Monday-first
+# to match Python's datetime.weekday().
+_DOW_CZ = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"]
+# Single-letter glyphs for the tiny 13px squares (P=Po/So, Ú=Út, S=St/So, Č=Čt,
+# P=Pá, N=Ne). Monday-first to match datetime.weekday().
+_DOW1_CZ = ["P", "Ú", "S", "Č", "P", "S", "N"]
+
+
+def fmt_md_dow(iso: str) -> str:
+    """fmt_md plus a leading 2-letter Czech day-of-week, e.g. 'Po 5.8'."""
+    d = _iso(iso)
+    if not d:
+        return iso
+    return f"{_DOW_CZ[d.weekday()]} {d.day}.{d.month}"
 
 
 def sparkline(series: list[tuple[datetime, float]]) -> str:
@@ -203,30 +232,40 @@ def sparkline(series: list[tuple[datetime, float]]) -> str:
 
 def build() -> str:
     if not HISTORY_CSV.exists():
-        return "<p>No history.csv — run the scraper first.</p>"
+        rows = []
+    else:
+        # Normalize any already-cached images onto white square canvases, so every
+        # thumbnail shares one aspect ratio (covers stale files whose product no
+        # longer has an image_url in the latest run).
+        if IMG_DIR.exists():
+            for f in IMG_DIR.glob("*.*"):
+                if f.name.startswith(".raw_"):
+                    continue
+                normalize_image_file(f)
+        rows = read_csv(HISTORY_CSV)
 
-    # Normalize any already-cached images onto white square canvases, so every
-    # thumbnail shares one aspect ratio (covers stale files whose product no
-    # longer has an image_url in the latest run).
-    if IMG_DIR.exists():
-        for f in IMG_DIR.glob("*.*"):
-            if f.name.startswith(".raw_"):
-                continue
-            normalize_image_file(f)
+    today_iso = date.today().isoformat()
+    today_date = date.fromisoformat(today_iso)
+    # A discount is still relevant if its end date is today or later. We also
+    # tolerate flyers whose start is a few days in the future (Kupi publishes
+    # "st 5. 8. – út 11. 8." offers several days early) so those count as
+    # current too, but anything that ended long ago is dropped as stale.
+    STALE_HORIZON = today_date + timedelta(days=14)
 
-    rows = read_csv(HISTORY_CSV)
-    if not rows:
-        return "<p>history.csv is empty.</p>"
+    all_scrape_dates = sorted(
+        {r.get("scraped_at", "")[:10] for r in rows if r.get("scraped_at")},
+        reverse=True,
+    )
+    last_run = all_scrape_dates[0] if all_scrape_dates else ""
+    has_history = len(all_scrape_dates) > 1
 
-    # current run = latest RUN DATE (YYYY-MM-DD). All three scrapers run in the
-    # same daily cron, so a run spans several scraped_at timestamps within one
-    # day — grouping by date keeps Albert/Lidl/Tesco together instead of
-    # dropping all but the last-finished store.
-    run_dates = sorted({r.get("scraped_at", "")[:10] for r in rows if r.get("scraped_at")}, reverse=True)
-    current_run = run_dates[0] if run_dates else ""
-    prev_run = run_dates[1] if len(run_dates) > 1 else None
-
-    # per (product, store) -> current entry; per (product, store) -> time series
+    # ACTIVE-WINDOW model (replaces the old single-"current run" day):
+    # show every discount that is still valid today — not just rows from the
+    # one global latest scrape day. Stores finish their daily cron on different
+    # calendar days, and Kupi flyers are forward-dated, so a product scraped a
+    # few days ago with a range covering today is a current offer and must be
+    # shown. For each (product, store) keep the still-active entry with the
+    # *latest* end date (longest-valid offer wins).
     current_entries: dict[tuple[str, str], dict] = {}
     series: dict[tuple[str, str], list[tuple[datetime, float]]] = defaultdict(list)
     stores_seen: set[str] = set()
@@ -238,22 +277,49 @@ def build() -> str:
         ts = parse_ts(r.get("scraped_at", ""))
         if val is not None:
             series[(product, store)].append((ts, val))
-        if r.get("scraped_at", "").startswith(current_run):
-            # keep cheapest normalized entry for the store (some items list twice)
-            lp = number(r.get("loyalty_price", ""))
-            disp_val = val
-            if r.get("loyalty_required", "").strip().lower() in {"true", "1", "yes", "y"} and lp is not None:
-                disp_val = lp
-            existing = current_entries.get((product, store))
-            if existing is None or (disp_val is not None and disp_val < existing["val"]):
-                current_entries[(product, store)] = {
-                    "product": product, "store": store,
-                    "val": disp_val if disp_val is not None else val,
-                    "unit": unit, "date_range": r.get("date_range", ""),
-                    "product_id": r.get("product_id", ""),
-                    "image_url": r.get("image_url", ""),
-                    "raw_name": r.get("product_name", product),
-                }
+        # Is this discount still active (end date >= today, not hopelessly stale)?
+        s, en = parse_range(r.get("date_range", ""))
+        end = date.fromisoformat(en) if en else None
+        start = date.fromisoformat(s) if s else None
+        if end is None:
+            active = True  # no parseable date → keep (avoid dropping on bad data)
+        else:
+            active = end >= today_date and (start is None or start <= STALE_HORIZON)
+        if not active:
+            continue
+        # keep the most-valid (latest-ending) still-active entry per store
+        lp = number(r.get("loyalty_price", ""))
+        disp_val = val
+        if r.get("loyalty_required", "").strip().lower() in {"true", "1", "yes", "y"} and lp is not None:
+            disp_val = lp
+        existing = current_entries.get((product, store))
+        if existing is None or (end is not None and (existing["_end"] is None or end > existing["_end"])):
+            current_entries[(product, store)] = {
+                "product": product, "store": store,
+                "val": disp_val if disp_val is not None else val,
+                "unit": unit, "date_range": r.get("date_range", ""),
+                "product_id": r.get("product_id", ""),
+                "image_url": r.get("image_url", ""),
+                "raw_name": r.get("product_name", product),
+                "_end": end,
+            }
+
+    # Combined per-product trend: for each calendar day, the LOWEST price across
+    # all stores (so the single product sparkline shows the best available deal
+    # over time). Keyed by product -> sorted list of (datetime, float).
+    day_min: dict[str, dict[date, float]] = defaultdict(dict)
+    for (product, _store), pts in series.items():
+        for ts, val in pts:
+            d = ts.date()
+            cur = day_min[product].get(d)
+            if cur is None or val < cur:
+                day_min[product][d] = val
+    lowest_series: dict[str, list[tuple[datetime, float]]] = {}
+    for product, dm in day_min.items():
+        lowest_series[product] = sorted(
+            [(datetime(d.year, d.month, d.day), v) for d, v in dm.items()],
+            key=lambda p: p[0],
+        )
 
     products: dict[str, list[dict]] = defaultdict(list)
     for (product, store), e in current_entries.items():
@@ -269,6 +335,46 @@ def build() -> str:
     }
     today_iso = date.today().isoformat()
     timeline_days = [date.fromisoformat(today_iso) + timedelta(days=i) for i in range(14)]
+
+    # Group consecutive days into week blocks split at Monday (week start), so
+    # the gap between weeks lands only on the Sunday->Monday boundary — not at a
+    # fixed midpoint. Used by both the header and every body row.
+    def group_weeks(items):
+        blocks, cur = [], []
+        for i, html in items:
+            if i > 0 and timeline_days[i].weekday() == 0:
+                blocks.append(cur)
+                cur = []
+            cur.append(html)
+        if cur:
+            blocks.append(cur)
+        return "".join(f'<div class="wk">{"".join(b)}</div>' for b in blocks)
+
+    # Header timeline: a label per week block (its start date) plus the weekday
+    # initials, both grouped into the same Monday-split blocks as the rows.
+    _blocks = []
+    _cur = []
+    for _i, _day in enumerate(timeline_days):
+        if _i > 0 and _day.weekday() == 0:
+            _blocks.append(_cur)
+            _cur = []
+        _cur.append(_day)
+    if _cur:
+        _blocks.append(_cur)
+    weeks_html = "".join(
+        f'<div class="wklabel" style="width:{len(b) * 13 + (len(b) - 1) * 3}px">{b[0].day}.{b[0].month}</div>'
+        for b in _blocks
+    )
+
+    # Picker timeline: one 13px square per day, grouped into the SAME Monday-split
+    # week blocks + 3px gaps as the body timeline, so the picker sits above the
+    # date column and its squares line up with the column's day squares.
+    _picker_items = [
+        (i, f'<span class="pkday" data-off="{i}">{_DOW1_CZ[timeline_days[i].weekday()]}</span>')
+        for i, _ in enumerate(timeline_days)
+    ]
+    picker_days_html = group_weeks(_picker_items)
+
     table_rows = []
     for product in sorted(products):
         entries = sorted(
@@ -303,55 +409,81 @@ def build() -> str:
             if en and (union_end is None or en > union_end):
                 union_end = en
             pp_cells.append(
-                f'<div class="ppcell" data-store="{esc(e["store"])}" style="border-left:3px solid {color}">'
-                f'{logo}<span class="pprice">{v:.2f}/{e["unit"]}</span></div>'
+                f'<div class="ppcell" data-store="{esc(e["store"])}">'
+                f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
             )
             active_start = date.fromisoformat(s) if s else None
             active_end = date.fromisoformat(en) if en else None
-            day_cells = []
+            day_items = []
             for day_index, day in enumerate(timeline_days):
-                if day_index == 7:
-                    day_cells.append('<span class="week-gap" aria-hidden="true"></span>')
                 active = active_start and active_end and active_start <= day <= active_end
                 classes = "day"
                 if active:
                     classes += " active"
-                if day.isoformat() == today_iso:
-                    classes += " today"
-                day_cells.append(
-                    f'<span class="{classes}" title="{esc(e["store"])} · {fmt_cz(day.isoformat())}"></span>'
-                )
+                day_items.append((
+                    day_index,
+                    f'<span class="{classes}" data-date="{day.isoformat()}" title="{esc(e["store"])} · {fmt_cz(day.isoformat())}">{_DOW1_CZ[day.weekday()]}</span>',
+                ))
+            day_html = group_weeks(day_items)
             date_cells.append(
                 f'<div class="dcell" data-store="{esc(e["store"])}" '
+                f'data-s="{esc(s or "")}" data-e="{esc(en or "")}" '
                 f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr)) or "no dates"}" '
-                f'style="--store-color:{color}"><div class="timeline">{"".join(day_cells)}</div></div>'
+                f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
             )
+        spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
             f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
-            f'<td class="spark">{sparkline(series.get((product, entries[0]["store"]), [])) or "<span class=dim>1 run</span>"}</td>'
+            f'<td class="spark"><div class="sparkline">{spark_html}</div></td>'
             f"</tr>"
         )
 
-    last_run = current_run or "unknown"
+    last_run = last_run or "unknown"
     n_products = len(table_rows)
     n_stores = len(stores_seen)
-    has_history = prev_run is not None
+    # Empty-state notice: render it *inside* the table body as a full-width row so
+    # the column headers stay exactly consistent with the populated view.
+    if not table_rows:
+        if not HISTORY_CSV.exists():
+            msg = "No history.csv — run the scraper first."
+        elif not rows:
+            msg = "history.csv is empty."
+        else:
+            msg = "No active discounts right now."
+        empty_notice = (
+            f'<tr><td colspan="4" class="dim" '
+            f'style="text-align:center;padding:24px">'
+            f'{esc(msg)}</td></tr>'
+        )
+    else:
+        empty_notice = ""
+    # has_history still reflects "do we have 2+ scrape days" for the trend hint.
 
     # Date bounds for the range slider. Far-left = today, far-right = latest
-    # discount end date seen. Rows without a parseable date default to today.
+    # discount end date among the *shown* (active-window) entries, so the
+    # slider never reaches into stale history. Row cells keep their real
+    # per-store date_range; this only sets the slider's max span.
     all_ends = []
-    for r in rows:
-        s, e = parse_range(r.get("date_range", ""))
-        for d in (s, e):
+    for e in current_entries.values():
+        s, en = parse_range(e.get("date_range", ""))
+        for d in (s, en):
             if d:
                 all_ends.append(d)
     date_min = today_iso
     date_max = max([today_iso] + all_ends) if all_ends else today_iso
-    # Slider uses integer day offsets: 0 = today, days_span = last discount day.
+    # Slider uses integer day offsets: 0 = today. The PICKER spans the full
+    # timeline grid (14 days, same as the column it mirrors), so the thumbs travel
+    # across every day square. The default selected window is today -> latest
+    # discount end (days_span), which is just the initial handle positions.
+    picker_span = len(timeline_days) - 1
     days_span = (date.fromisoformat(date_max) - date.fromisoformat(today_iso)).days
+    # One segment per day step (0 .. days_span, inclusive). The strip is rendered
+    # as a segmented toggle; the selected day(s) are highlighted via JS.
+    seg_count = days_span + 1
+    segments_html = "".join('<span class="seg"></span>' for _ in range(seg_count))
 
     html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -364,60 +496,100 @@ def build() -> str:
 :root {{
   --bg: #1a1b26; --fg: #c0caf5; --muted: #565f89; --dim: #3b4261;
   --border: #292e42; --track: #3b4261; --surface: #24283b; --chip-off-bg: #1a1b26;
-  --accent: #7aa2f7; --price: #bb9af7; --slider: #7dcfff; --th-bg: #1a1b26;
+  --accent: #7aa2f7; --price: #bb9af7; --slider: #7dcfff; --th-bg: #24283b;
   --toggle-bg: #1a1b26; --thumb-border: #1a1b26;
+  --logo-ink: #0f172a;  /* dark letter ink used inside the store-logo badges; reused
+                           for the weekday letters so they match the logos in every theme */
 }}
 :root[data-theme="light"] {{
   --bg: #eff1f5; --fg: #4c4f69; --muted: #6c6f85; --dim: #9ca0b0;
   --border: #ccd0da; --track: #9ca0b0; --surface: #e6e9ef; --chip-off-bg: #eff1f5;
-  --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #e6e9ef;
+  --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #dce0e8;
   --toggle-bg: #eff1f5; --thumb-border: #eff1f5;
 }}
 @media (prefers-color-scheme: light) {{
   :root:not([data-theme="dark"]) {{
     --bg: #eff1f5; --fg: #4c4f69; --muted: #6c6f85; --dim: #9ca0b0;
     --border: #ccd0da; --track: #9ca0b0; --surface: #e6e9ef; --chip-off-bg: #eff1f5;
-    --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #e6e9ef;
+    --accent: #1e66f5; --price: #8839ef; --slider: #179299; --th-bg: #dce0e8;
     --toggle-bg: #eff1f5; --thumb-border: #eff1f5;
   }}
 }}
+html {{ overflow-y: scroll; }}
 body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
   background: var(--bg); color: var(--fg); padding: 16px; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: .9rem; }}
+table {{ width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
 th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
-  vertical-align: top; }}
+  vertical-align: top; overflow: hidden; }}
 th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: var(--th-bg); }}
+/* Fixed column widths keep the header stable whether the body is full, empty,
+   or showing a date with no matches — no reflow / left-shift. The product column
+   is wide enough to show full Czech product names without truncation; the date
+   column absorbs the remaining width. */
+/* The date column is pinned to the timeline width (14 day-squares × 13px +
+   13 gaps × 8px ≈ 286px, rounded up) so there is no empty clickable strip to
+   the right of the last day. Without this, the wide "auto" column let clicks
+   far right of the dates Voronoi-map onto the last day (wireBodyDrag). The
+   product column (auto) absorbs the table's leftover width instead. */
+th[data-k="prod"] {{ width: auto; }}
+th[data-k="pricelist"] {{ width: 120px; }}
+th[data-k="drange"] {{ width: 300px; }}
+th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
-td.prod {{ font-weight: 600; white-space: nowrap; max-width: 180px; }}
-td.prod .thumb {{ width: 40px; height: 40px; object-fit: contain; border-radius: 6px;
-  vertical-align: middle; margin-right: 6px; background: var(--surface); }}
-td.prod .pname {{ vertical-align: middle; }}
+td.prod {{ font-weight: 600; vertical-align: middle; display: flex; align-items: center;
+  gap: 6px; overflow: visible; }}
+td.prod .thumb {{ width: 40px; height: 40px; flex: 0 0 auto; object-fit: contain;
+  border-radius: 6px; background: var(--surface); }}
+td.prod .dim {{ flex: 0 0 auto; }}
+/* Long names wrap instead of truncating on a single line: allow up to two
+   lines, then ellipsis. The full name stays reachable via the hover tooltip
+   (syncNameTitles adds a title when the text is clamped). */
+td.prod .pname {{ min-width: 0; line-height: 1.2; display: -webkit-box;
+  -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  overflow-wrap: anywhere; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell {{ display: flex; flex-direction: row-reverse; justify-content: flex-start;
-  align-items: center; gap: 6px; padding: 1px 0 1px 6px; }}
+  align-items: center; gap: 6px; padding: 1px 0; cursor: pointer; }}
+.ppcell:hover {{ filter: brightness(1.15); }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
 .ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
   font-size: .95rem; }}
-.drange {{ vertical-align: middle; min-width: 250px; }}
+.drange {{ vertical-align: middle; width: 300px; }}
 .dcell {{ padding: 2px 0 2px 6px; }}
-.timeline {{ display: grid; grid-template-columns: repeat(7, 13px) 8px repeat(7, 13px); gap: 3px; }}
-.day {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track); opacity: .28; }}
+.timeline {{ display: flex; gap: 8px; align-items: center; }}
+.timeline .wk {{ display: flex; gap: 3px; }}
+.day {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track); opacity: .28; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1; font-weight: 700; color: var(--logo-ink); }}
 .day.active {{ background: var(--store-color); opacity: 1; }}
-.day.today {{ outline: 2px solid var(--fg); outline-offset: 1px; }}
-.week-gap {{ width: 8px; }}
-.timeline-head {{ min-width: 250px; }}
-.timeline-head .weeks, .timeline-head .weekdays {{ display: grid; grid-template-columns: repeat(7, 13px) 8px repeat(7, 13px); gap: 3px; }}
+/* selected by the date-range / single-date picker (mirrors the picker's
+   highlighted segments) */
+.day.sel {{ outline: 2px solid var(--fg); outline-offset: 1px; }}
+.timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
+.timeline-head .weeks {{ display: flex; gap: 8px; }}
+.timeline-head .wk {{ display: flex; gap: 3px; }}
 .timeline-head .weeks {{ margin-bottom: 3px; color: var(--muted); font-size: .68rem; }}
-.timeline-head .weeks span:first-child {{ grid-column: span 7; text-align: center; }}
-.timeline-head .weeks span:last-child {{ grid-column: 9 / span 7; text-align: center; }}
-.timeline-head .weekdays {{ color: var(--muted); font-size: .65rem; text-align: center; }}
+.timeline-head .wklabel {{ text-align: center; }}
 .spark {{ width: 130px; }}
+.sparkline {{ transition: opacity .15s; }}
+.sparkline.muted {{ opacity: .3; }}
+.sparkline.datedim {{ opacity: .28; }}
 .dim {{ color: var(--dim); font-size: .8rem; }}
 /* muted = filtered-out store: dimmed for comparison, not removed */
-.ppcell.muted {{ opacity: .3; }}
+.ppcell.muted {{ opacity: .3; transition: opacity .15s; }}
+.dcell.muted {{ opacity: .3; transition: opacity .15s; }}
+/* datedim = store has no discount inside the selected date window (but one is
+   tracked within the two weeks) — fade its line out, keep the row for context */
+.ppcell.datedim {{ opacity: .28; transition: opacity .15s; }}
+.dcell.datedim {{ opacity: .28; transition: opacity .15s; }}
+/* rowout = the whole product is filtered out (every store muted, or its
+   discount window is entirely outside the selected range). Fade the name AND
+   the price block too, not just the date lines / individual store blocks. */
+tr.rowout td.prod {{ opacity: .35; transition: opacity .15s; }}
+tr.rowout td.prod .thumb {{ opacity: .35; }}
+tr.rowout .ppcell {{ opacity: .35; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   padding: 4px 10px; border-radius: 999px; border: 1px solid var(--track);
@@ -425,12 +597,11 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .legend .chip .logo {{ width: 18px; height: 18px; }}
 .legend .chip.off {{ opacity: .35; background: var(--chip-off-bg); border-color: var(--surface); }}
 .legend .chip:hover {{ border-color: var(--dim); }}
-.controls {{ display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
-  margin: 0 0 14px; padding: 10px 14px; background: var(--surface); border-radius: 8px; }}
 .toggle {{ cursor: pointer; padding: 6px 14px; border-radius: 999px;
   border: 1px solid var(--track); background: var(--toggle-bg); color: var(--fg); font-size: .85rem;
   user-select: none; transition: background .15s, border-color .15s; }}
-.toggle.on {{ background: var(--accent); color: var(--thumb-border); border-color: var(--accent); font-weight: 600; }}
+.toggle.on {{ background: var(--accent); color: var(--thumb-border); border-color: var(--accent); }}
+.toggles {{ display: flex; align-items: center; gap: 8px; }}
 .topbar {{ display: flex; align-items: center; justify-content: space-between; gap: 16px;
   margin: 0 0 10px; }}
 .topbar h1 {{ margin: 0; font-size: 1.5rem; }}
@@ -439,29 +610,20 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   font-size: .85rem; padding: 6px 12px; }}
 .theme button + button {{ border-left: 1px solid var(--track); }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
-.rangewrap {{ display: flex; flex-direction: column; gap: 4px; min-width: 320px; }}
-.rangewrap .rlabels {{ display: flex; justify-content: space-between;
-  font-size: .75rem; color: var(--muted); }}
-.sliderwrap {{ position: relative; height: 30px; }}
-.sliderwrap input[type=range] {{ position: absolute; left: 0; top: 8px; width: 100%;
-  margin: 0; pointer-events: none; -webkit-appearance: none; background: none;
-  height: 4px; }}
-.sliderwrap input[type=range]::-webkit-slider-thumb {{ -webkit-appearance: none;
-  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%;
-  background: var(--slider); border: 2px solid var(--thumb-border); cursor: pointer; }}
-.sliderwrap input[type=range]::-moz-range-thumb {{ pointer-events: auto;
-  width: 16px; height: 16px; border-radius: 50%; background: var(--slider);
-  border: 2px solid var(--thumb-border); cursor: pointer; }}
-.sliderwrap .track {{ position: absolute; left: 0; top: 8px; width: 100%;
-  height: 4px; background: var(--track); border-radius: 2px; }}
-.sliderwrap .fill {{ position: absolute; top: 8px; height: 4px; background: var(--slider);
-  border-radius: 2px; }}
-/* In Date mode the fill is a single-day pick, not a range, so render it neutral
-   (no blue "active range" bar). */
-.sliderwrap.single .fill {{ background: var(--track); }}
-.banner {{ background: var(--surface); border-radius: 8px; padding: 10px 14px;
-  margin-bottom: 14px; font-size: .9rem; }}
-.banner b {{ color: var(--accent); }}
+.rangewrap {{ display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }}
+.sliderwrap {{ display: flex; flex-direction: column; gap: 4px; }}
+/* Picker day squares sit in the header above the date column and mirror the body
+   timeline (same 13px squares + 3px gaps). They ARE the control now (no draggable
+   thumb): clicking a square moves the nearer range handle, or sets the date in
+   Date mode. The selected day(s) get a filled accent (range) or a black outline
+   (single date). */
+.sliderwrap .pkday {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track);
+  transition: background .12s, outline-color .12s; cursor: pointer; user-select: none; touch-action: none;
+  display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1; font-weight: 700; color: var(--logo-ink); }}
+.sliderwrap .pkday.on {{ background: var(--slider); }}
+/* range bounds: outline the first + last selected day (or the single day) to
+   mirror the body date column's .day.sel framing */
+.sliderwrap .pkday.sel {{ outline: 2px solid var(--fg); outline-offset: 1px; }}
 </style></head>
 <body>
 <div class="topbar">
@@ -471,6 +633,9 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
     <button data-theme="dark">Dark</button>
     <button data-theme="system">System</button>
   </div>
+  <div class="toggles">
+    <span class="toggle" id="hideToggle" title="Hide rows whose discounts fall outside the selected date range">Hide irrelevant</span>
+  </div>
 </div>
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
@@ -479,42 +644,46 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   <span class="chip" data-store="Tesco">{STORE_LOGO['Tesco']} Tesco</span>
   <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
 </div>
-<div class="controls">
-  <span class="toggle" id="pickerToggle" title="Switch between a date range and a single date">Range</span>
-  <div class="rangewrap">
-    <div class="sliderwrap" id="rangeSlider">
-      <div class="track"></div>
-      <div class="fill" id="rangeFill"></div>
-      <input type="range" id="rangeStart" min="0" max="{days_span}" step="1" value="0">
-      <input type="range" id="rangeEnd" min="0" max="{days_span}" step="1" value="{days_span}">
-    </div>
-    <div class="sliderwrap" id="singleSlider" style="display:none">
-      <div class="track"></div>
-      <div class="fill" id="singleFill"></div>
-      <input type="range" id="singleDate" min="0" max="{days_span}" step="1" value="0">
-    </div>
-    <div class="rlabels"><span id="lblStart">{fmt_cz(date_min)}</span><span id="lblEnd">{fmt_cz(date_max)}</span></div>
-  </div>
-</div>
-<div class="banner">{'Prices update daily. Trend lines need 2+ runs to show movement.'
- if not has_history else 'Trend lines show price movement across runs.'}</div>
 <table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
-<th data-k="drange" title="Discount days for the next two weeks"><div class="timeline-head">
-  <div class="weeks"><span>Week 1</span><span>Week 2</span></div>
-  <div class="weekdays">{''.join(('<span class="week-gap" aria-hidden="true"></span>' if i == 7 else '') + f'<span>{day.strftime("%a")[0]}</span>' for i, day in enumerate(timeline_days))}</div>
+<th data-k="drange" title="Discount days for the next two weeks"><div class="timeline-head picker">
+  <div class="rangewrap" id="pickerWrap">
+    <div class="sliderwrap" id="rangeSlider">
+      <div class="timeline picker" id="rangePicker">{picker_days_html}</div>
+    </div>
+  </div>
+  <div class="weeks">{weeks_html}</div>
 </div></th>
 <th data-k="spark">Trend</th>
 </tr></thead>
 <tbody>
 {''.join(table_rows)}
-</tbody></table>
+{empty_notice}</tbody></table>
 <script>
 const t = document.getElementById('t');
 const tb = t.tBodies[0];
 const rows = [...tb.rows];
+
+// Hover tooltip: show the full product name only when the .pname is actually
+// truncated (doesn't fit the column). A native title on every row would pop on
+// hover pointlessly for names that already fit, so we set title dynamically.
+function syncNameTitles() {{
+  document.querySelectorAll('#t .pname').forEach(el => {{
+    const truncated = el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
+    if (truncated) {{
+      el.title = el.textContent;
+      el.style.cursor = 'help';
+    }} else {{
+      el.removeAttribute('title');
+      el.style.cursor = '';
+    }}
+  }});
+}}
+syncNameTitles();
+window.addEventListener('resize', syncNameTitles);
+
 document.querySelectorAll('th').forEach(th => {{
   th.onclick = () => {{
     const k = th.dataset.k;
@@ -531,12 +700,14 @@ document.querySelectorAll('th').forEach(th => {{
 
 // Combined filters: store mute + date-range / single-date slider.
 const hidden = new Set();
+let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 const chips = [...document.querySelectorAll('.legend .chip')];
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
 // would shift by the UTC offset).
 const todayParts = "{today_iso}".split("-").map(Number);  // [Y, M, D]
+
 function offsetToIso(off) {{
   const d = new Date(Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2] + off));
   const y = d.getUTCFullYear();
@@ -545,7 +716,7 @@ function offsetToIso(off) {{
   return `${{y}}-${{m}}-${{day}}`;
 }}
 let rangeStart = offsetToIso(0);
-let rangeEnd = offsetToIso({days_span});
+let rangeEnd = offsetToIso({picker_span});
 
 function inRange(row) {{
   const s = row.dataset.start || rangeStart;
@@ -553,111 +724,241 @@ function inRange(row) {{
   return s <= rangeEnd && e >= rangeStart;   // overlap test
 }}
 function applyFilters() {{
+  // Mirror the picker selection onto the body timelines: only the UPPER and LOWER
+  // bound days of the chosen window get a black-outline box (single-date mode ->
+  // just that one day), so the frame marks the range edges, not every day.
+  // Skip squares belonging to a muted (filtered-out) store, so a multi-store
+  // product keeps the filter frame only on the lines that are still shown.
+  document.querySelectorAll('#t .day').forEach(d => {{
+    const ds = d.dataset.date;
+    const owner = d.closest('.dcell');
+    const ownerStore = owner && owner.dataset.store;
+    const muted = !!(ownerStore && hidden.has(ownerStore));
+    const on = !!ds && !muted && (ds === rangeStart || ds === rangeEnd);
+    d.classList.toggle('sel', on);
+  }});
+
   rows.forEach(r => {{
-    // store mute (dim, keep for comparison)
-    let visibleStores = 0;
-    r.querySelectorAll('.ppcell').forEach(c => {{
+    // Pair each store line's price cell (.ppcell) and date cell (.dcell) so we
+    // can show/hide them together — that keeps the Price column and the date
+    // column aligned when individual lines drop out.
+    const lines = [];
+    const ppByStore = {{}};
+    r.querySelectorAll('.ppcell').forEach(c => {{ ppByStore[c.dataset.store] = c; }});
+    r.querySelectorAll('.dcell').forEach(c => {{
       const st = c.dataset.store;
-      const muted = !!(st && hidden.has(st));
-      c.classList.toggle('muted', muted);
-      if (!muted) visibleStores++;
+      lines.push({{ store: st, pp: ppByStore[st] || null, dc: c }});
     }});
-    // date filters (hide whole row)
-    let show = inRange(r);
-    // hide rows with no visible store (every store muted via legend)
-    if (show && visibleStores === 0) show = false;
+    let visibleStores = 0;
+    let anyLineShown = false;
+    lines.forEach(L => {{
+      const st = L.store;
+      const muted = !!(st && hidden.has(st));
+      if (L.pp) L.pp.classList.toggle('muted', muted);
+      L.dc.classList.toggle('muted', muted);
+      if (!muted) visibleStores++;
+      const ds = L.dc.dataset.s, de = L.dc.dataset.e;
+      const hasDate = !!ds;
+      const overlap = hasDate && ds <= rangeEnd && (de || ds) >= rangeStart;
+      // Date-range fade: out-of-range lines always dim (independent of the
+      // "Hide irrelevant" toggle, which only controls the harder display:none hide).
+      const dim = !muted && hasDate && !overlap;
+      if (L.pp) L.pp.classList.toggle('datedim', dim);
+      L.dc.classList.toggle('datedim', dim);
+      const lineShown = !hideIrrelevant ? true : (!muted && overlap);
+      if (lineShown) anyLineShown = true;
+      const disp = lineShown ? '' : 'none';
+      if (L.pp) L.pp.style.display = disp;
+      L.dc.style.display = disp;
+    }});
+
+    // Whole-row "fully out" fade (name + price) is opt-in: only when
+    // "Hide irrelevant" is on. By default every row stays fully visible.
+    const fullyOut = hideIrrelevant && ((visibleStores === 0) || !inRange(r));
+    r.classList.toggle('rowout', fullyOut);
+    let show = anyLineShown;
+    if (!hideIrrelevant) show = true;                // default: keep all rows
     r.style.display = show ? '' : 'none';
   }});
+}}
+// Toggle a store's visibility (used by both the legend chips and the store
+// icons in the Price column). Reflects state on the chip (.off) and on every
+// .ppcell belonging to that store (.muted look) via applyFilters().
+function setStoreHidden(s, hide) {{
+  if (hide) {{ hidden.add(s); }} else {{ hidden.delete(s); }}
+  const chip = chips.find(c => c.dataset.store === s);
+  if (chip) chip.classList.toggle('off', hide);
+  applyFilters();
 }}
 chips.forEach(chip => {{
   chip.onclick = () => {{
     const s = chip.dataset.store;
-    if (hidden.has(s)) {{ hidden.delete(s); chip.classList.remove('off'); }}
-    else {{ hidden.add(s); chip.classList.add('off'); }}
-    applyFilters();
+    setStoreHidden(s, !hidden.has(s));
+  }};
+}});
+// Clicking a store icon in the Price column toggles that store's filter too.
+document.querySelectorAll('#t .ppcell').forEach(pc => {{
+  pc.style.cursor = 'pointer';
+  pc.onclick = (e) => {{
+    e.stopPropagation();
+    const s = pc.dataset.store;
+    setStoreHidden(s, !hidden.has(s));
   }};
 }});
 
-// Dual-handle date-range slider (far-left = today, far-right = latest end).
-const rs = document.getElementById('rangeStart');
-const re = document.getElementById('rangeEnd');
-const fill = document.getElementById('rangeFill');
-const lblS = document.getElementById('lblStart');
-const lblE = document.getElementById('lblEnd');
-// ISO YYYY-MM-DD -> Czech D.M.YYYY for display only (inputs keep ISO values).
+// Date-range picker — the colored day squares ARE the control (no draggable
+// thumb). Clicking a square selects/collapses to that day; dragging paints a
+// range across squares. State is shown purely by the square colors (.pkday.on).
+const rangePicker = document.getElementById('rangePicker');
+let offS = 0, offE = {picker_span};   // selected day offsets (0 = today)
+const SPAN_MAX = {picker_span};       // last day offset (full window)
+// ISO YYYY-MM-DD -> Czech D.M for display only (no year; the picker only spans
+// a couple of weeks, so the year is just noise).
 function fmtCz(iso) {{
   const m = /^(\\d{{4}})-(\\d{{2}})-(\\d{{2}})$/.exec(iso);
   if (!m) return iso;
-  return `${{parseInt(m[3],10)}}.${{parseInt(m[2],10)}}.${{m[1]}}`;
+  return `${{parseInt(m[3],10)}}.${{parseInt(m[2],10)}}`;
 }}
-function syncSlider() {{
-  if (rs.value > re.value) {{            // keep handles from crossing
-    if (document.activeElement === rs) re.value = rs.value;
-    else rs.value = re.value;
-  }}
-  const offS = +rs.value, offE = +re.value;
-  rangeStart = offsetToIso(offS); rangeEnd = offsetToIso(offE);
-  lblS.textContent = fmtCz(rangeStart); lblE.textContent = fmtCz(rangeEnd);
-  const span = ({days_span}) || 1;
-  const a = offS / span * 100;
-  const b = offE / span * 100;
-  fill.style.left = a + '%'; fill.style.width = (b - a) + '%';
+// Highlight picker squares [lo, hi] (inclusive day offsets) within a slider's strip.
+// The filled .on marks the whole selected span; .sel mirrors the body date column
+// by outlining the RANGE BOUNDS (first + last day, or the single day when lo===hi)
+// so a full-window selection reads as "first → last", not as one big block.
+function paintSegs(slider, lo, hi) {{
+  slider.querySelectorAll('.pkday').forEach((s, i) => {{
+    const on = i >= lo && i <= hi;
+    s.classList.toggle('on', on);
+    const isBound = on && (i === lo || i === hi);
+    s.classList.toggle('sel', isBound);
+  }});
+}}
+function syncView() {{
+  const ds = offsetToIso(offS), de = offsetToIso(offE);
+  rangeStart = ds; rangeEnd = de;
+  paintSegs(rangePicker, offS, offE);
   applyFilters();
 }}
-rs.addEventListener('input', syncSlider);
-re.addEventListener('input', syncSlider);
-syncSlider();
-
-// Range <-> Date picker toggle.
-// Range mode: two-handle slider (rangeStart..rangeEnd), begins at today (0).
-// Date mode: single-handle slider (singleDate). Switching to Date seeds it
-// from the range's left handle; switching back to Range re-opens from that
-// single day to the max (today..latest).
-const pickerBtn = document.getElementById('pickerToggle');
-const rangeSlider = document.getElementById('rangeSlider');
-const singleSlider = document.getElementById('singleSlider');
-const sd = document.getElementById('singleDate');
-const singleFill = document.getElementById('singleFill');
-let mode = 'range';
-
-function syncSingle() {{
-  const off = +sd.value;
-  rangeStart = offsetToIso(off);
-  rangeEnd = offsetToIso(off);
-  lblS.textContent = fmtCz(rangeStart);
-  lblE.textContent = fmtCz(rangeEnd);
-  const span = ({days_span}) || 1;
-  const a = off / span * 100;
-  singleFill.style.left = a + '%';
-  singleFill.style.width = (100 - a) + '%';
-  applyFilters();
+// Drag-to-paint range selection: press a square (start), drag across to another
+// (end), release commits. Removes the "which edge moves?" ambiguity — you define
+// both thresholds by where you start and stop. A plain click also works (start =
+// end, so it collapses to a single day, then drag extends it).
+function setRange(a, b) {{
+  offS = Math.min(a, b); offE = Math.max(a, b);
+  syncView();
 }}
+// Tap on a single day: if that day is already the ONLY selected one, reset the
+// selection to the full window (all days); otherwise collapse to that single day.
+function tapSelectDays(off) {{
+  if (offS === offE && offS === off) setRange(0, SPAN_MAX);
+  else setRange(off, off);
+}}
+// Wire drag-to-paint onto the range strip via pointer events (mouse + touch).
+// The target square is derived purely from the pointer's X position relative to
+// the strip, ignoring Y — so you can drag anywhere along the vertical axis (above
+// or below the squares, in the gaps) and the correct day still fills in, as long
+// as the X corresponds to that day's column.
+(function wireRangeDrag() {{
+  const squares = Array.from(rangePicker.querySelectorAll('.pkday'));
+  let dragging = false, anchor = -1;
+  const idxFromX = (x) => {{
+    // Voronoi by square center: every X along the strip — including the gaps
+    // between days — maps to the nearest square, so the spaces are clickable too.
+    let best = -1, bestD = Infinity;
+    for (let i = 0; i < squares.length; i++) {{
+      const r = squares[i].getBoundingClientRect();
+      const c = r.left + r.width / 2;
+      const d = Math.abs(x - c);
+      if (d < bestD) {{ bestD = d; best = i; }}
+    }}
+    return best;
+  }};
+  const ondown = (e) => {{
+    if (e.button !== 0) return;   // primary/left only; ignore middle (1) / right (2)
+    e.preventDefault();
+    const idx = idxFromX(e.clientX);
+    if (idx < 0) return;
+    dragging = true; anchor = idx;
+    tapSelectDays(idx);
+    rangePicker.setPointerCapture && e.pointerId != null && rangePicker.setPointerCapture(e.pointerId);
+  }};
+  const onmove = (e) => {{
+    if (!dragging) return;
+    const idx = idxFromX(e.clientX);
+    if (idx >= 0 && idx !== anchor) setRange(anchor, idx);
+  }};
+  const onup = () => {{ dragging = false; anchor = -1; }};
+  rangePicker.addEventListener('pointerdown', ondown);
+  rangePicker.addEventListener('pointermove', onmove);
+  rangePicker.addEventListener('pointerup', onup);
+  rangePicker.addEventListener('pointercancel', onup);
+}})();
+syncView();
 
-sd.addEventListener('input', syncSingle);
+// Reverse of offsetToIso: an ISO date (YYYY-MM-DD) -> integer day offset from
+// today (the build anchor). Used to map a body date-column square (which carries
+// its real ISO date) back onto the same offset scale the picker uses.
+function isoToOffset(iso) {{
+  const p = iso.split("-").map(Number);
+  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  const t = new Date(Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2]));
+  return Math.round((d - t) / 86400000);
+}}
+// The date-column squares share the SAME 14-day grid and X layout as the picker,
+// so dragging/clicking them drives the very same selection (and thus filters all
+// products) — just like the picker itself. Y is ignored; only the X (the day's
+// column) decides which squares fill in.
+(function wireBodyDrag() {{
+  const body = document.getElementById('t').querySelector('tbody');
+  let dragging = false, anchor = -1;
+  const idxFromX = (x) => {{
+    // Voronoi by square center: gaps between day squares map to the nearest day.
+    const days = Array.from(body.querySelectorAll('.day'));
+    let best = -1, bestD = Infinity;
+    for (let i = 0; i < days.length; i++) {{
+      const r = days[i].getBoundingClientRect();
+      const c = r.left + r.width / 2;
+      const d = Math.abs(x - c);
+      if (d < bestD) {{ bestD = d; best = i; }}
+    }}
+    return best;
+  }};
+  const offAt = (i) => {{
+    const sq = body.querySelectorAll('.day')[i];
+    return sq ? isoToOffset(sq.dataset.date) : -1;
+  }};
+  const ondown = (e) => {{
+    if (e.button !== 0) return;   // primary/left only; ignore middle (1) / right (2)
+    const cell = e.target.closest('.dcell');
+    if (!cell) return;
+    e.preventDefault();
+    const i = idxFromX(e.clientX);
+    const off = offAt(i);
+    if (off < 0) return;
+    dragging = true; anchor = off;
+    tapSelectDays(off);
+    body.setPointerCapture && e.pointerId != null && body.setPointerCapture(e.pointerId);
+  }};
+  const onmove = (e) => {{
+    if (!dragging) return;
+    const i = idxFromX(e.clientX);
+    const off = offAt(i);
+    if (off < 0 || off === anchor) return;
+    setRange(anchor, off);
+  }};
+  const onup = () => {{ dragging = false; anchor = -1; }};
+  body.addEventListener('pointerdown', ondown);
+  body.addEventListener('pointermove', onmove);
+  body.addEventListener('pointerup', onup);
+  body.addEventListener('pointercancel', onup);
+}})();
 
-pickerBtn.onclick = () => {{
-  if (mode === 'range') {{
-    // -> Date: seed single handle from the range's left handle, hide range.
-    mode = 'date';
-    sd.value = rs.value;
-    rangeSlider.style.display = 'none';
-    singleSlider.style.display = '';
-    singleSlider.classList.add('single');
-    pickerBtn.textContent = 'Date';
-    pickerBtn.classList.add('on');
-    syncSingle();
-  }} else {{
-    // -> Range: re-open from the single day (left) to the max (right).
-    mode = 'range';
-    rs.value = sd.value;
-    re.value = ({days_span});
-    rangeSlider.style.display = '';
-    singleSlider.style.display = 'none';
-    singleSlider.classList.remove('single');
-    pickerBtn.textContent = 'Range';
-    pickerBtn.classList.remove('on');
-    syncSlider();
-  }}
+// "Hide irrelevant" toggle: opt-in whole-row hiding for discounts that
+// fall outside the selected date range. Default OFF — every row stays visible
+// (dimmed where out of range) so the table never jumps.
+const hideBtn = document.getElementById('hideToggle');
+hideBtn.onclick = () => {{
+  hideIrrelevant = !hideIrrelevant;
+  hideBtn.classList.toggle('on', hideIrrelevant);
+  applyFilters();
 }};
 
 // Light / Dark / System theme switcher (persisted in localStorage).
