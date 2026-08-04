@@ -361,20 +361,6 @@ def build() -> str:
         _cur.append(_day)
     if _cur:
         _blocks.append(_cur)
-    weeks_html = "".join(
-        f'<div class="wklabel" style="width:{len(b) * 13 + (len(b) - 1) * 3}px">{b[0].day}.{b[0].month}</div>'
-        for b in _blocks
-    )
-
-    # Picker timeline: one 13px square per day, grouped into the SAME Monday-split
-    # week blocks + 3px gaps as the body timeline, so the picker sits above the
-    # date column and its squares line up with the column's day squares.
-    _picker_items = [
-        (i, f'<span class="pkday" data-off="{i}">{_DOW1_CZ[timeline_days[i].weekday()]}</span>')
-        for i, _ in enumerate(timeline_days)
-    ]
-    picker_days_html = group_weeks(_picker_items)
-
     table_rows = []
     for product in sorted(products):
         entries = sorted(
@@ -610,20 +596,8 @@ tr.rowout .ppcell {{ opacity: .35; }}
   font-size: .85rem; padding: 6px 12px; }}
 .theme button + button {{ border-left: 1px solid var(--track); }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
-.rangewrap {{ display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }}
-.sliderwrap {{ display: flex; flex-direction: column; gap: 4px; }}
-/* Picker day squares sit in the header above the date column and mirror the body
-   timeline (same 13px squares + 3px gaps). They ARE the control now (no draggable
-   thumb): clicking a square moves the nearer range handle, or sets the date in
-   Date mode. The selected day(s) get a filled accent (range) or a black outline
-   (single date). */
-.sliderwrap .pkday {{ width: 13px; height: 13px; border-radius: 3px; background: var(--track);
-  transition: background .12s, outline-color .12s; cursor: pointer; user-select: none; touch-action: none;
-  display: flex; align-items: center; justify-content: center; font-size: 8px; line-height: 1; font-weight: 700; color: var(--logo-ink); }}
-.sliderwrap .pkday.on {{ background: var(--slider); }}
-/* range bounds: outline the first + last selected day (or the single day) to
-   mirror the body date column's .day.sel framing */
-.sliderwrap .pkday.sel {{ outline: 2px solid var(--fg); outline-offset: 1px; }}
+.timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
+.date-label {{ font-weight: 600; color: var(--fg); font-size: .9rem; }}
 </style></head>
 <body>
 <div class="topbar">
@@ -648,13 +622,8 @@ tr.rowout .ppcell {{ opacity: .35; }}
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
-<th data-k="drange" title="Discount days for the next two weeks"><div class="timeline-head picker">
-  <div class="rangewrap" id="pickerWrap">
-    <div class="sliderwrap" id="rangeSlider">
-      <div class="timeline picker" id="rangePicker">{picker_days_html}</div>
-    </div>
-  </div>
-  <div class="weeks">{weeks_html}</div>
+<th data-k="drange" title="Discount days for the next two weeks"><div class="timeline-head">
+  <span class="date-label" id="dateLabel">Date</span>
 </div></th>
 <th data-k="spark">Trend</th>
 </tr></thead>
@@ -806,35 +775,13 @@ document.querySelectorAll('#t .ppcell').forEach(pc => {{
   }};
 }});
 
-// Date-range picker — the colored day squares ARE the control (no draggable
-// thumb). Clicking a square selects/collapses to that day; dragging paints a
-// range across squares. State is shown purely by the square colors (.pkday.on).
-const rangePicker = document.getElementById('rangePicker');
+// The header date picker was removed — the body date-column squares are the
+// only date control now. The header just shows a static "Date" column label.
 let offS = 0, offE = {picker_span};   // selected day offsets (0 = today)
 const SPAN_MAX = {picker_span};       // last day offset (full window)
-// ISO YYYY-MM-DD -> Czech D.M for display only (no year; the picker only spans
-// a couple of weeks, so the year is just noise).
-function fmtCz(iso) {{
-  const m = /^(\\d{{4}})-(\\d{{2}})-(\\d{{2}})$/.exec(iso);
-  if (!m) return iso;
-  return `${{parseInt(m[3],10)}}.${{parseInt(m[2],10)}}`;
-}}
-// Highlight picker squares [lo, hi] (inclusive day offsets) within a slider's strip.
-// The filled .on marks the whole selected span; .sel mirrors the body date column
-// by outlining the RANGE BOUNDS (first + last day, or the single day when lo===hi)
-// so a full-window selection reads as "first → last", not as one big block.
-function paintSegs(slider, lo, hi) {{
-  slider.querySelectorAll('.pkday').forEach((s, i) => {{
-    const on = i >= lo && i <= hi;
-    s.classList.toggle('on', on);
-    const isBound = on && (i === lo || i === hi);
-    s.classList.toggle('sel', isBound);
-  }});
-}}
 function syncView() {{
   const ds = offsetToIso(offS), de = offsetToIso(offE);
   rangeStart = ds; rangeEnd = de;
-  paintSegs(rangePicker, offS, offE);
   applyFilters();
 }}
 // Drag-to-paint range selection: press a square (start), drag across to another
@@ -856,41 +803,6 @@ function tapSelectDays(off) {{
 // the strip, ignoring Y — so you can drag anywhere along the vertical axis (above
 // or below the squares, in the gaps) and the correct day still fills in, as long
 // as the X corresponds to that day's column.
-(function wireRangeDrag() {{
-  const squares = Array.from(rangePicker.querySelectorAll('.pkday'));
-  let dragging = false, anchor = -1;
-  const idxFromX = (x) => {{
-    // Voronoi by square center: every X along the strip — including the gaps
-    // between days — maps to the nearest square, so the spaces are clickable too.
-    let best = -1, bestD = Infinity;
-    for (let i = 0; i < squares.length; i++) {{
-      const r = squares[i].getBoundingClientRect();
-      const c = r.left + r.width / 2;
-      const d = Math.abs(x - c);
-      if (d < bestD) {{ bestD = d; best = i; }}
-    }}
-    return best;
-  }};
-  const ondown = (e) => {{
-    if (e.button !== 0) return;   // primary/left only; ignore middle (1) / right (2)
-    e.preventDefault();
-    const idx = idxFromX(e.clientX);
-    if (idx < 0) return;
-    dragging = true; anchor = idx;
-    tapSelectDays(idx);
-    rangePicker.setPointerCapture && e.pointerId != null && rangePicker.setPointerCapture(e.pointerId);
-  }};
-  const onmove = (e) => {{
-    if (!dragging) return;
-    const idx = idxFromX(e.clientX);
-    if (idx >= 0 && idx !== anchor) setRange(anchor, idx);
-  }};
-  const onup = () => {{ dragging = false; anchor = -1; }};
-  rangePicker.addEventListener('pointerdown', ondown);
-  rangePicker.addEventListener('pointermove', onmove);
-  rangePicker.addEventListener('pointerup', onup);
-  rangePicker.addEventListener('pointercancel', onup);
-}})();
 syncView();
 
 // Reverse of offsetToIso: an ISO date (YYYY-MM-DD) -> integer day offset from
@@ -969,10 +881,10 @@ hideBtn.onclick = () => {{
 // day square), not the .timeline box, because .timeline is display:flex and
 // stretches to fill the cell — its box width would be the (wrong) full column.
 function fitDateColumn() {{
-  const ref = document.querySelector('#t tbody .dcell .timeline') || document.querySelector('#rangePicker');
+  const ref = document.querySelector('#t tbody .dcell .timeline');
   const th = document.querySelector('th[data-k="drange"]');
   if (!ref || !th) return;
-  const days = ref.querySelectorAll('.day, .pkday');
+  const days = ref.querySelectorAll('.day');
   let w = 0;
   if (days.length) {{
     const a = days[0].getBoundingClientRect();
