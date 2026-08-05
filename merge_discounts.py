@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-INPUT_CSVS = [ROOT / name for name in ("lidl.csv", "tesco.csv", "albert.csv")]
+INPUT_CSVS = [ROOT / name for name in ("lidl.csv", "tesco.csv", "albert.csv", "billa.csv")]
 OUTPUT_CSV = ROOT / "all_discounts.csv"
 
 
