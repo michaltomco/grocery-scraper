@@ -1,9 +1,9 @@
-from scrapers import albert, lidl, tesco
+from scrapers import albert, billa, lidl, tesco
 from merge_discounts import main as merge
 
 
 def main() -> None:
-    for scraper in (albert, lidl, tesco):
+    for scraper in (albert, billa, lidl, tesco):
         scraper.main()
     merge()
 
