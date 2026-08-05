@@ -332,7 +332,7 @@ def build() -> str:
         "Lidl": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Lidl"><rect x="2" y="2" width="20" height="20" rx="5" fill="#facc15"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">L</text></svg>',
         "Tesco": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Tesco"><rect x="2" y="2" width="20" height="20" rx="5" fill="#f87171"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">T</text></svg>',
         "Albert": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Albert"><rect x="2" y="2" width="20" height="20" rx="5" fill="#60a5fa"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">A</text></svg>',
-        "Billa": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Billa"><rect x="2" y="2" width="20" height="20" rx="5" fill="#cc1f2c"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">B</text></svg>',
+        "Billa": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Billa"><rect x="2" y="2" width="20" height="20" rx="5" fill="#cc1f2c"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">B</text></svg>',
     }
     today_iso = date.today().isoformat()
     timeline_days = [date.fromisoformat(today_iso) + timedelta(days=i) for i in range(14)]
