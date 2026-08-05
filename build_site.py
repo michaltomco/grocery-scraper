@@ -515,6 +515,12 @@ def build() -> str:
 html {{ overflow-y: scroll; }}
 body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
   background: var(--bg); color: var(--fg); padding: 16px; }}
+/* Center the whole page horizontally while keeping the table's fixed column
+   widths: width:max-content sizes the wrapper to the table's natural width
+   (all columns preserved), margin:0 auto centers it on wide screens, and
+   max-width:100% lets it shrink (the table's own max-width:100% then
+   compresses the date column) instead of overflowing on narrow screens. */
+.page {{ width: max-content; max-width: 100%; margin: 0 auto; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
 table {{ width: max-content; max-width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
@@ -616,6 +622,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
 </style></head>
 <body>
+<div class="page">
 <div class="topbar">
   <h1>🪸 Grocery Prices</h1>
   <div class="theme" id="themeSwitch">
@@ -647,6 +654,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 <tbody>
 {''.join(table_rows)}
 {empty_notice}</tbody></table>
+</div>
 <script>
 const t = document.getElementById('t');
 const tb = t.tBodies[0];
