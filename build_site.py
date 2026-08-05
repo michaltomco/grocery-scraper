@@ -325,13 +325,14 @@ def build() -> str:
     for (product, store), e in current_entries.items():
         products[product].append(e)
 
-    # Store brand colors (not price-ranked): Lidl=yellow, Tesco=red, Albert=blue.
-    STORE_COLOR = {"Lidl": "#facc15", "Tesco": "#f87171", "Albert": "#60a5fa"}
+    # Store brand colors (not price-ranked): Lidl=yellow, Tesco=red, Albert=blue, Billa=red(#cc1f2c).
+    STORE_COLOR = {"Lidl": "#facc15", "Tesco": "#f87171", "Albert": "#60a5fa", "Billa": "#cc1f2c"}
     # Small brand-colored logo per store (letter badge on brand color).
     STORE_LOGO = {
         "Lidl": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Lidl"><rect x="2" y="2" width="20" height="20" rx="5" fill="#facc15"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">L</text></svg>',
         "Tesco": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Tesco"><rect x="2" y="2" width="20" height="20" rx="5" fill="#f87171"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">T</text></svg>',
         "Albert": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Albert"><rect x="2" y="2" width="20" height="20" rx="5" fill="#60a5fa"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">A</text></svg>',
+        "Billa": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Billa"><rect x="2" y="2" width="20" height="20" rx="5" fill="#cc1f2c"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#ffffff">B</text></svg>',
     }
     today_iso = date.today().isoformat()
     timeline_days = [date.fromisoformat(today_iso) + timedelta(days=i) for i in range(14)]
@@ -618,6 +619,7 @@ tr.rowout .ppcell {{ opacity: .35; }}
   <span class="chip" data-store="Lidl">{STORE_LOGO['Lidl']} Lidl</span>
   <span class="chip" data-store="Tesco">{STORE_LOGO['Tesco']} Tesco</span>
   <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
+  <span class="chip" data-store="Billa">{STORE_LOGO['Billa']} Billa</span>
 </div>
 <table id="t">
 <thead><tr>
