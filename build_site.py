@@ -105,6 +105,13 @@ def normalized(row: dict) -> tuple[float | None, str]:
     pc = number(row.get("price_per_piece", ""))
     if pc is not None:
         return pc, "ks"
+    # Fallback: some scraped rows only carry a generic `price` (no per_kg/per_piece).
+    # Infer the unit from the product name ("1 kg" -> kg, otherwise per piece).
+    generic = number(row.get("price", ""))
+    if generic is not None:
+        name = (row.get("product_name") or row.get("canonical_product_name") or "")
+        unit = "kg" if re.search(r"\b\d+(?:[.,]\d+)?\s*kg\b", name, re.IGNORECASE) else "ks"
+        return generic, unit
     return None, ""
 
 
@@ -384,9 +391,6 @@ def build() -> str:
         date_cells = []
         union_start, union_end = None, None
         for e in entries:
-            v = e["val"]
-            if v is None:
-                continue
             logo = STORE_LOGO.get(e["store"], "")
             color = STORE_COLOR.get(e["store"], "#64748b")
             dr = e.get("date_range", "") or ""
@@ -395,29 +399,35 @@ def build() -> str:
                 union_start = s
             if en and (union_end is None or en > union_end):
                 union_end = en
-            pp_cells.append(
-                f'<div class="ppcell" data-store="{esc(e["store"])}">'
-                f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
-            )
-            active_start = date.fromisoformat(s) if s else None
-            active_end = date.fromisoformat(en) if en else None
-            day_items = []
-            for day_index, day in enumerate(timeline_days):
-                active = active_start and active_end and active_start <= day <= active_end
-                classes = "day"
-                if active:
-                    classes += " active"
-                day_items.append((
-                    day_index,
-                    f'<span class="{classes}" data-date="{day.isoformat()}" title="{esc(e["store"])} · {fmt_cz(day.isoformat())}">{_DOW1_CZ[day.weekday()]}</span>',
-                ))
-            day_html = group_weeks(day_items)
-            date_cells.append(
-                f'<div class="dcell" data-store="{esc(e["store"])}" '
-                f'data-s="{esc(s or "")}" data-e="{esc(en or "")}" '
-                f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr)) or "no dates"}" '
-                f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
-            )
+            # Price cell is only meaningful when we have a parsed value.
+            v = e["val"]
+            if v is not None:
+                pp_cells.append(
+                    f'<div class="ppcell" data-store="{esc(e["store"])}">'
+                    f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
+                )
+            # Date cell: render whenever the entry has a date range, independent
+            # of whether the price parsed — a discount date is valid data on its own.
+            if s and en:
+                active_start = date.fromisoformat(s)
+                active_end = date.fromisoformat(en)
+                day_items = []
+                for day_index, day in enumerate(timeline_days):
+                    active = active_start <= day <= active_end
+                    classes = "day"
+                    if active:
+                        classes += " active"
+                    day_items.append((
+                        day_index,
+                        f'<span class="{classes}" data-date="{day.isoformat()}" title="{esc(e["store"])} · {fmt_cz(day.isoformat())}">{_DOW1_CZ[day.weekday()]}</span>',
+                    ))
+                day_html = group_weeks(day_items)
+                date_cells.append(
+                    f'<div class="dcell" data-store="{esc(e["store"])}" '
+                    f'data-s="{esc(s or "")}" data-e="{esc(en or "")}" '
+                    f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr)) or "no dates"}" '
+                    f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
+                )
         spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
