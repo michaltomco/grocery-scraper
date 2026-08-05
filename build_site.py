@@ -531,7 +531,7 @@ th:hover {{ color: var(--fg); }}
 th[data-k="prod"], td.prod {{ width: 220px; min-width: 220px; max-width: 220px; }}
 td.prod {{ font-weight: 600; vertical-align: middle; overflow: visible; }}
 td.prod .thumb {{ width: 40px; height: 40px; display: inline-block; vertical-align: middle;
-  object-fit: contain; border-radius: 6px; background: var(--surface); }}
+  object-fit: contain; border-radius: 6px; background: var(--surface); margin-right: 6px; }}
 td.prod .dim {{ display: inline-block; vertical-align: middle; }}
 /* Long names wrap to as many lines as they need instead of being truncated.
    overflow-wrap:anywhere lets long single words (or concatenated Czech names)
