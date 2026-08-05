@@ -578,6 +578,10 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 tr.rowout td.prod {{ opacity: .35; transition: opacity .15s; }}
 tr.rowout td.prod .thumb {{ opacity: .35; }}
 tr.rowout .ppcell {{ opacity: .35; }}
+/* When a product is fully filtered out (every store line muted or out of the
+   selected date range) under normal filtering, fade its name to match the
+   .datedim/.muted level so the whole row dims uniformly. */
+td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   padding: 4px 10px; border-radius: 999px; border: 1px solid var(--track);
@@ -723,6 +727,7 @@ function applyFilters() {{
     }});
     let visibleStores = 0;
     let anyLineShown = false;
+    let shown = 0;   // lines actually visible under current filters (not muted AND in window)
     lines.forEach(L => {{
       const st = L.store;
       const muted = !!(st && hidden.has(st));
@@ -732,8 +737,8 @@ function applyFilters() {{
       const ds = L.dc.dataset.s, de = L.dc.dataset.e;
       const hasDate = !!ds;
       const overlap = hasDate && ds <= rangeEnd && (de || ds) >= rangeStart;
-      // Date-range fade: out-of-range lines always dim (independent of the
-      // "Hide irrelevant" toggle, which only controls the harder display:none hide).
+      const inWin = hasDate ? overlap : true;   // a line with no date isn't date-filtered
+      if (!muted && inWin) shown++;
       const dim = !muted && hasDate && !overlap;
       if (L.pp) L.pp.classList.toggle('datedim', dim);
       L.dc.classList.toggle('datedim', dim);
@@ -744,6 +749,12 @@ function applyFilters() {{
       L.dc.style.display = disp;
     }});
 
+    // Fade the product name too when the whole product is filtered out — i.e.
+    // every store line is muted or falls outside the selected date range. If a
+    // product still has any visible line (another store, or in-window), its name
+    // stays fully visible. Matches the .datedim/.muted fade level (.28).
+    const prodCell = r.querySelector('td.prod');
+    if (prodCell) prodCell.classList.toggle('prodfade', shown === 0);
     // Whole-row "fully out" fade (name + price) is opt-in: only when
     // "Hide irrelevant" is on. By default every row stays fully visible.
     const fullyOut = hideIrrelevant && ((visibleStores === 0) || !inRange(r));
