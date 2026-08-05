@@ -1,52 +1,40 @@
 canonical_product_name,best_store,best_price,best_unit,best_date_range,dropped_count,increased_count
 ananas,Lidl,27.90,/kg,2026-08-06 - 2026-08-09,0,0
 banany,Lidl,19.90,/kg,2026-08-04 - 2026-08-05,0,0
-boruvky,Tesco,159.60,/kg,2026-08-04,0,0
-bramborove_platky_menu_inspirace,Albert,77.60,/kg,2026-08-04,0,0
-brambory,Tesco,9.90,/kg,2026-08-05 - 2026-08-11,0,0
-brokolice,Albert,19.90,/ks,2026-08-08 - 2026-08-09,0,0
+boruvky,Albert,199.80,/kg,2026-08-05 - 2026-08-11,0,2
+brambory,Tesco,9.90,/kg,2026-08-05 - 2026-08-11,0,2
+brokolice,Albert,19.90,/ks,2026-08-08 - 2026-08-09,0,2
 brokolice_menu_inspirace,Albert,166.30,/kg,2026-08-05 - 2026-08-11,0,0
 broskve,Tesco,34.90,/kg,2026-08-05 - 2026-08-11,0,0
-celer_rapikaty,Albert,24.90,/ks,2026-08-04,0,0
 cervena_repa,Albert,15.90,/kg,2026-08-05 - 2026-08-11,0,0
 cesnek,Lidl,9.90,/ks,2026-08-04 - 2026-08-05,0,0
 cibule_bio_nature_s_promise,Albert,39.80,/kg,2026-08-05 - 2026-08-11,0,0
 cibule_kuchynska_zluta,Lidl,11.90,/kg,2026-08-06 - 2026-08-09,0,0
-cuketa,Tesco,24.90,/kg,2026-08-04,0,0
-hrozny,Lidl,59.80,/kg,2026-08-04 - 2026-08-05,0,0
+cuketa,Albert,29.90,/kg,2026-08-05 - 2026-08-11,0,0
+hrozny,Lidl,59.80,/kg,2026-08-04 - 2026-08-05,0,2
 jablka,Albert,18.90,/kg,2026-08-08 - 2026-08-09,0,0
 jahody,Tesco,129.80,/kg,2026-08-05 - 2026-08-11,0,0
 jarni_cibule_svazek,Tesco,10.90,/ks,2026-08-05 - 2026-08-11,0,0
-kedlubna,Tesco,9.90,/ks,2026-08-04,0,0
 kiwi,Lidl,9.90,/ks,2026-08-06 - 2026-08-09,0,0
 kopr_cerstvy_svazek,Lidl,29.90,/ks,2026-08-06 - 2026-08-09,0,0
-kukurice_klas,Tesco,12.90,/ks,2026-08-04,0,0
 kukurice_predvarena,Lidl,14.95,/ks,2026-08-04 - 2026-08-05,0,0
 kvetak,Lidl,29.90,/ks,2026-08-04 - 2026-08-05,0,0
 lilek,Tesco,39.90,/kg,2026-08-05 - 2026-08-11,0,0
 limety,Tesco,6.90,/ks,2026-08-07 - 2026-08-09,0,0
-mandarinky,Tesco,39.90,/kg,2026-08-04,0,0
-mango,Tesco,24.90,/ks,2026-08-04,0,0
-meloun,Albert,7.90,/kg,2026-08-05 - 2026-08-11,0,0
-merunky,Albert,49.90,/kg,2026-08-04,0,0
+meloun,Albert,7.90,/kg,2026-08-05 - 2026-08-11,0,2
+merunky,Albert,49.90,/kg,2026-08-05 - 2026-08-11,0,0
 mix_farmarsky_menu_inspirace,Albert,232.70,/kg,2026-08-05 - 2026-08-11,0,0
-mix_zeleninovy_menu_inspirace,Albert,137.20,/kg,2026-08-04,0,0
+mix_zeleninovy_menu_inspirace,Albert,137.20,/kg,2026-08-05 - 2026-08-11,0,0
 mrkev,Tesco,16.90,/kg,2026-08-05 - 2026-08-11,0,0
-mrkev_kvetak,Albert,149.70,/kg,2026-08-04,0,0
-nektarinky,Albert,29.90,/kg,2026-08-05 - 2026-08-11,0,0
+nektarinky,Albert,29.90,/kg,2026-08-05 - 2026-08-11,0,2
 okurka,Albert,14.90,/ks,2026-08-05 - 2026-08-11,0,0
-paprika,Albert,34.90,/kg,2026-08-04,0,0
-paprika_bila,Tesco,34.90,/kg,2026-08-04,0,0
-paprika_cervena,Albert,12.45,/ks,2026-08-04,0,0
+paprika,Albert,34.90,/kg,2026-08-05 - 2026-08-11,0,0
+paprika_bila,Tesco,39.80,/kg,2026-08-05 - 2026-08-11,0,0
+paprika_cervena,Albert,22.45,/ks,2026-08-05 - 2026-08-11,0,1
 pomerance,Tesco,29.90,/kg,2026-08-05 - 2026-08-11,0,0
-porek,Albert,19.90,/ks,2026-08-04,0,0
 rajcata_cherry,Tesco,79.60,/kg,2026-08-10 - 2026-08-11,0,0
 rajcata_cherry_kerikova,Lidl,126.33,/kg,2026-08-04 - 2026-08-05,0,0
-rajcata_kerikova,Tesco,29.90,/kg,2026-08-04,0,0
-salat_fresco_mix,Albert,213.60,/kg,2026-08-04,0,0
-salat_little_gem,Tesco,9.30,/ks,2026-08-04,0,0
+rajcata_kerikova,Albert,159.60,/kg,2026-08-05 - 2026-08-11,0,0
 salat_rodinny,Tesco,62.60,/kg,2026-08-05 - 2026-08-11,0,0
 salat_rodinny_mix,Albert,99.80,/kg,2026-08-05 - 2026-08-11,0,0
-sojove_klicky_menu_inspirace,Albert,199.60,/kg,2026-08-04,0,0
 svestky,Lidl,29.90,/kg,2026-08-07 - 2026-08-09,0,0
-zampiony,Albert,149.70,/kg,2026-08-04,0,0
