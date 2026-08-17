@@ -185,8 +185,20 @@ def main() -> None:
         print(f"  {product}: " + " | ".join(parts))
     print("\nNOTABLE PRICE DROPS")
     drops = [item for item in changes if item[2] == "dropped"]
+    # A product is often listed on several still-active flyers, so the raw loop
+    # above appends one (identical) drop line per flyer row. Collapse to a single
+    # line per (product, store), keeping the largest absolute move so the most
+    # significant price drop for that store is the one shown.
+    seen_best = {}
+    for item in drops:
+        product, row, _label, delta, _percent = item
+        key = (product, row.get("store", ""))
+        cur = seen_best.get(key)
+        if cur is None or abs(delta) > abs(cur[3]):
+            seen_best[key] = item
+    drops = sorted(seen_best.values(), key=lambda item: item[3])
     if drops:
-        for product, row, label, delta, percent in sorted(drops, key=lambda item: item[3]):
+        for product, row, label, delta, percent in drops:
             val, unit = normalized_price(row)
             disp = f"{val:.2f}/{unit}" if val is not None else f"{number(row.get('price', '')):.2f}"
             print(f"  {product} — {row['store']}: {disp} ({delta:+.2f}, {percent:+.1f}%)")
