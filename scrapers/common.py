@@ -45,6 +45,9 @@ FIELDNAMES = [
 ]
 
 CANONICAL_WORDS = {
+    "avokádo": "avokado",
+    "avokado": "avokado",
+    "avocado": "avokado",
     "ananas": "ananas",
     "banan": "banany",
     "banany": "banany",
@@ -194,6 +197,31 @@ def canonical_product_name(product_name: str) -> str:
             return "paprika_cervena"
         if "bila" in descriptors or "bile" in descriptors or "bily" in descriptors:
             return "paprika_bila"
+
+    if unique_canonical_words == ["avokado"]:
+        # Scan the processed (accent-stripped, normalized) text directly for
+        # subcategory signals — these words are not in DESCRIPTOR_WORDS and
+        # would otherwise be lost.  Substring matching handles variants like
+        # "nature's_promise" → "natures_promise", "zrelé" → "zrele", etc.
+        text_lower = text.lower()
+        is_bio = any(
+            needle in text_lower
+            for needle in ("bio", "organic", "natur", "nature", "nature_s_promise")
+        )
+        is_ready = any(
+            needle in text_lower
+            for needle in (
+                "ready_to_eat", "ready_to_ripen", "readytoeat", "readytori",
+                "zrno", "zrna", "zrel", "zren", "ripe", "ready",
+            )
+        )
+        if is_bio and is_ready:
+            return "avokado_ready_to_eat_bio"
+        if is_bio:
+            return "avokado_bio"
+        if is_ready:
+            return "avokado_ready_to_eat"
+        return "avokado"
 
     return "_".join(unique_canonical_words)
 
@@ -441,15 +469,17 @@ def extract_kupi_products(
 
     for row in soup.select(".discount_row[data-product][data-discount]"):
         discount_id = row["data-discount"]
+        product_id = row.get("data-product", "")
+        dedupe_key = (product_id, discount_id)
         if (
-            discount_id in seen_discount_ids
+            dedupe_key in seen_discount_ids
             # kupi.cz lists the shop as e.g. "Albert Supermarket" /
             # "Albert Hypermarket", so match by containment, not exact equality.
             or config.store.lower() not in kupi_shop_name(row).lower()
         ):
             continue
 
-        seen_discount_ids.add(discount_id)
+        seen_discount_ids.add(dedupe_key)
         rows.append(extract_kupi_discount(row, products, scraped_at, config))
 
     return rows
