@@ -17,9 +17,9 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 try:
-    from scrapers.common import read_csv
+    from scrapers.common import read_csv, canonical_product_name
 except ModuleNotFoundError:
-    from common import read_csv
+    from common import read_csv, canonical_product_name
 
 ROOT = Path(__file__).resolve().parent
 HISTORY_CSV = ROOT / "history.csv"
@@ -278,7 +278,10 @@ def build() -> str:
     stores_seen: set[str] = set()
     for r in rows:
         store = r.get("store", "")
-        product = r.get("canonical_product_name", "")
+        # Re-canonicalize from the raw product name so that any recent
+        # canonicalizer enhancements (e.g. avocado subcategories) take
+        # effect even for rows whose CSV column predates the change.
+        product = canonical_product_name(r.get("product_name", ""))
         stores_seen.add(store)
         val, unit = normalized(r)
         ts = parse_ts(r.get("scraped_at", ""))
