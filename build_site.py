@@ -20,11 +20,13 @@ try:
     from scrapers.common import read_csv, canonical_product_name
 except ModuleNotFoundError:
     from common import read_csv, canonical_product_name
+from nutrition import get_many
 
 ROOT = Path(__file__).resolve().parent
 HISTORY_CSV = ROOT / "history.csv"
 SITE_DIR = ROOT / "site"
 IMG_DIR = SITE_DIR / "img"
+PRODUCTS_DIR = SITE_DIR / "products"
 INDEX_HTML = SITE_DIR / "index.html"
 
 # Download each product image exactly once, keyed by product_id. Already-cached
@@ -144,6 +146,54 @@ def pretty_name(name: str) -> str:
     return n or name
 
 
+GENERAL_DISPLAY_NAMES = {
+    "mrkev": "Mrkev",
+    "brambory": "Brambory",
+    "cibule": "Cibule",
+    "paprika": "Paprika",
+    "rajcata": "Rajčata",
+    "okurka": "Okurka",
+    "jablka": "Jablka",
+    "banany": "Banány",
+    "hrozny": "Hrozny",
+    "jarni_cibule_svazek": "Jarní cibule",
+}
+
+RDA_VALUES = {
+    "Vitamin A": (900, "µg"), "Vitamin B1": (1.2, "mg"), "Vitamin B2": (1.3, "mg"),
+    "Vitamin B3": (16, "mg"), "Vitamin B5": (5, "mg"), "Vitamin B6": (1.3, "mg"),
+    "Vitamin B7 (Biotin)": (30, "µg"), "Vitamin B9 (Folate)": (400, "µg"),
+    "Vitamin B9": (400, "µg"),
+    "Vitamin B12": (2.4, "µg"), "Vitamin C": (90, "mg"), "Vitamin D": (15, "µg"),
+    "Vitamin E": (15, "mg"), "Vitamin K": (120, "µg"),
+    "Calcium": (1300, "mg"), "Iron": (18, "mg"), "Magnesium": (420, "mg"),
+    "Phosphorus": (1250, "mg"), "Potassium": (4700, "mg"), "Sodium": (2300, "mg"),
+    "Zinc": (11, "mg"), "Copper": (0.9, "mg"), "Manganese": (2.3, "mg"),
+    "Selenium": (55, "µg"),
+}
+
+
+def rda_percent(label: str, value, unit: str) -> int | None:
+    label = label.replace("Vitamin B9 (Folate)", "Vitamin B9")
+    if label not in RDA_VALUES or value in (None, 0):
+        return None
+    amount, target_unit = float(value), RDA_VALUES[label][1]
+    normalized_unit = unit.lower().replace("μ", "µ")
+    if normalized_unit in {"ug", "µg", "mcg"} and target_unit == "mg":
+        amount /= 1000
+    elif normalized_unit == "g" and target_unit == "mg":
+        amount *= 1000
+    elif normalized_unit in {"mg", "g"} and target_unit == "µg":
+        amount = amount * (1_000_000 if normalized_unit == "g" else 1000)
+    elif label == "Vitamin A" and normalized_unit in {"iu", "i.u."}:
+        amount *= 0.3
+    return round(amount / RDA_VALUES[label][0] * 100)
+
+
+def display_name(product: str, raw_name: str) -> str:
+    return GENERAL_DISPLAY_NAMES.get(product, pretty_name(raw_name))
+
+
 def parse_range(date_range: str) -> tuple[str, str]:
     """Return (start_iso, end_iso) for a date_range like '2026-08-04' or
     '2026-08-06 - 2026-08-09'. Missing end defaults to the start."""
@@ -237,6 +287,270 @@ def sparkline(series: list[tuple[datetime, float]]) -> str:
     )
 
 
+def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> None:
+    """Write one static detail page per canonical produce item."""
+    PRODUCTS_DIR.mkdir(parents=True, exist_ok=True)
+    product_keys = sorted(products)
+    for product_index, product in enumerate(product_keys):
+        entries = products[product]
+        first = entries[0] if entries else {}
+        pretty = display_name(product, first.get("raw_name", product))
+        img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
+        image_html = (
+            f'<img class="hero" src="../{esc(img_path)}" alt="{esc(pretty)}">'
+            if img_path else ""
+        )
+        nutrition_entry = nutrition.get(product, {})
+        values = nutrition_entry.get("values", {})
+        groups = {
+            "Calories & macros": {
+                "Calories", "Protein", "Carbs", "Fat", "Fiber", "Omega-3 fat", "Omega-6 fat",
+            },
+            "Vitamins": {
+                "Vitamin A", "Vitamin B1", "Vitamin B2", "Vitamin B3", "Vitamin B5",
+                "Vitamin B6", "Vitamin B7 (Biotin)", "Vitamin B9", "Vitamin B9 (Folate)", "Vitamin B12",
+                "Vitamin C", "Vitamin D", "Vitamin E", "Vitamin K",
+            },
+            "Minerals": {
+                "Calcium", "Iron", "Magnesium", "Phosphorus", "Potassium", "Zinc",
+                "Copper", "Manganese", "Selenium", "Sodium",
+            },
+        }
+
+        def nutrition_section(title: str, labels: set[str]) -> str:
+            vitamin_order = {
+                "Vitamin A": 1, "Vitamin B1": 2, "Vitamin B2": 3, "Vitamin B3": 4,
+                "Vitamin B5": 5, "Vitamin B6": 6, "Vitamin B7 (Biotin)": 7,
+                "Vitamin B9": 8, "Vitamin B9 (Folate)": 8, "Vitamin B12": 9, "Vitamin C": 10,
+                "Vitamin D": 11, "Vitamin E": 12, "Vitamin K": 13,
+            }
+            ordered_values = sorted(
+                ((label, value) for label, value in values.items() if label in labels),
+                key=lambda item: vitamin_order.get(item[0], item[0]),
+            )
+
+            def value_html(label: str, value: dict) -> str:
+                amount = value.get("value")
+                if amount == 0:
+                    return (
+                        '<span class="nutrient-value">'
+                        '<span class="mode-raw">–</span><span class="mode-rda">–</span>'
+                        '<span class="mode-axis"><span class="axis"><span class="axis-fill" style="width:0;min-width:0"></span></span></span>'
+                        '</span>'
+                    )
+                unit = esc(value.get("unit", ""))
+                percentage = rda_percent(label, amount, value.get("unit", ""))
+                raw = f"{esc(amount)} {unit}"
+                if percentage is None:
+                    return raw
+                width = min(max(percentage, 0), 100)
+                return (
+                    f'<span class="nutrient-value">'
+                    f'<span class="mode-raw">{raw}</span>'
+                    f'<span class="mode-rda">{percentage}%</span>'
+                    f'<span class="mode-axis"><span class="axis"><span class="axis-fill" style="width:{width}%"></span></span></span>'
+                )
+
+            rows = "".join(
+                f'<tr><th>{esc((label.replace("Vitamin B9 (Folate)", "Vitamin B9").replace("Vitamin ", "").split(" (")[0]) if title == "Vitamins" else label)}</th><td>{value_html(label, value)}</td></tr>'
+                for label, value in ordered_values
+            )
+            if not rows:
+                rows = '<tr><td colspan="2" class="muted">No data available</td></tr>'
+            return f'<section class="nutrition-group"><h2>{title}</h2><table>{rows}</table></section>'
+
+        nutrition_sections = "".join(
+            nutrition_section(title, labels) for title, labels in groups.items()
+        )
+
+        timeline_days = [date.today() + timedelta(days=i) for i in range(14)]
+        day_letters = ["P", "Ú", "S", "Č", "P", "S", "N"]
+
+        detail_store_colors = {
+            "Lidl": "#facc15", "Tesco": "#f87171",
+            "Albert": "#60a5fa", "Billa": "#cc1f2c",
+        }
+        store_initials = {"Lidl": "L", "Tesco": "T", "Albert": "A", "Billa": "B"}
+
+        def store_chip(store: str) -> str:
+            color = detail_store_colors.get(store, "var(--accent)")
+            initial = store_initials.get(store, store[:1].upper())
+            return f'<span class="store-chip" style="--store-color:{color}"><span class="store-mark">{esc(initial)}</span>{esc(store)}</span>'
+
+        def detail_timeline(date_range: str, store: str) -> str:
+            start, end = parse_range(date_range)
+            start_date, end_date = _iso(start), _iso(end)
+            if not start_date or not end_date:
+                return '<span class="muted">No dates</span>'
+            cells = []
+            for day in timeline_days:
+                active = start_date <= day <= end_date
+                cells.append(
+                    f'<span class="day{" active" if active else ""}" data-date="{day.isoformat()}" '
+                    f'title="{esc(fmt_cz(day.isoformat()))}">{day_letters[day.weekday()]}</span>'
+                )
+            color = detail_store_colors.get(store, "var(--accent)")
+            weeks, current = [], []
+            for index, cell in enumerate(cells):
+                if index > 0 and timeline_days[index].weekday() == 0:
+                    weeks.append(f'<div class="wk">{"".join(current)}</div>')
+                    current = []
+                current.append(cell)
+            if current:
+                weeks.append(f'<div class="wk">{"".join(current)}</div>')
+            return f'<div class="timeline" style="--store-color:{color}">' + "".join(weeks) + '</div>'
+
+        discount_rows = "".join(
+            f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parse_range(e.get("date_range", ""))[0])}" data-end="{esc(parse_range(e.get("date_range", ""))[1])}"><td>{store_chip(e.get("store", ""))}</td>'
+            f'<td class="discount-price">{esc(e.get("val") if e.get("val") is not None else "-")} / {esc(e.get("unit", ""))}</td>'
+            f'<td>{detail_timeline(e.get("date_range", ""), e.get("store", ""))}</td></tr>'
+            for e in sorted(
+                entries,
+                key=lambda item: (
+                    item.get("val") is None,
+                    item.get("val") if item.get("val") is not None else float("inf"),
+                    item.get("store", ""),
+                ),
+            )
+        )
+        source = nutrition_entry.get("source", "")
+        source_html = f'<p class="muted">Source: {esc(source)}</p>' if source else ""
+        previous_html = ""
+        next_html = ""
+        if product_index > 0:
+            previous = product_keys[product_index - 1]
+            previous_html = f'<a class="nav-button" href="{previous}.html" aria-label="Previous produce" title="Previous produce">&lt;</a>'
+        if product_index + 1 < len(product_keys):
+            following = product_keys[product_index + 1]
+            next_html = f'<a class="nav-button" href="{following}.html" aria-label="Next produce" title="Next produce">&gt;</a>'
+        page = f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{esc(pretty)} · Grocery Prices</title>
+<style>
+:root {{ --bg:#1a1b26; --fg:#c0caf5; --muted:#565f89; --surface:#24283b; --border:#292e42; --accent:#7aa2f7; --track:#3b4261; --axis-track:#3b4261; --logo-ink:#0f172a; }}
+:root[data-theme="light"] {{ --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --track:#9ca0b0; --axis-track:#a3a8b8; --logo-ink:#0f172a; }}
+@media (prefers-color-scheme: light) {{ :root:not([data-theme="dark"]) {{ --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --axis-track:#a3a8b8; }} }}
+body {{ font-family: -apple-system, system-ui, sans-serif; max-width: 900px; margin: 0 auto;
+  padding: 24px; background: var(--bg); color: var(--fg); }}
+a {{ color: var(--accent); }} .muted {{ color: var(--muted); }}
+.hero {{ width: 180px; height: 180px; object-fit: contain; background: var(--surface); border-radius: 12px; }}
+.card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }}
+.nutrition-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }}
+.nutrition-group {{ background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }}
+.nutrition-group h2 {{ color: var(--accent); }}
+.product-summary {{ display:grid; grid-template-columns:minmax(180px, 1fr) minmax(360px, 2fr); gap:16px; align-items:start; }}
+.product-visual {{ min-width:0; }}
+.product-summary > .card {{ margin-top:0; }}
+.store-chip {{ display:inline-flex; align-items:center; gap:6px; font-weight:600; cursor:pointer; }}
+.discount-price {{ font-weight:700; cursor:pointer; }}
+.discount-row-off td {{ opacity:.3; }}
+.muted td {{ opacity:.3; color:var(--muted); }}
+.datedim td {{ opacity:1; color:var(--muted); }}
+.muted .store-chip {{ opacity:1; color:var(--muted); }}
+.datedim .store-chip, .datedim .discount-price {{ opacity:.28; color:var(--muted); }}
+.muted .store-mark, .datedim .store-mark {{ opacity:.35; }}
+.datedim .day.active {{ opacity:.28; }}
+.store-chip.off {{ opacity:.35; }}
+.muted .store-chip.off {{ opacity:1; }}
+.store-mark {{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:var(--store-color); color:#0f172a; font-weight:700; font-size:.8rem; }}
+.nutrition-heading {{ display:flex; justify-content:space-between; align-items:center; gap:12px; }}
+.nutrition-mode {{ display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }}
+.nutrition-mode button {{ border:0; padding:5px 9px; background:transparent; color:var(--fg); cursor:pointer; }}
+.nutrition-mode button + button {{ border-left:1px solid var(--border); }}
+.nutrition-mode button.active {{ background:var(--accent); color:var(--bg); font-weight:600; }}
+.produce-nav {{ display:flex; gap:8px; position:relative; top:6px; }}
+.title-row {{ display:flex; align-items:center; justify-content:space-between; gap:16px; }}
+.nav-button {{ display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:999px; padding:3px 8px; font-size:14px; line-height:1.2; font-weight:700; text-decoration:none; color:var(--fg); background:var(--surface); }}
+.nav-button:hover {{ border-color:var(--accent); color:var(--accent); }}
+.back-button {{ display:inline-block; border:1px solid var(--border); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--fg); background:var(--surface); }}
+.back-button:hover {{ border-color:var(--accent); color:var(--accent); }}
+.mode-rda, .mode-axis {{ display:none; }}
+.mode-axis {{ width:135px; align-items:center; justify-content:flex-end; gap:5px; }}
+.axis {{ display:inline-block; vertical-align:middle; width:100px; height:10px; margin-right:5px; background:var(--axis-track); border:0; border-radius:4px; overflow:hidden; }}
+.axis-fill {{ display:block; min-width:3px; height:100%; background:var(--accent); border-radius:3px; }}
+.axis-label {{ font-size:.8em; font-weight:600; color:var(--fg); }}
+.timeline {{ display:flex; gap:8px; align-items:center; width:max-content; }}
+.timeline .wk {{ display:flex; gap:3px; }}
+.day {{ width:13px; height:13px; border-radius:3px; background:var(--track); opacity:.28;
+  display:flex; align-items:center; justify-content:center; font-size:8px; line-height:1;
+  font-weight:700; color:var(--logo-ink); cursor:pointer; user-select:none; }}
+.day.active {{ background:var(--store-color, var(--accent)); opacity:1; color:#0f172a; border-color:var(--store-color, var(--accent)); }}
+.day.sel {{ outline:2px solid var(--fg); outline-offset:1px; }}
+.topbar {{ display:flex; justify-content:space-between; align-items:center; gap:16px; }}
+.theme {{ display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }}
+.theme button {{ border:0; padding:6px 10px; background:transparent; color:var(--fg); cursor:pointer; }}
+.theme button + button {{ border-left:1px solid var(--border); }}
+.theme button.active {{ background:var(--accent); color:var(--bg); font-weight:600; }}
+@media (max-width: 700px) {{ .nutrition-grid, .product-summary {{ grid-template-columns: 1fr; }} }}
+table {{ border-collapse: collapse; width: 100%; }} th, td {{ text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }}
+.nutrition-group th {{ text-align:left; width:50%; }}
+.nutrition-group td {{ text-align:right; white-space:nowrap; }}
+h1 {{ margin-bottom: 6px; }} h2 {{ margin-top: 0; font-size: 1rem; }}
+</style></head><body>
+<p><a class="back-button" href="../index.html">Back</a></p>
+<div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
+<div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>Current discounts</h2><table id="discountTable"><thead><tr><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
+<div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
+</body><script>
+const key = 'grocery-theme';
+function applyTheme(mode) {{
+  if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+  else document.documentElement.removeAttribute('data-theme');
+}}
+applyTheme(localStorage.getItem(key) || 'system');
+const nutritionMode = document.getElementById('nutritionMode');
+nutritionMode.querySelectorAll('button').forEach(button => button.onclick = () => {{
+  const mode = button.dataset.mode;
+  document.querySelectorAll('.mode-raw, .mode-rda, .mode-axis').forEach(item => item.style.display = 'none');
+  document.querySelectorAll('.mode-' + mode).forEach(item => item.style.display = mode === 'axis' ? 'flex' : 'inline');
+  nutritionMode.querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
+  localStorage.setItem('grocery-nutrition-mode', mode);
+}});
+nutritionMode.querySelector('[data-mode="' + (localStorage.getItem('grocery-nutrition-mode') || 'axis') + '"]').click();
+const hidden = new Set();
+const todayParts = "{date.today().isoformat()}".split("-").map(Number);
+function offsetToIso(off) {{
+  const d = new Date(Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2] + off));
+  return `${{d.getUTCFullYear()}}-${{String(d.getUTCMonth()+1).padStart(2,'0')}}-${{String(d.getUTCDate()).padStart(2,'0')}}`;
+}}
+let rangeStart = offsetToIso(0), rangeEnd = offsetToIso(13);
+function applyFilters() {{
+  document.querySelectorAll('#discountTable .day').forEach(day => day.classList.toggle('sel', day.dataset.date === rangeStart || day.dataset.date === rangeEnd));
+  document.querySelectorAll('#discountTable tr[data-store]').forEach(row => {{
+    const storeMuted = hidden.has(row.dataset.store);
+    const outside = row.dataset.start && row.dataset.end && (row.dataset.end < rangeStart || row.dataset.start > rangeEnd);
+    row.classList.toggle('muted', storeMuted);
+    row.classList.toggle('datedim', !storeMuted && outside);
+  }});
+}}
+function setStoreHidden(store, hide) {{
+  if (hide) hidden.add(store); else hidden.delete(store);
+  document.querySelectorAll('.store-chip').forEach(chip => chip.classList.toggle('off', hidden.has(chip.closest('tr').dataset.store)));
+  applyFilters();
+}}
+document.querySelectorAll('.store-chip').forEach(chip => chip.onclick = () => setStoreHidden(chip.closest('tr').dataset.store, !hidden.has(chip.closest('tr').dataset.store)));
+document.querySelectorAll('.discount-price').forEach(price => price.onclick = () => {{
+  const store = price.closest('tr').dataset.store;
+  setStoreHidden(store, !hidden.has(store));
+}});
+let selecting = false, anchor = null;
+document.querySelectorAll('#discountTable .day').forEach(day => {{
+  day.addEventListener('pointerdown', event => {{
+    event.preventDefault();
+    if (rangeStart === rangeEnd && day.dataset.date === rangeStart) {{
+      selecting = false; rangeStart = offsetToIso(0); rangeEnd = offsetToIso(13); applyFilters(); return;
+    }}
+    selecting = true; anchor = day.dataset.date; rangeStart = anchor; rangeEnd = anchor; applyFilters();
+  }});
+  day.addEventListener('pointerenter', () => {{ if (!selecting) return; rangeStart = anchor < day.dataset.date ? anchor : day.dataset.date; rangeEnd = anchor < day.dataset.date ? day.dataset.date : anchor; applyFilters(); }});
+}});
+document.addEventListener('pointerup', () => {{ selecting = false; }});
+applyFilters();
+</script></html>"""
+        (PRODUCTS_DIR / f"{product}.html").write_text(page, encoding="utf-8")
+
+
 def build() -> str:
     if not HISTORY_CSV.exists():
         rows = []
@@ -250,6 +564,8 @@ def build() -> str:
                     continue
                 normalize_image_file(f)
         rows = read_csv(HISTORY_CSV)
+
+    nutrition = get_many({canonical_product_name(r.get("product_name", "")) for r in rows})
 
     today_iso = date.today().isoformat()
     today_date = date.fromisoformat(today_iso)
@@ -334,6 +650,7 @@ def build() -> str:
     products: dict[str, list[dict]] = defaultdict(list)
     for (product, store), e in current_entries.items():
         products[product].append(e)
+    write_product_pages(products, nutrition)
 
     # Store brand colors (not price-ranked): Lidl=yellow, Tesco=red, Albert=blue, Billa=red(#cc1f2c).
     STORE_COLOR = {"Lidl": "#facc15", "Tesco": "#f87171", "Albert": "#60a5fa", "Billa": "#cc1f2c"}
@@ -379,7 +696,25 @@ def build() -> str:
             key=lambda x: (x["val"] is None, x["val"] or 0),
         )
         first = entries[0] if entries else {}
-        pretty = pretty_name(first.get("raw_name", product))
+        pretty = display_name(product, first.get("raw_name", product))
+        nutrition_entry = nutrition.get(product, {})
+        nutrition_values = nutrition_entry.get("values", {})
+        nutrition_html = ""
+        if nutrition_entry.get("status") == "found":
+            labels = ("Energy", "Protein", "Carbs", "Fiber", "Vitamin C")
+            parts = []
+            for label in labels:
+                value = nutrition_values.get(label)
+                if value:
+                    parts.append(f"{label}: {value['value']} {value['unit']}")
+            if parts:
+                source = nutrition_entry.get("source", "")
+                nutrition_html = (
+                    f'<span class="nutrition" title="Per 100 g; source: {esc(source)}">'
+                    f'Nutrition / 100 g: {esc(" · ".join(parts))}</span>'
+                )
+        elif nutrition_entry.get("status") == "not_found":
+            nutrition_html = '<span class="nutrition dim">Nutrition data unavailable</span>'
         img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
         img_tag = (
             f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
@@ -434,7 +769,8 @@ def build() -> str:
         spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
-            f'<td class="prod">{img_tag}<span class="pname">{esc(pretty)}</span></td>'
+            f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html">'
+            f'{img_tag}<span class="pname">{esc(pretty)}</span></a></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
             f'<td class="spark"><div class="sparkline">{spark_html}</div></td>'
@@ -549,6 +885,8 @@ th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
 th[data-k="prod"], td.prod {{ width: 220px; min-width: 220px; max-width: 220px; }}
 td.prod {{ font-weight: 600; vertical-align: middle; overflow: visible; }}
+td.prod .product-link {{ color: inherit; text-decoration: none; display: block; }}
+td.prod .product-link:hover .pname {{ color: var(--accent); text-decoration: underline; }}
 td.prod .thumb {{ width: 40px; height: 40px; display: inline-block; vertical-align: middle;
   object-fit: contain; border-radius: 6px; background: var(--surface); margin-right: 6px; }}
 td.prod .dim {{ display: inline-block; vertical-align: middle; }}
@@ -557,6 +895,8 @@ td.prod .dim {{ display: inline-block; vertical-align: middle; }}
    break so they never overflow the 220px column. */
 td.prod .pname {{ display: inline-block; vertical-align: middle; max-width: calc(100% - 46px);
   line-height: 1.2; overflow-wrap: anywhere; word-break: break-word; }}
+td.prod .nutrition {{ display: block; margin-top: 5px; font-size: .7rem; line-height: 1.35;
+  font-weight: 400; color: var(--muted); white-space: normal; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 .ppcell {{ display: flex; flex-direction: row-reverse; justify-content: flex-start;
   align-items: center; gap: 6px; padding: 1px 0; cursor: pointer; }}
@@ -590,7 +930,8 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 /* datedim = store has no discount inside the selected date window (but one is
    tracked within the two weeks) — fade its line out, keep the row for context */
 .ppcell.datedim {{ opacity: .28; transition: opacity .15s; }}
-.dcell.datedim {{ opacity: .28; transition: opacity .15s; }}
+.dcell.datedim {{ opacity: 1; transition: opacity .15s; }}
+.dcell.datedim .day.active {{ opacity: .28; }}
 /* rowout = the whole product is filtered out (every store muted, or its
    discount window is entirely outside the selected range). Fade the name AND
    the price block too, not just the date lines / individual store blocks. */

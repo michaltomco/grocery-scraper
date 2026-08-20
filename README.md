@@ -37,3 +37,13 @@ All output CSVs use the same columns, in this order:
 History deduplication uses `store + product_id + date_range + price +
 unit_price`; repeated runs therefore preserve one record for each identical
 offer while new dates or prices are retained.
+
+## Nutrition data
+
+The site enriches each canonical produce item with calories plus available
+macronutrient and micronutrient values per 100 g. The full record is shown on
+the product detail page.
+Missing items are looked up from Open Food Facts during `build_site.py`, then
+persisted in `nutrition_cache.json`; cached items are not requested again.
+The cache records successful, unavailable, and failed lookups so a site rebuild
+does not repeatedly contact the remote service.

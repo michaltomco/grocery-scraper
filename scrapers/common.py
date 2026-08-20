@@ -88,6 +88,7 @@ CANONICAL_WORDS = {
     "tresen": "tresne",
     "zampiony": "zampiony",
     "zeli": "zeli",
+    "dyne": "dyne_hokkaido",
 }
 
 DESCRIPTOR_WORDS = {
@@ -100,6 +101,9 @@ DESCRIPTOR_WORDS = {
     "cherry",
     "delicious",
     "golden",
+    "hokkaido",
+    "ceska",
+    "farma",
     "hadovka",
     "kerikova",
     "konzumni",
