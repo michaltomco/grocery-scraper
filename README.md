@@ -40,9 +40,7 @@ offer while new dates or prices are retained.
 
 ## Nutrition data
 
-The site enriches each canonical produce item with calories plus available
-macronutrient and micronutrient values per 100 g. The full record is shown on
-the product detail page.
+The site enriches each canonical produce item with nutrition values per 100 g.
 Missing items are looked up from Open Food Facts during `build_site.py`, then
 persisted in `nutrition_cache.json`; cached items are not requested again.
 The cache records successful, unavailable, and failed lookups so a site rebuild

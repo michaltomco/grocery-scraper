@@ -10,7 +10,9 @@ thumbnail shares the same aspect ratio without cropping. Output is a single
 file with inline CSS/JS.
 """
 import csv
+import json
 import re
+import shutil
 import urllib.request
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -35,6 +37,14 @@ INDEX_HTML = SITE_DIR / "index.html"
 # thumbnail shares one aspect ratio and the white padding blends with the
 # product's own white background. Returns a web path relative to the site root.
 THUMB = 220  # px, size of the normalized square canvas
+FALLBACK_IMAGE = IMG_DIR / "veg.png"
+
+
+def fallback_image() -> str:
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    if not FALLBACK_IMAGE.exists():
+        shutil.copyfile(ROOT / "veg.png", FALLBACK_IMAGE)
+    return "img/veg.png"
 
 
 def normalize_image_file(path: Path) -> bool:
@@ -56,8 +66,8 @@ def normalize_image_file(path: Path) -> bool:
 
 
 def cache_image(product_id: str, image_url: str) -> str:
-    if not image_url:
-        return ""
+    if not image_url or any(marker in image_url.lower() for marker in ("no-image", "no_image", "/no_img/", "placeholder")):
+        return fallback_image()
     IMG_DIR.mkdir(parents=True, exist_ok=True)
     ext = Path(image_url.split("?")[0]).suffix or ".jpg"
     dest = IMG_DIR / f"{product_id}{ext}"
@@ -83,7 +93,7 @@ def cache_image(product_id: str, image_url: str) -> str:
             canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
             canvas.save(dest, "JPEG", quality=90)
     except Exception:
-        return ""
+        return fallback_image()
     finally:
         if raw.exists():
             try:
@@ -115,6 +125,57 @@ def normalized(row: dict) -> tuple[float | None, str]:
         unit = "kg" if re.search(r"\b\d+(?:[.,]\d+)?\s*kg\b", name, re.IGNORECASE) else "ks"
         return generic, unit
     return None, ""
+
+
+def explicit_weight_grams(name: str) -> float | None:
+    """Return package weight when it is explicitly present in the name."""
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(kg|g)\b", name or "", re.IGNORECASE)
+    if not match:
+        return None
+    value = float(match.group(1).replace(",", "."))
+    return value * 1000 if match.group(2).lower() == "kg" else value
+
+
+# Conservative edible-weight estimates for unmistakable whole produce sold per
+# piece. These are deliberately kept separate from explicit package weights and
+# shown as estimates in the nutrient ranking.
+PIECE_WEIGHT_ESTIMATES_G = {
+    "ananas": 900, "avokado": 150, "brokolice": 500, "celer_rapikaty": 400,
+    "cesnek": 10, "fiky_cerstve": 50, "jarni_cibule_svazek": 100,
+    "kedlubna": 300, "kiwi": 75, "kopr_cerstvy_svazek": 50,
+    "kukurice_klas": 200, "kukurice_klas_ceska_farma": 200,
+    "kukurice_predvarena": 150, "kvetak": 800, "limety": 70, "mango": 300,
+    "mrkev": 100, "okurka": 400, "paprika_cervena": 150, "porek": 250,
+    "salat_little_gem": 150, "salat_little_gem_bio_nature_s_promise": 150,
+}
+
+
+def estimated_piece_weight_grams(product: str) -> float | None:
+    return PIECE_WEIGHT_ESTIMATES_G.get(product)
+
+
+def rda_amount_in_unit(label: str, unit: str) -> float | None:
+    target = RDA_VALUES.get(label)
+    if not target:
+        return None
+    amount, target_unit = target
+    unit = str(unit).lower().replace("μ", "µ")
+    if unit in {"ug", "mcg"}:
+        unit = "µg"
+    target_unit = str(target_unit).lower().replace("μ", "µ")
+    if unit == target_unit:
+        return amount
+    if unit in {"ug", "µg", "mcg"} and target_unit == "mg":
+        return amount * 1000
+    if unit == "mg" and target_unit == "µg":
+        return amount / 1000
+    if unit == "g" and target_unit == "mg":
+        return amount / 1000
+    if unit == "mg" and target_unit == "g":
+        return amount * 1000
+    if label == "Vitamin A" and unit in {"iu", "i.u."} and target_unit == "µg":
+        return amount / 0.3
+    return None
 
 
 def parse_ts(value: str) -> datetime:
@@ -151,6 +212,7 @@ GENERAL_DISPLAY_NAMES = {
     "brambory": "Brambory",
     "cibule": "Cibule",
     "paprika": "Paprika",
+    "paprika_cervena": "Paprika červená",
     "rajcata": "Rajčata",
     "okurka": "Okurka",
     "jablka": "Jablka",
@@ -160,6 +222,9 @@ GENERAL_DISPLAY_NAMES = {
 }
 
 RDA_VALUES = {
+    "Calories": (2000, "kcal"), "Protein": (160, "g"), "Fat": (100, "g"),
+    "Carbs": (135, "g"), "Fiber": (40, "g"),
+    "Omega-3 fat": (1.6, "g"), "Omega-6 fat": (17, "g"),
     "Vitamin A": (900, "µg"), "Vitamin B1": (1.2, "mg"), "Vitamin B2": (1.3, "mg"),
     "Vitamin B3": (16, "mg"), "Vitamin B5": (5, "mg"), "Vitamin B6": (1.3, "mg"),
     "Vitamin B7 (Biotin)": (30, "µg"), "Vitamin B9 (Folate)": (400, "µg"),
@@ -301,6 +366,9 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
             if img_path else ""
         )
         nutrition_entry = nutrition.get(product, {})
+        source_image = str(first.get("image_url", "")).lower()
+        if (not source_image or any(marker in source_image for marker in ("no-image", "no_image", "/no_img/", "placeholder"))):
+            nutrition_entry = {}
         values = nutrition_entry.get("values", {})
         groups = {
             "Calories & macros": {
@@ -324,10 +392,27 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
                 "Vitamin B9": 8, "Vitamin B9 (Folate)": 8, "Vitamin B12": 9, "Vitamin C": 10,
                 "Vitamin D": 11, "Vitamin E": 12, "Vitamin K": 13,
             }
+            macro_order = {
+                "Calories": 1, "Protein": 2, "Fat": 3, "Carbs": 4,
+                "Omega-3 fat": 5, "Omega-6 fat": 6, "Fiber": 7,
+            }
             ordered_values = sorted(
                 ((label, value) for label, value in values.items() if label in labels),
-                key=lambda item: vitamin_order.get(item[0], item[0]),
+                key=lambda item: (macro_order.get(item[0], 99) if title == "Calories & macros" else vitamin_order.get(item[0], item[0])),
             )
+            omega_values = [
+                float(value.get("value")) for label, value in ordered_values
+                if label.startswith("Omega-") and isinstance(value, dict)
+                and isinstance(value.get("value"), (int, float)) and value.get("value") > 0
+            ]
+            omega_axis_max = max(omega_values, default=0.0)
+            if title == "Calories & macros" and values:
+                present = {label for label, _ in ordered_values}
+                ordered_values.extend(
+                    (label, {"value": 0, "unit": "g"})
+                    for label in ("Omega-3 fat", "Omega-6 fat")
+                    if label not in present
+                )
 
             def value_html(label: str, value: dict) -> str:
                 amount = value.get("value")
@@ -342,17 +427,26 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
                 percentage = rda_percent(label, amount, value.get("unit", ""))
                 raw = f"{esc(amount)} {unit}"
                 if percentage is None:
+                    if label.startswith("Omega-") and omega_axis_max > 0:
+                        width = min(max(float(amount) / omega_axis_max * 100, 0), 100)
+                        return (
+                            f'<span class="nutrient-value">'
+                            f'<span class="mode-raw">{raw}</span><span class="mode-rda">–</span>'
+                            f'<span class="mode-axis"><span class="axis"><span class="axis-fill" style="width:{width:.2f}%"></span></span></span>'
+                            f'</span>'
+                        )
                     return raw
                 width = min(max(percentage, 0), 100)
+                rda_display = '-' if percentage == 0 else f'{percentage}%'
                 return (
                     f'<span class="nutrient-value">'
                     f'<span class="mode-raw">{raw}</span>'
-                    f'<span class="mode-rda">{percentage}%</span>'
+                    f'<span class="mode-rda">{rda_display}</span>'
                     f'<span class="mode-axis"><span class="axis"><span class="axis-fill" style="width:{width}%"></span></span></span>'
                 )
 
             rows = "".join(
-                f'<tr><th>{esc((label.replace("Vitamin B9 (Folate)", "Vitamin B9").replace("Vitamin ", "").split(" (")[0]) if title == "Vitamins" else label)}</th><td>{value_html(label, value)}</td></tr>'
+                f'<tr><th>{esc((label.replace("Vitamin B9 (Folate)", "Vitamin B9").replace("Vitamin ", "").split(" (")[0]) if title == "Vitamins" else label.removesuffix(" fat"))}</th><td>{value_html(label, value)}</td></tr>'
                 for label, value in ordered_values
             )
             if not rows:
@@ -414,7 +508,9 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
             )
         )
         source = nutrition_entry.get("source", "")
-        source_html = f'<p class="muted">Source: {esc(source)}</p>' if source else ""
+        source_product = nutrition_entry.get("source_product", "")
+        source_detail = f' — {esc(source_product)}' if source_product else ""
+        source_html = f'<p class="muted">Source: {esc(source)}{source_detail}</p>' if source else ""
         previous_html = ""
         next_html = ""
         if product_index > 0:
@@ -427,10 +523,11 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(pretty)} · Grocery Prices</title>
+<script>try {{ const t=localStorage.getItem('grocery-theme'); if (t==='light' || t==='dark') {{ document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme=t; document.documentElement.style.backgroundColor=t==='dark'?'#1a1b26':'#eff1f5'; }} }} catch (e) {{}}</script>
 <style>
 :root {{ --bg:#1a1b26; --fg:#c0caf5; --muted:#565f89; --surface:#24283b; --border:#292e42; --accent:#7aa2f7; --track:#3b4261; --axis-track:#3b4261; --logo-ink:#0f172a; }}
 :root[data-theme="light"] {{ --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --track:#9ca0b0; --axis-track:#a3a8b8; --logo-ink:#0f172a; }}
-@media (prefers-color-scheme: light) {{ :root:not([data-theme="dark"]) {{ --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --axis-track:#a3a8b8; }} }}
+@media (prefers-color-scheme: light) {{ :root:not([data-theme="dark"]) {{ --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --track:#9ca0b0; --axis-track:#a3a8b8; }} }}
 body {{ font-family: -apple-system, system-ui, sans-serif; max-width: 900px; margin: 0 auto;
   padding: 24px; background: var(--bg); color: var(--fg); }}
 a {{ color: var(--accent); }} .muted {{ color: var(--muted); }}
@@ -475,7 +572,7 @@ a {{ color: var(--accent); }} .muted {{ color: var(--muted); }}
 .day {{ width:13px; height:13px; border-radius:3px; background:var(--track); opacity:.28;
   display:flex; align-items:center; justify-content:center; font-size:8px; line-height:1;
   font-weight:700; color:var(--logo-ink); cursor:pointer; user-select:none; }}
-.day.active {{ background:var(--store-color, var(--accent)); opacity:1; color:#0f172a; border-color:var(--store-color, var(--accent)); }}
+.day.active {{ background:var(--store-color, var(--accent)); opacity:1; color:#0f172a; border:0; }}
 .day.sel {{ outline:2px solid var(--fg); outline-offset:1px; }}
 .topbar {{ display:flex; justify-content:space-between; align-items:center; gap:16px; }}
 .theme {{ display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }}
@@ -483,6 +580,19 @@ a {{ color: var(--accent); }} .muted {{ color: var(--muted); }}
 .theme button + button {{ border-left:1px solid var(--border); }}
 .theme button.active {{ background:var(--accent); color:var(--bg); font-weight:600; }}
 @media (max-width: 700px) {{ .nutrition-grid, .product-summary {{ grid-template-columns: 1fr; }} }}
+@media (max-width: 700px) {{
+  body {{ padding:12px; }}
+  .topbar {{ flex-wrap:wrap; align-items:flex-start; gap:10px; }}
+  .topbar h1 {{ flex:1 1 100%; font-size:1.25rem; }}
+  .theme, .toggles {{ flex-wrap:wrap; }}
+  .toggles {{ margin-left:0; }}
+  .legend {{ flex-wrap:wrap; gap:6px; }}
+  .card {{ overflow-x:auto; }}
+  #t, #rankingTable {{ min-width:760px; }}
+  .ranking-heading {{ flex-wrap:wrap; }}
+  .ranking-heading > div {{ display:flex; flex-wrap:wrap; gap:6px; width:100%; }}
+  .ranking-heading select {{ flex:1 1 140px; min-width:0; }}
+}}
 table {{ border-collapse: collapse; width: 100%; }} th, td {{ text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }}
 .nutrition-group th {{ text-align:left; width:50%; }}
 .nutrition-group td {{ text-align:right; white-space:nowrap; }}
@@ -623,10 +733,9 @@ def build() -> str:
             current_entries[(product, store)] = {
                 "product": product, "store": store,
                 "val": disp_val if disp_val is not None else val,
-                "unit": unit, "date_range": r.get("date_range", ""),
+                "unit": unit, "date_range": r.get("date_range", ""), "raw_name": r.get("product_name", product),
                 "product_id": r.get("product_id", ""),
                 "image_url": r.get("image_url", ""),
-                "raw_name": r.get("product_name", product),
                 "_end": end,
             }
 
@@ -717,7 +826,7 @@ def build() -> str:
             nutrition_html = '<span class="nutrition dim">Nutrition data unavailable</span>'
         img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
         img_tag = (
-            f'<img class="thumb" src="{img_path}" alt="{esc(pretty)}" loading="lazy">'
+            f'<img class="thumb" src="{img_path}" width="40" height="40" alt="" aria-hidden="true">'
             if img_path else '<span class="dim">no img</span>'
         )
         # Combined price+store cells, one per store (kept aligned). The logo
@@ -769,7 +878,7 @@ def build() -> str:
         spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
-            f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html">'
+            f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html" aria-label="{esc(pretty)}">'
             f'{img_tag}<span class="pname">{esc(pretty)}</span></a></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
@@ -780,6 +889,69 @@ def build() -> str:
     last_run = last_run or "unknown"
     n_products = len(table_rows)
     n_stores = len(stores_seen)
+    ranking_data = []
+    ranking_labels = {}
+    ranking_rdas = {}
+    for product, entries in products.items():
+        nutri = nutrition.get(product, {})
+        vals = nutri.get("values", {}) if nutri.get("status") == "found" else {}
+        source_image = str((entries[0] if entries else {}).get("image_url", "")).lower()
+        if (not source_image or any(marker in source_image for marker in ("no-image", "no_image", "/no_img/", "placeholder"))):
+            vals = {}
+        if not vals:
+            continue
+        pretty = display_name(product, (entries[0] if entries else {}).get("raw_name", product))
+        for label, nutrient in vals.items():
+            if isinstance(nutrient, dict) and isinstance(nutrient.get("value"), (int, float)) and nutrient["value"] > 0:
+                ranking_labels[label] = nutrient.get("unit", "")
+                rda = rda_amount_in_unit(label, nutrient.get("unit", ""))
+                if rda is not None:
+                    ranking_rdas[label] = rda
+        for entry in entries:
+            price = number(entry.get("val", ""))
+            if price is None or price <= 0:
+                continue
+            start, end = parse_range(entry.get("date_range", ""))
+            weight = explicit_weight_grams(entry.get("raw_name", ""))
+            estimated = False
+            if weight is None and entry.get("unit") == "ks":
+                weight = estimated_piece_weight_grams(product)
+                estimated = weight is not None
+            if entry.get("unit") == "kg":
+                basis = "kg"
+                nutrient_factor = 10.0
+            elif entry.get("unit") == "ks" and weight:
+                basis = f"~{weight:g}g" if estimated else f"{weight:g}g"
+                nutrient_factor = weight / 100.0
+            else:
+                # A piece price without a verified weight cannot be compared
+                # fairly with per-kilogram offers, so it is omitted by default.
+                continue
+            ranking_data.append({
+                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "storeLogo": STORE_LOGO.get(entry.get("store", ""), ""), "storeColor": STORE_COLOR.get(entry.get("store", ""), "#7aa2f7"),
+                "price": price, "basis": basis, "factor": nutrient_factor,
+                "start": start or "", "end": end or "",
+                "values": {label: nutrient.get("value") for label, nutrient in vals.items()
+                           if isinstance(nutrient, dict) and isinstance(nutrient.get("value"), (int, float)) and nutrient["value"] > 0},
+                "rdas": {label: rda_amount_in_unit(label, nutrient.get("unit", "")) for label, nutrient in vals.items()
+                         if isinstance(nutrient, dict) and rda_amount_in_unit(label, nutrient.get("unit", "")) is not None},
+            })
+    ranking_options = sorted(ranking_labels)
+    for label in ("Omega-3 fat", "Omega-6 fat"):
+        ranking_labels.setdefault(label, "g")
+    ranking_options = sorted(ranking_labels)
+    ranking_groups = {
+        "Calories & macros": [label for label in ranking_options if label in {"Calories", "Protein", "Carbs", "Fat", "Fiber", "Omega-3 fat", "Omega-6 fat"}],
+        "Vitamins": [label for label in ranking_options if label.startswith("Vitamin ")],
+        "Minerals": [label for label in ranking_options if label in {"Calcium", "Iron", "Magnesium", "Phosphorus", "Potassium", "Zinc", "Copper", "Manganese", "Selenium", "Sodium"}],
+    }
+    ranking_groups = {group: labels for group, labels in ranking_groups.items() if labels}
+    ranking_groups_json = json.dumps(ranking_groups, ensure_ascii=False).replace("</", "<\\/")
+    ranking_dates_json = json.dumps([d.isoformat() for d in timeline_days], ensure_ascii=False)
+    ranking_dow_json = json.dumps([_DOW1_CZ[d.weekday()] for d in timeline_days], ensure_ascii=False)
+    ranking_json = json.dumps(ranking_data, ensure_ascii=False).replace("</", "<\\/")
+    ranking_units_json = json.dumps(ranking_labels, ensure_ascii=False).replace("</", "<\\/")
+    ranking_rdas_json = json.dumps(ranking_rdas, ensure_ascii=False).replace("</", "<\\/")
     # Empty-state notice: render it *inside* the table body as a full-width row so
     # the column headers stay exactly consistent with the populated view.
     if not table_rows:
@@ -825,8 +997,10 @@ def build() -> str:
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grocery Prices</title>
+<script>try {{ const t=localStorage.getItem('grocery-theme'); if (t==='light' || t==='dark') {{ document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme=t; document.documentElement.style.backgroundColor=t==='dark'?'#1a1b26':'#eff1f5'; }} }} catch (e) {{}}</script>
 <style>
 * {{ box-sizing: border-box; }}
+html {{ background: var(--bg); color-scheme: dark light; scrollbar-gutter: stable; }}
 /* Theme tokens. Dark = Tokyo Night; light = Catppuccin Latte.
    "system" = no data-theme attr, so the media query below follows the OS. */
 :root {{
@@ -852,17 +1026,17 @@ def build() -> str:
   }}
 }}
 html {{ overflow-y: scroll; }}
-body {{ font-family: -apple-system, system-ui, sans-serif; margin: 0;
-  background: var(--bg); color: var(--fg); padding: 16px; }}
+body {{ font-family: -apple-system, system-ui, sans-serif; max-width:900px; margin:0 auto;
+  background: var(--bg); color: var(--fg); padding:24px; }}
 /* Center the whole page horizontally while keeping the table's fixed column
    widths: width:max-content sizes the wrapper to the table's natural width
    (all columns preserved), margin:0 auto centers it on wide screens, and
    max-width:100% lets it shrink (the table's own max-width:100% then
    compresses the date column) instead of overflowing on narrow screens. */
-.page {{ width: max-content; max-width: 100%; margin: 0 auto; }}
+.page {{ width:100%; max-width:100%; margin:0 auto; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
-table {{ width: max-content; max-width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
+table {{ width:100%; max-width:100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
 /* max-content keeps each column at its set width (no leftover space to
    balloon a column); max-width:100% prevents overflow on small screens. */
 th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
@@ -944,7 +1118,7 @@ tr.rowout .ppcell {{ opacity: .35; }}
 td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .legend {{ display: flex; gap: 12px; margin: 6px 0 14px; font-size: .82rem; }}
 .legend .chip {{ display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--track);
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--track); font-weight: 600;
   background: var(--surface); user-select: none; transition: opacity .15s, background .15s; }}
 .legend .chip .logo {{ width: 18px; height: 18px; }}
 .legend .chip.off {{ opacity: .35; background: var(--chip-off-bg); border-color: var(--surface); }}
@@ -964,6 +1138,42 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
+.ranking-card[hidden] {{ display:none; }}
+.ranking-heading {{ display:flex; align-items:center; justify-content:space-between; gap:12px; }}
+.ranking-heading h2 {{ margin:0; }}
+.ranking-heading select {{ background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
+.ranking-help {{ margin:8px 0; }}
+.ranking-product {{ display:inline-flex; align-items:center; gap:8px; }}
+.ranking-product {{ color:inherit; text-decoration:none; font-weight:600; }}
+.ranking-product img {{ width:36px; height:36px; object-fit:contain; border-radius:6px; background:var(--surface); vertical-align:middle; }}
+.ranking-store {{ display:inline-flex; align-items:center; gap:6px; font-weight:600; cursor:pointer; }}
+.ranking-store .logo {{ width:18px; height:18px; }}
+#rankingTable td:nth-child(4) {{ font-weight:700; }}
+#rankingTable td {{ vertical-align:middle; }}
+#rankingTable {{ width:100%; max-width:100%; table-layout:fixed; }}
+#rankingTable th:nth-child(2), #rankingTable td:nth-child(2) {{ text-align:right; }}
+#rankingTable th:nth-child(1), #rankingTable td:nth-child(1) {{ width:220px; }}
+#rankingTable th:nth-child(2), #rankingTable td:nth-child(2) {{ width:150px; white-space:nowrap; }}
+#rankingTable th:nth-child(4), #rankingTable td:nth-child(4) {{ width:150px; white-space:nowrap; }}
+.ranking-store {{ justify-content:flex-end; }}
+.ranking-datedim {{ opacity:.28; transition:opacity .15s; }}
+.ranking-storedim {{ opacity:.3; transition:opacity .15s; }}
+.ranking-drange {{ white-space:nowrap; }}
+.ranking-drange .timeline {{ display:inline-flex; gap:3px; align-items:center; width:max-content; }}
+.ranking-drange .day {{ width:13px; height:13px; }}
+.ranking-drange .day.week-start {{ margin-left:5px; }}
+@media (max-width:700px) {{
+  body {{ padding:12px; }}
+  .topbar {{ flex-wrap:wrap; align-items:flex-start; gap:10px; }}
+  .topbar h1 {{ flex:1 1 100%; font-size:1.25rem; }}
+  .theme, .toggles {{ flex-wrap:wrap; }}
+  .legend {{ flex-wrap:wrap; gap:6px; }}
+  .page > .card {{ overflow-x:auto; }}
+  #t, #rankingTable {{ min-width:760px; }}
+  .ranking-heading {{ flex-wrap:wrap; }}
+  .ranking-heading > div {{ display:flex; flex-wrap:wrap; gap:6px; width:100%; }}
+  .ranking-heading select {{ flex:1 1 140px; min-width:0; }}
+}}
 </style></head>
 <body>
 <div class="page">
@@ -976,7 +1186,13 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   </div>
   <div class="toggles">
     <span class="toggle" id="hideToggle" title="Hide rows whose discounts fall outside the selected date range">Hide irrelevant</span>
+    <span class="toggle" id="rankToggle">Rank by nutrient</span>
   </div>
+</div>
+<div class="card ranking-card" id="rankingCard" hidden>
+  <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
+  <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
+  <table id="rankingTable"><thead><tr><th>Product</th><th>Price per 100% RDA</th><th>Discount days</th><th>Price</th></tr></thead><tbody></tbody></table>
 </div>
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
@@ -1040,6 +1256,39 @@ document.querySelectorAll('th').forEach(th => {{
 const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 const chips = [...document.querySelectorAll('.legend .chip')];
+const rankingData = {ranking_json};
+const rankingUnits = {ranking_units_json};
+const rankingGroups = {ranking_groups_json};
+const rankingDates = {ranking_dates_json};
+const rankingDow = {ranking_dow_json};
+const rankingCard = document.getElementById('rankingCard');
+const rankingTableBody = document.querySelector('#rankingTable tbody');
+const rankingCategory = document.getElementById('rankingCategory');
+const rankingNutrient = document.getElementById('rankingNutrient');
+Object.keys(rankingGroups).forEach(group => rankingCategory.add(new Option(group, group)));
+function refreshRankingNutrients() {{
+  rankingNutrient.replaceChildren(...rankingGroups[rankingCategory.value].map(label => new Option(label.startsWith('Vitamin ') ? label.replace('Vitamin ', '').replace(/ \\(.*/, '') : label.replace(/ fat$/, ''), label)));
+  updateRanking();
+}}
+rankingCategory.onchange = refreshRankingNutrients;
+refreshRankingNutrients();
+function updateRanking() {{
+  if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
+  const label = rankingNutrient.value;
+  const ranked = rankingData.filter(item => (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
+    .map(item => ({{ ...item, amount: item.values[label] * item.factor, rdaCost: item.price * item.rdas[label] / (item.values[label] * item.factor), datedim: !(item.start <= rangeEnd && (item.end || item.start) >= rangeStart), storedim: hidden.has(item.store) }}))
+    .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
+    .sort((a, b) => a.rdaCost - b.rdaCost)
+    .slice(0, 10);
+  rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img src="${{item.image}}" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{day}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
+  rankingTableBody.querySelectorAll('.ranking-store').forEach(store => store.onclick = () => setStoreHidden(store.dataset.store, !hidden.has(store.dataset.store)));
+}}
+document.getElementById('rankToggle').onclick = () => {{
+  rankingCard.hidden = !rankingCard.hidden;
+  document.getElementById('rankToggle').classList.toggle('on', !rankingCard.hidden);
+  updateRanking();
+}};
+rankingNutrient.onchange = updateRanking;
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
@@ -1067,7 +1316,7 @@ function applyFilters() {{
   // just that one day), so the frame marks the range edges, not every day.
   // Skip squares belonging to a muted (filtered-out) store, so a multi-store
   // product keeps the filter frame only on the lines that are still shown.
-  document.querySelectorAll('#t .day').forEach(d => {{
+  document.querySelectorAll('#t .day, #rankingTable .day').forEach(d => {{
     const ds = d.dataset.date;
     const owner = d.closest('.dcell');
     const ownerStore = owner && owner.dataset.store;
@@ -1125,6 +1374,7 @@ function applyFilters() {{
     if (!hideIrrelevant) show = true;                // default: keep all rows
     r.style.display = show ? '' : 'none';
   }});
+  updateRanking();
 }}
 // Toggle a store's visibility (used by both the legend chips and the store
 // icons in the Price column). Reflects state on the chip (.off) and on every
@@ -1199,7 +1449,7 @@ function isoToOffset(iso) {{
   let dragging = false, anchor = -1;
   const idxFromX = (x) => {{
     // Voronoi by square center: gaps between day squares map to the nearest day.
-    const days = Array.from(body.querySelectorAll('.day'));
+    const days = Array.from(document.querySelectorAll('#t .day, #rankingTable .day'));
     let best = -1, bestD = Infinity;
     for (let i = 0; i < days.length; i++) {{
       const r = days[i].getBoundingClientRect();
@@ -1210,7 +1460,7 @@ function isoToOffset(iso) {{
     return best;
   }};
   const offAt = (i) => {{
-    const sq = body.querySelectorAll('.day')[i];
+    const sq = document.querySelectorAll('#t .day, #rankingTable .day')[i];
     return sq ? isoToOffset(sq.dataset.date) : -1;
   }};
   const ondown = (e) => {{
@@ -1218,7 +1468,7 @@ function isoToOffset(iso) {{
     // Whole date-column cell is the hit target (mirrors the old header picker):
     // gaps between squares AND the slack to the right of the last square all
     // Voronoi-map onto the nearest day, so nothing in the column is dead.
-    const cell = e.target.closest('td.drange');
+    const cell = e.target.closest('td.drange, td.ranking-drange');
     if (!cell) return;
     e.preventDefault();
     const i = idxFromX(e.clientX);
@@ -1236,10 +1486,10 @@ function isoToOffset(iso) {{
     setRange(anchor, off);
   }};
   const onup = () => {{ dragging = false; anchor = -1; }};
-  body.addEventListener('pointerdown', ondown);
-  body.addEventListener('pointermove', onmove);
-  body.addEventListener('pointerup', onup);
-  body.addEventListener('pointercancel', onup);
+  document.addEventListener('pointerdown', ondown);
+  document.addEventListener('pointermove', onmove);
+  document.addEventListener('pointerup', onup);
+  document.addEventListener('pointercancel', onup);
 }})();
 
 // "Hide irrelevant" toggle: opt-in whole-row hiding for discounts that
@@ -1305,6 +1555,7 @@ applyTheme(saved);
 
 def main() -> None:
     SITE_DIR.mkdir(parents=True, exist_ok=True)
+    fallback_image()
     html = build()
     INDEX_HTML.write_text(html, encoding="utf-8")
     print(f"Wrote {INDEX_HTML.name} ({len(html)} bytes) into {SITE_DIR.name}/.")
