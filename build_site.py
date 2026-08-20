@@ -949,6 +949,7 @@ def build() -> str:
     ranking_groups_json = json.dumps(ranking_groups, ensure_ascii=False).replace("</", "<\\/")
     ranking_dates_json = json.dumps([d.isoformat() for d in timeline_days], ensure_ascii=False)
     ranking_dow_json = json.dumps([_DOW1_CZ[d.weekday()] for d in timeline_days], ensure_ascii=False)
+    ranking_date_labels_json = json.dumps([fmt_cz(d.isoformat()) for d in timeline_days], ensure_ascii=False)
     ranking_json = json.dumps(ranking_data, ensure_ascii=False).replace("</", "<\\/")
     ranking_units_json = json.dumps(ranking_labels, ensure_ascii=False).replace("</", "<\\/")
     ranking_rdas_json = json.dumps(ranking_rdas, ensure_ascii=False).replace("</", "<\\/")
@@ -1162,6 +1163,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .ranking-drange .timeline {{ display:inline-flex; gap:3px; align-items:center; width:max-content; }}
 .ranking-drange .day {{ width:13px; height:13px; }}
 .ranking-drange .day.week-start {{ margin-left:5px; }}
+.ranking-drange .day.sel {{ position:relative; z-index:2; outline:2px solid var(--fg); outline-offset:1px; border:2px solid var(--fg); box-shadow:inset 0 0 0 1px var(--surface); }}
 @media (max-width:700px) {{
   body {{ padding:12px; }}
   .topbar {{ flex-wrap:wrap; align-items:flex-start; gap:10px; }}
@@ -1261,6 +1263,7 @@ const rankingUnits = {ranking_units_json};
 const rankingGroups = {ranking_groups_json};
 const rankingDates = {ranking_dates_json};
 const rankingDow = {ranking_dow_json};
+const rankingDateLabels = {ranking_date_labels_json};
 const rankingCard = document.getElementById('rankingCard');
 const rankingTableBody = document.querySelector('#rankingTable tbody');
 const rankingCategory = document.getElementById('rankingCategory');
@@ -1280,7 +1283,7 @@ function updateRanking() {{
     .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
     .sort((a, b) => a.rdaCost - b.rdaCost)
     .slice(0, 10);
-  rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img src="${{item.image}}" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{day}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
+  rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img src="${{item.image}}" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{rankingDateLabels[i]}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
   rankingTableBody.querySelectorAll('.ranking-store').forEach(store => store.onclick = () => setStoreHidden(store.dataset.store, !hidden.has(store.dataset.store)));
 }}
 document.getElementById('rankToggle').onclick = () => {{
