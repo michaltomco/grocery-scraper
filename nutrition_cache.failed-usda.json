@@ -1,0 +1,2443 @@
+{
+  "ananas": {
+    "status": "error",
+    "query": "ananas",
+    "values": {},
+    "schema_version": 7
+  },
+  "avokado": {
+    "status": "error",
+    "query": "avocado",
+    "values": {},
+    "schema_version": 7
+  },
+  "banany": {
+    "status": "error",
+    "query": "banana",
+    "values": {},
+    "schema_version": 7
+  },
+  "bataty": {
+    "status": "error",
+    "query": "bataty",
+    "values": {},
+    "schema_version": 7
+  },
+  "boruvky": {
+    "status": "error",
+    "query": "blueberry",
+    "values": {},
+    "schema_version": 7
+  },
+  "bramborove_hranolky_menu_inspirace": {
+    "status": "error",
+    "query": "potato",
+    "values": {},
+    "schema_version": 7
+  },
+  "bramborove_platky_menu_inspirace": {
+    "status": "found",
+    "query": "potato",
+    "source": "Open Food Facts",
+    "source_product": "Pringles Paprika",
+    "values": {
+      "Calories": {
+        "value": 522.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 2164.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 6.7,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 54.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 30.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Monounsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Polyunsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 4.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.2,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.3,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:03+00:00",
+    "schema_version": 7
+  },
+  "brambory": {
+    "status": "error",
+    "query": "potato",
+    "values": {},
+    "schema_version": 7
+  },
+  "brokolice": {
+    "status": "error",
+    "query": "broccoli",
+    "values": {},
+    "schema_version": 7
+  },
+  "brokolice_menu_inspirace": {
+    "status": "error",
+    "query": "broccoli",
+    "values": {},
+    "schema_version": 7
+  },
+  "broskve": {
+    "status": "error",
+    "query": "peach",
+    "values": {},
+    "schema_version": 7
+  },
+  "bylinky_v_kvetinaci": {
+    "status": "error",
+    "query": "bylinky v kvetinaci",
+    "values": {},
+    "schema_version": 7
+  },
+  "celer_rapikaty": {
+    "status": "error",
+    "query": "celery",
+    "values": {},
+    "schema_version": 7
+  },
+  "cervena_repa": {
+    "status": "error",
+    "query": "cervena repa",
+    "values": {},
+    "schema_version": 7
+  },
+  "cesnek": {
+    "status": "error",
+    "query": "garlic",
+    "values": {},
+    "schema_version": 7
+  },
+  "cibule_bio_nature_s_promise": {
+    "status": "found",
+    "query": "onion",
+    "source": "Open Food Facts",
+    "source_product": "Middle Eastern Falafels",
+    "values": {
+      "Calories": {
+        "value": 221.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 926.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 7.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 9.9,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 1.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.8,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.3,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.52,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:17+00:00",
+    "schema_version": 7
+  },
+  "cibule_kuchynska_zluta": {
+    "status": "error",
+    "query": "onion",
+    "values": {},
+    "schema_version": 7
+  },
+  "citrony_bio_nature_s_promise": {
+    "status": "error",
+    "query": "lemon",
+    "values": {},
+    "schema_version": 7
+  },
+  "cuketa": {
+    "status": "found",
+    "query": "zucchini",
+    "source": "Open Food Facts",
+    "source_product": "Vegane Falafel",
+    "values": {
+      "Calories": {
+        "value": 187.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 781.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 7.5,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 18.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 7.5,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 8.7,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.0,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.48,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:22+00:00",
+    "schema_version": 7
+  },
+  "dyne_hokkaido": {
+    "status": "error",
+    "query": "pumpkin",
+    "values": {},
+    "schema_version": 7
+  },
+  "dyne_hokkaido_ceska_farma": {
+    "status": "found",
+    "query": "pumpkin",
+    "source": "USDA FoodData Central",
+    "source_product": "Pumpkin, raw",
+    "values": {
+      "Carbs": {
+        "value": 6.5,
+        "unit": "g"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 1.1,
+        "unit": "ug"
+      },
+      "Fiber": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "ug"
+      },
+      "Calories": {
+        "value": 26.0,
+        "unit": "kcal"
+      },
+      "Vitamin B9 (Folate)": {
+        "value": 16.0,
+        "unit": "ug"
+      },
+      "Vitamin A": {
+        "value": 8510.0,
+        "unit": "iu"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 21.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 340.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.32,
+        "unit": "mg"
+      },
+      "Vitamin B3": {
+        "value": 0.6,
+        "unit": "mg"
+      },
+      "Vitamin B5": {
+        "value": 0.3,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.06,
+        "unit": "mg"
+      },
+      "Protein": {
+        "value": 1.0,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.8,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 12.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 44.0,
+        "unit": "mg"
+      },
+      "Sodium": {
+        "value": 1.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.13,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.12,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 9.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.05,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.11,
+        "unit": "mg"
+      },
+      "Vitamin B12": {
+        "value": 0.0,
+        "unit": "ug"
+      },
+      "Selenium": {
+        "value": 0.3,
+        "unit": "ug"
+      }
+    },
+    "schema_version": 6
+  },
+  "fiky_cerstve": {
+    "status": "found",
+    "query": "fig",
+    "source": "Open Food Facts",
+    "source_product": "Organic Sun-dried Figs",
+    "values": {
+      "Calories": {
+        "value": 275.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 1312.5,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 2.5,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 70.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 10.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 52.5,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.17,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.01,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.75,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:25+00:00",
+    "schema_version": 7
+  },
+  "hliva_ustricna": {
+    "status": "error",
+    "query": "hliva ustricna",
+    "values": {},
+    "schema_version": 7
+  },
+  "hrozny": {
+    "status": "found",
+    "query": "grapes",
+    "source": "Open Food Facts",
+    "source_product": "Orange with concentrated grape and date juices",
+    "values": {
+      "Calories": {
+        "value": 208.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 934.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 54.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Monounsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Polyunsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 48.4,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.03,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.01,
+        "unit": "g"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:29+00:00",
+    "schema_version": 7
+  },
+  "hrusky_zelene": {
+    "status": "error",
+    "query": "pear",
+    "values": {},
+    "schema_version": 7
+  },
+  "jablka": {
+    "status": "found",
+    "query": "apple",
+    "source": "Open Food Facts",
+    "source_product": "APPLE CIDER VINEGAR",
+    "values": {
+      "Calories": {
+        "value": 0.0,
+        "unit": "kcal"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:32+00:00",
+    "schema_version": 7
+  },
+  "jahody": {
+    "status": "found",
+    "query": "strawberry",
+    "source": "Open Food Facts",
+    "source_product": "Yogurt Oats Strawberry",
+    "values": {
+      "Calories": {
+        "value": 108.57,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 748.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 4.8,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 25.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 6.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.1,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 11.9,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.07,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.03,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:35+00:00",
+    "schema_version": 7
+  },
+  "jarni_cibule_svazek": {
+    "status": "error",
+    "query": "onion",
+    "values": {},
+    "schema_version": 7
+  },
+  "kedlubna": {
+    "status": "error",
+    "query": "kedlubna",
+    "values": {},
+    "schema_version": 7
+  },
+  "kiwi": {
+    "status": "error",
+    "query": "kiwi",
+    "values": {},
+    "schema_version": 7
+  },
+  "kopr_cerstvy_svazek": {
+    "status": "not_found",
+    "query": "kopr cerstvy svazek",
+    "values": {},
+    "schema_version": 7
+  },
+  "kukurice_klas": {
+    "status": "error",
+    "query": "corn",
+    "values": {},
+    "schema_version": 7
+  },
+  "kukurice_klas_ceska_farma": {
+    "status": "error",
+    "query": "corn",
+    "values": {},
+    "schema_version": 7
+  },
+  "kukurice_predvarena": {
+    "status": "error",
+    "query": "corn",
+    "values": {},
+    "schema_version": 7
+  },
+  "kvetak": {
+    "status": "found",
+    "query": "cauliflower",
+    "source": "Open Food Facts",
+    "source_product": "Roasted cauliflower & cheese ravioli",
+    "values": {
+      "Calories": {
+        "value": 277.11,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 1185.54,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 8.43,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 31.33,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 13.25,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 4.22,
+        "unit": "g"
+      },
+      "Monounsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Polyunsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.41,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.82,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.3,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.52,
+        "unit": "g"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.05,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.1,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.16,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:47+00:00",
+    "schema_version": 7
+  },
+  "lilek": {
+    "status": "error",
+    "query": "eggplant",
+    "values": {},
+    "schema_version": 7
+  },
+  "limety": {
+    "status": "error",
+    "query": "lime",
+    "values": {},
+    "schema_version": 7
+  },
+  "maliny": {
+    "status": "error",
+    "query": "raspberry",
+    "values": {},
+    "schema_version": 7
+  },
+  "maliny_cerstve_utrzeno": {
+    "status": "error",
+    "query": "raspberry",
+    "values": {},
+    "schema_version": 7
+  },
+  "mandarinky": {
+    "status": "found",
+    "query": "mandarin",
+    "source": "Open Food Facts",
+    "source_product": "Mandarin Style Orange Chicken Bowl",
+    "values": {
+      "Calories": {
+        "value": 146.34,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 649.32,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 7.59,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 22.76,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 3.25,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 1.36,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 1.63,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 5.42,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.46,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.18,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.17,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:27:55+00:00",
+    "schema_version": 7
+  },
+  "mango": {
+    "status": "error",
+    "query": "mango",
+    "values": {},
+    "schema_version": 7
+  },
+  "meloun": {
+    "status": "error",
+    "query": "melon",
+    "values": {},
+    "schema_version": 7
+  },
+  "merunky": {
+    "status": "error",
+    "query": "apricot",
+    "values": {},
+    "schema_version": 7
+  },
+  "mix_do_polevek_a_omacek_menu_inspirace": {
+    "status": "error",
+    "query": "mix do polevek a omacek menu inspirace",
+    "values": {},
+    "schema_version": 7
+  },
+  "mix_farmarsky_menu_inspirace": {
+    "status": "error",
+    "query": "mix farmarsky menu inspirace",
+    "values": {},
+    "schema_version": 7
+  },
+  "mix_zeleninovy_menu_inspirace": {
+    "status": "error",
+    "query": "mix zeleninovy menu inspirace",
+    "values": {},
+    "schema_version": 7
+  },
+  "mrkev": {
+    "status": "error",
+    "query": "carrot",
+    "values": {},
+    "schema_version": 7
+  },
+  "mrkev_kvetak": {
+    "status": "error",
+    "query": "cauliflower",
+    "values": {},
+    "schema_version": 7
+  },
+  "nektarinky": {
+    "status": "found",
+    "query": "nectarine",
+    "source": "Open Food Facts",
+    "source_product": "Waterloo Sparkling Water Raspberry Nectarine",
+    "values": {
+      "Calories": {
+        "value": 0.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 0.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Monounsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Polyunsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:08+00:00",
+    "schema_version": 7
+  },
+  "okurka": {
+    "status": "found",
+    "query": "cucumber",
+    "source": "Open Food Facts",
+    "source_product": "Gewürzgurken Auslese",
+    "values": {
+      "Calories": {
+        "value": 33.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 140.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 1.0,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 5.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 5.6,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:10+00:00",
+    "schema_version": 7
+  },
+  "ostruziny": {
+    "status": "error",
+    "query": "blackberry",
+    "values": {},
+    "schema_version": 7
+  },
+  "paprika": {
+    "status": "error",
+    "query": "bell pepper raw",
+    "values": {},
+    "schema_version": 7
+  },
+  "paprika_bila": {
+    "status": "found",
+    "query": "white pepper raw",
+    "source": "Open Food Facts",
+    "source_product": "Raw breaded white chicken patty filled with green peppers, onions & cheese chicken philly",
+    "values": {
+      "Calories": {
+        "value": 197.0,
+        "unit": "kcal"
+      },
+      "Protein": {
+        "value": 11.97,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 9.15,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 11.97,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 3.52,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.7,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.41,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.98,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.39,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.03,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.03,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:15+00:00",
+    "schema_version": 7
+  },
+  "paprika_cervena": {
+    "status": "found",
+    "query": "red bell pepper raw",
+    "source": "Open Food Facts",
+    "source_product": "Brad's raw chips, red bell pepper chips",
+    "values": {
+      "Calories": {
+        "value": 214.0,
+        "unit": "kcal"
+      },
+      "Protein": {
+        "value": 10.71,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 35.71,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 5.36,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 1.79,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 14.3,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.57,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.89,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.36,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.14,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.07,
+        "unit": "mg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:16+00:00",
+    "schema_version": 7
+  },
+  "physalis_mochyne": {
+    "status": "error",
+    "query": "physalis mochyne",
+    "values": {},
+    "schema_version": 7
+  },
+  "pomerance": {
+    "status": "error",
+    "query": "pomerance",
+    "values": {},
+    "schema_version": 7
+  },
+  "porek": {
+    "status": "found",
+    "query": "leek",
+    "source": "Open Food Facts",
+    "source_product": "Leek & Potato Soup",
+    "values": {
+      "Calories": {
+        "value": 15.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 293.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 2.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 6.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 3.6,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 2.2,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.8,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.44,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.18,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:22+00:00",
+    "schema_version": 7
+  },
+  "rajcata": {
+    "status": "error",
+    "query": "tomato",
+    "values": {},
+    "schema_version": 7
+  },
+  "rajcata_cherry": {
+    "status": "error",
+    "query": "tomato",
+    "values": {},
+    "schema_version": 7
+  },
+  "rajcata_cherry_kerikova": {
+    "status": "error",
+    "query": "tomato",
+    "values": {},
+    "schema_version": 7
+  },
+  "rajcata_kerikova": {
+    "status": "found",
+    "query": "tomato",
+    "source": "Open Food Facts",
+    "source_product": "Ketchup zéro sel ajouré, 70% moins de sucres",
+    "values": {
+      "Calories": {
+        "value": 44.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 185.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 1.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 5.4,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.4,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.02,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:28+00:00",
+    "schema_version": 7
+  },
+  "rukola": {
+    "status": "error",
+    "query": "arugula",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_baby_listy_mix": {
+    "status": "found",
+    "query": "lettuce",
+    "source": "Open Food Facts",
+    "source_product": "Sweet and Crunchy Salad",
+    "values": {
+      "Calories": {
+        "value": 25.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 102.2,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 3.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 0.06,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.01,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.5,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:31+00:00",
+    "schema_version": 7
+  },
+  "salat_fresco_mix": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_krupavy_crispy": {
+    "status": "found",
+    "query": "lettuce",
+    "source": "Open Food Facts",
+    "source_product": "Sweet and Crunchy Salad",
+    "values": {
+      "Calories": {
+        "value": 25.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 102.2,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 3.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 0.06,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.01,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.5,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:34+00:00",
+    "schema_version": 7
+  },
+  "salat_little_gem": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_little_gem_bio_nature_s_promise": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_party_mix_ready": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_rodinny": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_rodinny_mix": {
+    "status": "found",
+    "query": "lettuce",
+    "source": "Open Food Facts",
+    "source_product": "Sweet and Crunchy Salad",
+    "values": {
+      "Calories": {
+        "value": 25.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 102.2,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 3.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 0.06,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.01,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.5,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:41+00:00",
+    "schema_version": 7
+  },
+  "salat_s_cervenou_repou": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "salat_sezonni_ready": {
+    "status": "error",
+    "query": "lettuce",
+    "values": {},
+    "schema_version": 7
+  },
+  "sojove_klicky_menu_inspirace": {
+    "status": "not_found",
+    "query": "sojove klicky menu inspirace",
+    "values": {},
+    "schema_version": 7
+  },
+  "svestky": {
+    "status": "error",
+    "query": "plum",
+    "values": {},
+    "schema_version": 7
+  },
+  "zampiony": {
+    "status": "found",
+    "query": "mushroom",
+    "source": "Open Food Facts",
+    "source_product": "Champiñones Laminados",
+    "values": {
+      "Calories": {
+        "value": 21.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 42.67,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 1.56,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 0.83,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.06,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Monounsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Polyunsaturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.17,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-20T17:28:48+00:00",
+    "schema_version": 7
+  }
+}

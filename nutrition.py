@@ -5,6 +5,7 @@ site does not repeatedly call the remote service.
 """
 import json
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -15,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 CACHE_PATH = ROOT / "nutrition_cache.json"
 API_URL = "https://world.openfoodfacts.org/cgi/search.pl"
 USDA_API_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
-CACHE_VERSION = 6
+CACHE_VERSION = 13
 HEADERS = {"User-Agent": "grocery-scraper/1.0 (nutrition cache)"}
 NUTRIENTS = {
     "energy-kcal_100g": ("kcal", "Calories"),
@@ -29,6 +30,7 @@ NUTRIENTS = {
     "trans-fat_100g": ("g", "Trans fat"),
     "omega-3-fat_100g": ("g", "Omega-3 fat"),
     "omega-6-fat_100g": ("g", "Omega-6 fat"),
+    "omega-9-fat_100g": ("g", "Omega-9 fat"),
     "fiber_100g": ("g", "Fiber"),
     "sugars_100g": ("g", "Sugars"),
     "starch_100g": ("g", "Starch"),
@@ -65,23 +67,31 @@ NUTRIENTS = {
 QUERY_ALIASES = {
     "avokado": "avocado",
     "banany": "banana",
+    "bataty": "sweet potato orange flesh raw",
     "boruvky": "blueberry",
     "brambory": "potato",
+    "ananas": "pineapple",
+    "citrony_bio_nature_s_promise": "lemons",
     "broskve": "peach",
     "hrozny": "grapes",
+    "hliva_ustricna": "oyster mushroom",
+    "jarni_cibule_svazek": "spring onions",
     "jablka": "apple",
-    "jahody": "strawberry",
+    "jahody": "strawberries",
     "mandarinky": "mandarin",
     "merunky": "apricot",
     "mrkev": "carrot",
     "nektarinky": "nectarine",
     "okurka": "cucumber",
-    "paprika": "pepper",
-    "rajcata": "tomato",
-    "zampiony": "mushroom",
+    "paprika": "green sweet pepper raw",
+    "pomerance": "oranges",
+    "rajcata": "red tomatoes",
+    "rajcata_cherry": "red tomatoes",
+    "rajcata_cherry_kerikova": "red tomatoes",
+    "zampiony": "button mushrooms",
     "paprika_cervena": "red bell pepper raw",
     "paprika_bila": "white pepper raw",
-    "paprika": "bell pepper raw",
+    "paprika": "green sweet pepper raw",
 }
 
 SUBSTRING_ALIASES = {
@@ -106,6 +116,8 @@ USDA_LABELS = {
     "vitamin b-6": "Vitamin B6", "biotin": "Vitamin B7 (Biotin)",
     "folate": "Vitamin B9", "vitamin b-12": "Vitamin B12",
     "linolenic acid": "Omega-3 fat", "linoleic acid": "Omega-6 fat",
+    "oleic acid": "Omega-9 fat", "18:3 n-3": "Omega-3 fat",
+    "18:2": "Omega-6 fat", "18:1": "Omega-9 fat",
 }
 
 
@@ -150,7 +162,7 @@ def fetch_usda_nutrition(query: str) -> dict:
         "api_key": os.environ.get("USDA_API_KEY", "DEMO_KEY"),
         "query": query if "raw" in query else f"{query} raw",
         "dataType": "SR Legacy,Foundation",
-        "pageSize": 10,
+        "pageSize": 50,
     }
     try:
         response = requests.get(USDA_API_URL, params=params, headers=HEADERS, timeout=15)
@@ -159,7 +171,28 @@ def fetch_usda_nutrition(query: str) -> dict:
     except (requests.RequestException, ValueError):
         return {}
     candidates = []
+    query_terms = [term for term in re.findall(r"[a-z]+", query.lower()) if term not in {"raw", "fresh", "without", "skin"} and len(term) > 2]
     for food in foods:
+        description = str(food.get("description", "")).lower()
+        if query_terms and not any(term in description or term.rstrip("s") in description or term[:4] in description for term in query_terms):
+            continue
+        if "grape" in query.lower() and ("leaf" in description or "leav" in description or "tomato" in description):
+            continue
+        if "sweet potato" in query.lower() and ("sweet potato" not in description or any(term in description for term in ("leaf", "leav", "cooked", "baked", "boiled"))):
+            continue
+        if "lemon" in query.lower() and "juice" in description:
+            continue
+        query_lower = query.lower()
+        if "pineapple" in query_lower and "pineapple" not in description:
+            continue
+        if "strawberr" in query_lower and ("strawberr" not in description or "raw" not in description or any(term in description for term in ("kefir", "yogurt", "juice", "drink", "pastr", "toaster"))):
+            continue
+        if "green" in query_lower and "pepper" in query_lower and not all(term in description for term in ("pepper", "sweet", "green")):
+            continue
+        if "red" in query_lower and "pepper" in query_lower and not all(term in description for term in ("pepper", "sweet", "red")):
+            continue
+        if "mushroom" in query_lower and ("mushroom" not in description or "white" not in description):
+            continue
         values = {}
         for nutrient in food.get("foodNutrients", []):
             name = nutrient.get("nutrientName", "").lower()
@@ -175,7 +208,13 @@ def fetch_usda_nutrition(query: str) -> dict:
             candidates.append((len(values), food, values))
     if not candidates:
         return {}
-    _, food, values = max(candidates, key=lambda item: item[0])
+    def candidate_score(item):
+        _, food, _ = item
+        description = str(food.get("description", "")).lower()
+        grape_fruit = "grape" in query.lower() and "grape" in description and "leaf" not in description and "leav" not in description
+        return (grape_fruit, item[0])
+
+    _, food, values = max(candidates, key=candidate_score)
     return {"values": values, "source": "USDA FoodData Central", "source_product": food.get("description", "")}
 
 
