@@ -1,13 +1,15 @@
 import csv
 from collections import defaultdict
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
-try:
-    from scrapers.common import read_csv
-except ModuleNotFoundError:
-    from common import read_csv
-
+from scrapers.common import (
+    read_csv,
+    number,
+    is_true,
+    parsed_date_range,
+    is_active_offer,
+)
 
 ROOT = Path(__file__).resolve().parent
 HISTORY_CSV = ROOT / "history.csv"
@@ -21,17 +23,6 @@ REPORT_FIELDS = [
     "dropped_count",
     "increased_count",
 ]
-
-
-def number(value: str) -> float | None:
-    try:
-        return float(str(value).replace(",", ".").strip())
-    except (TypeError, ValueError):
-        return None
-
-
-def is_true(value: str) -> bool:
-    return str(value).strip().lower() in {"true", "1", "yes", "y"}
 
 
 def normalized_price(row: dict) -> tuple[float | None, str]:
@@ -74,15 +65,12 @@ def main() -> None:
         print("history.csv is empty; no price report was generated.")
         return
 
-    today_iso = date.today().isoformat()
-    today_date = date.fromisoformat(today_iso)
-    STALE_HORIZON = today_date + timedelta(days=14)
+    today_date = date.today()
 
     all_scrape_dates = sorted(
         {row.get("scraped_at", "")[:10] for row in history if row.get("scraped_at")},
         reverse=True,
     )
-    has_history = len(all_scrape_dates) > 1
     previous_day = (
         max(
             d
@@ -93,25 +81,19 @@ def main() -> None:
         else None
     )
 
-    # ACTIVE-WINDOW model (mirrors build_site.py): show every discount still
-    # valid today — not only rows from the single global latest scrape day.
-    # Stores finish their daily cron on different calendar days and Kupi flyers
-    # are forward-dated, so a product scraped a few days ago with a range
-    # covering today is a current offer and must be reported. For previous-day
-    # price comparison we use the most-recent scrape day that is strictly before
-    # today (so a store whose latest scrape was yesterday still gets a baseline).
+    # ACTIVE-WINDOW model (mirrors build_site.py via is_active_offer): show every
+    # discount still valid today — not only rows from the single global latest
+    # scrape day. Stores finish their daily cron on different calendar days and
+    # Kupi flyers are forward-dated, so a product scraped a few days ago with a
+    # range covering today is a current offer and must be reported. For
+    # previous-day price comparison we use the most-recent scrape day that is
+    # strictly before today (so a store whose latest scrape was yesterday still
+    # gets a baseline).
     current_rows = []
     previous_by_key = {}
     for row in history:
         store = row.get("store", "")
-        s, en = (row.get("date_range", "") or "").split(" - ", 1) if " - " in (row.get("date_range", "") or "") else (row.get("date_range", ""), row.get("date_range", ""))
-        end = date.fromisoformat(en) if en else None
-        start = date.fromisoformat(s) if s else None
-        if end is None:
-            active = True
-        else:
-            active = end >= today_date and (start is None or start <= STALE_HORIZON)
-        if active:
+        if is_active_offer(row.get("date_range", ""), today_date):
             current_rows.append(row)
         if previous_day and row.get("scraped_at", "").startswith(previous_day):
             key = (store, row.get("product_id", ""))

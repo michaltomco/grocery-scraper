@@ -1,7 +1,4 @@
-try:
-    from common import KupiStoreConfig, run_kupi_scraper
-except ModuleNotFoundError:
-    from scrapers.common import KupiStoreConfig, run_kupi_scraper
+from scrapers.common import KupiStoreConfig, run_kupi_scraper
 from pathlib import Path
 
 

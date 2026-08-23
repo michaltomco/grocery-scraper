@@ -100,7 +100,6 @@ DESCRIPTOR_WORDS = {
     "cervene",
     "cherry",
     "kerikova",
-    "cherry",
     "delicious",
     "golden",
     "hokkaido",
@@ -125,6 +124,40 @@ STORE_WORDS = {
     "lidl",
     "tesco",
 }
+
+# Single source of truth for per-store presentation metadata. The brand-colored
+# logo is derived from (color, initial) so there is exactly one place to edit
+# when a store is added or recolored. `loyalty_program` mirrors the value each
+# scraper passes to KupiStoreConfig.
+STORE_BRAND = {
+    "Lidl": {"color": "#facc15", "initial": "L", "loyalty_program": "Lidl Plus"},
+    "Tesco": {"color": "#f87171", "initial": "T", "loyalty_program": "Clubcard"},
+    "Albert": {"color": "#60a5fa", "initial": "A", "loyalty_program": "Můj Albert"},
+    "Billa": {"color": "#cc1f2c", "initial": "B", "loyalty_program": "Billa Club"},
+}
+
+
+def store_logo(store: str) -> str:
+    """Return a small brand-colored SVG badge (letter on store color)."""
+    brand = STORE_BRAND.get(store)
+    if not brand:
+        return ""
+    color = brand["color"]
+    initial = brand["initial"]
+    return (
+        f'<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="{store}">'
+        f'<rect x="2" y="2" width="20" height="20" rx="5" fill="{color}"/>'
+        f'<text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">'
+        f"{initial}</text></svg>"
+    )
+
+
+def store_color(store: str) -> str:
+    return STORE_BRAND.get(store, {}).get("color", "#64748b")
+
+
+def store_initial(store: str) -> str:
+    return STORE_BRAND.get(store, {}).get("initial", store[:1].upper())
 
 CZECH_MONTHS = {
     "ledna": 1,
@@ -335,6 +368,46 @@ def parse_validity(text: str) -> tuple[str, str]:
         return parse_partial_date(parts[0], today), parse_partial_date(parts[1], today)
 
     return today.isoformat(), parse_partial_date(normalized, today)
+
+
+def number(value: str) -> float | None:
+    """Parse a Czech-formatted number (comma decimal) into float, or None."""
+    try:
+        return float(str(value).replace(",", ".").strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def is_true(value: str) -> bool:
+    """Interpret a CSV boolean-ish string as True."""
+    return str(value).strip().lower() in {"true", "1", "yes", "y"}
+
+
+def parsed_date_range(date_range: str) -> tuple[str, str]:
+    """Return (start_iso, end_iso) from a date_range like '2026-08-04' or
+    '2026-08-06 - 2026-08-09'. Missing end defaults to the start."""
+    if not date_range:
+        return "", ""
+    if " - " in date_range:
+        start, end = date_range.split(" - ", 1)
+        return start.strip(), end.strip()
+    return date_range.strip(), date_range.strip()
+
+
+def is_active_offer(date_range: str, today: date, stale_horizon_days: int = 14) -> bool:
+    """True when a discount is still relevant: its end date is today or later
+    and its start is not hopelessly stale (within `stale_horizon_days` ahead).
+    A missing/unparseable end date is treated as active to avoid dropping rows
+    on bad data. Shared by the site builder, the price report, and the monitor
+    so the "what's current" rule lives in exactly one place.
+    """
+    start_iso, end_iso = parsed_date_range(date_range)
+    end = date.fromisoformat(end_iso) if end_iso else None
+    start = date.fromisoformat(start_iso) if start_iso else None
+    if end is None:
+        return True
+    stale_horizon = today + timedelta(days=stale_horizon_days)
+    return end >= today and (start is None or start <= stale_horizon)
 
 
 def kupi_product_name(wrap) -> str:

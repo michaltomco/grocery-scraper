@@ -191,7 +191,9 @@ def fetch_usda_nutrition(query: str) -> dict:
             continue
         if "red" in query_lower and "pepper" in query_lower and not all(term in description for term in ("pepper", "sweet", "red")):
             continue
-        if "mushroom" in query_lower and ("mushroom" not in description or "white" not in description):
+        if "oyster" in query_lower and "oyster" not in description:
+            continue
+        if "mushroom" in query_lower and "white" not in query_lower and ("mushroom" not in description or "white" not in description):
             continue
         values = {}
         for nutrient in food.get("foodNutrients", []):

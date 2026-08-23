@@ -2140,131 +2140,6 @@
     },
     "schema_version": 13
   },
-  "hliva_ustricna": {
-    "status": "found",
-    "query": "oyster mushroom",
-    "source": "USDA FoodData Central",
-    "source_product": "Mushrooms, white, raw",
-    "values": {
-      "Omega-9 fat": {
-        "value": 0.0,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.16,
-        "unit": "g"
-      },
-      "Vitamin A": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Fiber": {
-        "value": 1.0,
-        "unit": "g"
-      },
-      "Vitamin K": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Fat": {
-        "value": 0.34,
-        "unit": "g"
-      },
-      "Calcium": {
-        "value": 3.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 318.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.52,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 9.3,
-        "unit": "ug"
-      },
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
-      },
-      "Vitamin B3": {
-        "value": 3.61,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 1.5,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.1,
-        "unit": "mg"
-      },
-      "Vitamin C": {
-        "value": 2.1,
-        "unit": "mg"
-      },
-      "Vitamin B1": {
-        "value": 0.08,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.4,
-        "unit": "mg"
-      },
-      "Iron": {
-        "value": 0.5,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 9.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 86.0,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 5.0,
-        "unit": "mg"
-      },
-      "Copper": {
-        "value": 0.32,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Protein": {
-        "value": 3.09,
-        "unit": "g"
-      },
-      "Vitamin B9": {
-        "value": 17.0,
-        "unit": "ug"
-      },
-      "Calories": {
-        "value": 22.0,
-        "unit": "kcal"
-      },
-      "Vitamin D": {
-        "value": 0.2,
-        "unit": "ug"
-      },
-      "Carbs": {
-        "value": 3.26,
-        "unit": "g"
-      }
-    },
-    "schema_version": 13
-  },
   "hrozny": {
     "status": "found",
     "query": "grapes",
@@ -8782,5 +8657,75 @@
       }
     },
     "schema_version": 9
+  },
+  "hliva_ustricna": {
+    "status": "found",
+    "query": "oyster mushroom",
+    "source": "Open Food Facts",
+    "source_product": "Richin brand, whole oyster mushrooms",
+    "values": {
+      "Calories": {
+        "value": 11.0,
+        "unit": "kcal"
+      },
+      "Protein": {
+        "value": 0.91,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 1.82,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 1.8,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.86,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.35,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "µg"
+      }
+    },
+    "updated_at": "2026-08-23T07:52:56+00:00",
+    "schema_version": 13
   }
 }

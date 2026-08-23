@@ -1,7 +1,4 @@
-try:
-    from scrapers.common import merge_csvs
-except ModuleNotFoundError:
-    from common import merge_csvs
+from scrapers.common import merge_csvs
 from pathlib import Path
 
 

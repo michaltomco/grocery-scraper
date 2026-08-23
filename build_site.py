@@ -18,14 +18,22 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-try:
-    from scrapers.common import read_csv, canonical_product_name
-except ModuleNotFoundError:
-    from common import read_csv, canonical_product_name
+from scrapers.common import (
+    canonical_product_name,
+    read_csv,
+    ROOT,
+    HISTORY_CSV,
+    STORE_WORDS,
+    number,
+    parsed_date_range,
+    is_true,
+    is_active_offer,
+    store_logo,
+    store_color,
+    store_initial,
+)
 from nutrition import get_many
 
-ROOT = Path(__file__).resolve().parent
-HISTORY_CSV = ROOT / "history.csv"
 SITE_DIR = ROOT / "site"
 IMG_DIR = SITE_DIR / "img"
 PRODUCTS_DIR = SITE_DIR / "products"
@@ -101,13 +109,6 @@ def cache_image(product_id: str, image_url: str) -> str:
             except OSError:
                 pass
     return f"img/{dest.name}"
-
-
-def number(value: str) -> float | None:
-    try:
-        return float(str(value).replace(",", ".").strip())
-    except (TypeError, ValueError):
-        return None
 
 
 def normalized(row: dict) -> tuple[float | None, str]:
@@ -227,8 +228,7 @@ RDA_VALUES = {
     "Omega-3 fat": (1.6, "g"), "Omega-6 fat": (17, "g"),
     "Vitamin A": (900, "µg"), "Vitamin B1": (1.2, "mg"), "Vitamin B2": (1.3, "mg"),
     "Vitamin B3": (16, "mg"), "Vitamin B5": (5, "mg"), "Vitamin B6": (1.3, "mg"),
-    "Vitamin B7 (Biotin)": (30, "µg"), "Vitamin B9 (Folate)": (400, "µg"),
-    "Vitamin B9": (400, "µg"),
+    "Vitamin B7 (Biotin)": (30, "µg"), "Vitamin B9": (400, "µg"),
     "Vitamin B12": (2.4, "µg"), "Vitamin C": (90, "mg"), "Vitamin D": (15, "µg"),
     "Vitamin E": (15, "mg"), "Vitamin K": (120, "µg"),
     "Calcium": (1300, "mg"), "Iron": (18, "mg"), "Magnesium": (420, "mg"),
@@ -257,17 +257,6 @@ def rda_percent(label: str, value, unit: str) -> int | None:
 
 def display_name(product: str, raw_name: str) -> str:
     return GENERAL_DISPLAY_NAMES.get(product, pretty_name(raw_name))
-
-
-def parse_range(date_range: str) -> tuple[str, str]:
-    """Return (start_iso, end_iso) for a date_range like '2026-08-04' or
-    '2026-08-06 - 2026-08-09'. Missing end defaults to the start."""
-    if not date_range:
-        return "", ""
-    if " - " in date_range:
-        start, end = date_range.split(" - ", 1)
-        return start.strip(), end.strip()
-    return date_range.strip(), date_range.strip()
 
 
 def _iso(d: str):
@@ -460,19 +449,13 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
         timeline_days = [date.today() + timedelta(days=i) for i in range(14)]
         day_letters = ["P", "Ú", "S", "Č", "P", "S", "N"]
 
-        detail_store_colors = {
-            "Lidl": "#facc15", "Tesco": "#f87171",
-            "Albert": "#60a5fa", "Billa": "#cc1f2c",
-        }
-        store_initials = {"Lidl": "L", "Tesco": "T", "Albert": "A", "Billa": "B"}
-
         def store_chip(store: str) -> str:
-            color = detail_store_colors.get(store, "var(--accent)")
-            initial = store_initials.get(store, store[:1].upper())
+            color = store_color(store)
+            initial = store_initial(store)
             return f'<span class="store-chip" style="--store-color:{color}"><span class="store-mark">{esc(initial)}</span>{esc(store)}</span>'
 
         def detail_timeline(date_range: str, store: str) -> str:
-            start, end = parse_range(date_range)
+            start, end = parsed_date_range(date_range)
             start_date, end_date = _iso(start), _iso(end)
             if not start_date or not end_date:
                 return '<span class="muted">No dates</span>'
@@ -483,7 +466,7 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
                     f'<span class="day{" active" if active else ""}" data-date="{day.isoformat()}" '
                     f'title="{esc(fmt_cz(day.isoformat()))}">{day_letters[day.weekday()]}</span>'
                 )
-            color = detail_store_colors.get(store, "var(--accent)")
+            color = store_color(store)
             weeks, current = [], []
             for index, cell in enumerate(cells):
                 if index > 0 and timeline_days[index].weekday() == 0:
@@ -495,7 +478,7 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
             return f'<div class="timeline" style="--store-color:{color}">' + "".join(weeks) + '</div>'
 
         discount_rows = "".join(
-            f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parse_range(e.get("date_range", ""))[0])}" data-end="{esc(parse_range(e.get("date_range", ""))[1])}"><td>{store_chip(e.get("store", ""))}</td>'
+            f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parsed_date_range(e.get("date_range", ""))[0])}" data-end="{esc(parsed_date_range(e.get("date_range", ""))[1])}"><td>{store_chip(e.get("store", ""))}</td>'
             f'<td class="discount-price">{esc(e.get("val") if e.get("val") is not None else "-")} / {esc(e.get("unit", ""))}</td>'
             f'<td>{detail_timeline(e.get("date_range", ""), e.get("store", ""))}</td></tr>'
             for e in sorted(
@@ -683,7 +666,7 @@ def build() -> str:
     # tolerate flyers whose start is a few days in the future (Kupi publishes
     # "st 5. 8. – út 11. 8." offers several days early) so those count as
     # current too, but anything that ended long ago is dropped as stale.
-    STALE_HORIZON = today_date + timedelta(days=14)
+    # The exact rule lives in scrapers.common.is_active_offer.
 
     all_scrape_dates = sorted(
         {r.get("scraped_at", "")[:10] for r in rows if r.get("scraped_at")},
@@ -714,20 +697,15 @@ def build() -> str:
         if val is not None:
             series[(product, store)].append((ts, val))
         # Is this discount still active (end date >= today, not hopelessly stale)?
-        s, en = parse_range(r.get("date_range", ""))
-        end = date.fromisoformat(en) if en else None
-        start = date.fromisoformat(s) if s else None
-        if end is None:
-            active = True  # no parseable date → keep (avoid dropping on bad data)
-        else:
-            active = end >= today_date and (start is None or start <= STALE_HORIZON)
-        if not active:
+        if not is_active_offer(r.get("date_range", ""), today_date):
             continue
         # keep the most-valid (latest-ending) still-active entry per store
         lp = number(r.get("loyalty_price", ""))
         disp_val = val
-        if r.get("loyalty_required", "").strip().lower() in {"true", "1", "yes", "y"} and lp is not None:
+        if is_true(r.get("loyalty_required", "")) and lp is not None:
             disp_val = lp
+        s, en = parsed_date_range(r.get("date_range", ""))
+        end = date.fromisoformat(en) if en else None
         existing = current_entries.get((product, store))
         if existing is None or (end is not None and (existing["_end"] is None or end > existing["_end"])):
             current_entries[(product, store)] = {
@@ -761,15 +739,8 @@ def build() -> str:
         products[product].append(e)
     write_product_pages(products, nutrition)
 
-    # Store brand colors (not price-ranked): Lidl=yellow, Tesco=red, Albert=blue, Billa=red(#cc1f2c).
-    STORE_COLOR = {"Lidl": "#facc15", "Tesco": "#f87171", "Albert": "#60a5fa", "Billa": "#cc1f2c"}
-    # Small brand-colored logo per store (letter badge on brand color).
-    STORE_LOGO = {
-        "Lidl": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Lidl"><rect x="2" y="2" width="20" height="20" rx="5" fill="#facc15"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">L</text></svg>',
-        "Tesco": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Tesco"><rect x="2" y="2" width="20" height="20" rx="5" fill="#f87171"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">T</text></svg>',
-        "Albert": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Albert"><rect x="2" y="2" width="20" height="20" rx="5" fill="#60a5fa"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">A</text></svg>',
-        "Billa": '<svg class="logo" viewBox="0 0 24 24" role="img" aria-label="Billa"><rect x="2" y="2" width="20" height="20" rx="5" fill="#cc1f2c"/><text x="12" y="16" font-size="12" font-weight="700" text-anchor="middle" fill="#0f172a">B</text></svg>',
-    }
+    # Store brand colors/logos come from the single STORE_BRAND registry in
+    # scrapers.common (store_color / store_logo helpers).
     today_iso = date.today().isoformat()
     timeline_days = [date.fromisoformat(today_iso) + timedelta(days=i) for i in range(14)]
 
@@ -838,10 +809,10 @@ def build() -> str:
         date_cells = []
         union_start, union_end = None, None
         for e in entries:
-            logo = STORE_LOGO.get(e["store"], "")
-            color = STORE_COLOR.get(e["store"], "#64748b")
+            logo = store_logo(e["store"])
+            color = store_color(e["store"])
             dr = e.get("date_range", "") or ""
-            s, en = parse_range(dr)
+            s, en = parsed_date_range(dr)
             if s and (union_start is None or s < union_start):
                 union_start = s
             if en and (union_end is None or en > union_end):
@@ -911,7 +882,7 @@ def build() -> str:
             price = number(entry.get("val", ""))
             if price is None or price <= 0:
                 continue
-            start, end = parse_range(entry.get("date_range", ""))
+            start, end = parsed_date_range(entry.get("date_range", ""))
             weight = explicit_weight_grams(entry.get("raw_name", ""))
             estimated = False
             if weight is None and entry.get("unit") == "ks":
@@ -928,7 +899,7 @@ def build() -> str:
                 # fairly with per-kilogram offers, so it is omitted by default.
                 continue
             ranking_data.append({
-                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "storeLogo": STORE_LOGO.get(entry.get("store", ""), ""), "storeColor": STORE_COLOR.get(entry.get("store", ""), "#7aa2f7"),
+                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
                 "price": price, "basis": basis, "factor": nutrient_factor,
                 "start": start or "", "end": end or "",
                 "values": {label: nutrient.get("value") for label, nutrient in vals.items()
@@ -977,7 +948,7 @@ def build() -> str:
     # per-store date_range; this only sets the slider's max span.
     all_ends = []
     for e in current_entries.values():
-        s, en = parse_range(e.get("date_range", ""))
+        s, en = parsed_date_range(e.get("date_range", ""))
         for d in (s, en):
             if d:
                 all_ends.append(d)
@@ -1199,10 +1170,10 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
 <div class="legend">
-  <span class="chip" data-store="Lidl">{STORE_LOGO['Lidl']} Lidl</span>
-  <span class="chip" data-store="Tesco">{STORE_LOGO['Tesco']} Tesco</span>
-  <span class="chip" data-store="Albert">{STORE_LOGO['Albert']} Albert</span>
-  <span class="chip" data-store="Billa">{STORE_LOGO['Billa']} Billa</span>
+  <span class="chip" data-store="Lidl">{store_logo("Lidl")} Lidl</span>
+  <span class="chip" data-store="Tesco">{store_logo("Tesco")} Tesco</span>
+  <span class="chip" data-store="Albert">{store_logo("Albert")} Albert</span>
+  <span class="chip" data-store="Billa">{store_logo("Billa")} Billa</span>
 </div>
 <table id="t">
 <thead><tr>
