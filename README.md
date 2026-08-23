@@ -33,7 +33,15 @@ test runner is required:
 uv run python -m unittest discover -s tests -v
 ```
 
-GitHub Actions runs the same command on every push and pull request.
+The suite includes real Chromium interaction tests. Install the browser once
+locally before the first run:
+
+```bash
+uv run playwright install chromium
+```
+
+GitHub Actions installs Chromium and runs the same test command on every push
+and pull request.
 
 ## CSV schema
 
