@@ -164,6 +164,8 @@ def rda_amount_in_unit(label: str, unit: str) -> float | None:
     if unit in {"ug", "mcg"}:
         unit = "µg"
     target_unit = str(target_unit).lower().replace("μ", "µ")
+    if label == "Vitamin A" and unit in {"iu", "i.u."}:
+        return None
     if unit == target_unit:
         return amount
     if unit in {"ug", "µg", "mcg"} and target_unit == "mg":
@@ -174,8 +176,6 @@ def rda_amount_in_unit(label: str, unit: str) -> float | None:
         return amount / 1000
     if unit == "mg" and target_unit == "g":
         return amount * 1000
-    if label == "Vitamin A" and unit in {"iu", "i.u."} and target_unit == "µg":
-        return amount / 0.3
     return None
 
 
@@ -244,14 +244,14 @@ def rda_percent(label: str, value, unit: str) -> int | None:
         return None
     amount, target_unit = float(value), RDA_VALUES[label][1]
     normalized_unit = unit.lower().replace("μ", "µ")
+    if label == "Vitamin A" and normalized_unit in {"iu", "i.u."}:
+        return None
     if normalized_unit in {"ug", "µg", "mcg"} and target_unit == "mg":
         amount /= 1000
     elif normalized_unit == "g" and target_unit == "mg":
         amount *= 1000
     elif normalized_unit in {"mg", "g"} and target_unit == "µg":
         amount = amount * (1_000_000 if normalized_unit == "g" else 1000)
-    elif label == "Vitamin A" and normalized_unit in {"iu", "i.u."}:
-        amount *= 0.3
     return round(amount / RDA_VALUES[label][0] * 100)
 
 

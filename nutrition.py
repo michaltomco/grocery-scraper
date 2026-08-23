@@ -120,6 +120,26 @@ USDA_LABELS = {
     "18:2": "Omega-6 fat", "18:1": "Omega-9 fat",
 }
 
+# Open Food Facts search is product-oriented, not an ingredient database. A
+# produce term such as "lime" can therefore rank a snack or drink above a raw
+# lime simply because its nutrition label has more fields. These markers reject
+# obviously processed results before the generic nutrient-count ranking.
+PROCESSED_FOOD_MARKERS = {
+    "chip", "chips", "tortilla", "snack", "flavored", "flavoured",
+    "juice", "drink", "soda", "sauce", "seasoning", "powder", "candy",
+    "cereal", "cookie", "crisp", "crackers", "cheese", "yogurt", "kefir",
+}
+
+
+def is_raw_produce_candidate(item: dict) -> bool:
+    text = " ".join(
+        [
+            str(item.get("product_name", "")),
+            " ".join(str(tag) for tag in item.get("categories_tags", [])),
+        ]
+    ).lower()
+    return not any(marker in text for marker in PROCESSED_FOOD_MARKERS)
+
 
 def load_cache() -> dict:
     if not CACHE_PATH.exists():
@@ -198,7 +218,15 @@ def fetch_usda_nutrition(query: str) -> dict:
         values = {}
         for nutrient in food.get("foodNutrients", []):
             name = nutrient.get("nutrientName", "").lower()
-            label = next((label for key, label in USDA_LABELS.items() if key in name), None)
+            # FoodData Central exposes both Vitamin A, RAE and Vitamin A, IU.
+            # RAE is the dietary-comparison unit; IU is ambiguous without
+            # knowing whether its source is retinol or provitamin-A carotenoid.
+            # Never let the IU value overwrite the direct RAE measurement.
+            if "vitamin a, iu" in name:
+                continue
+            label = "Vitamin A" if "vitamin a, rae" in name else next(
+                (label for key, label in USDA_LABELS.items() if key in name), None
+            )
             value = _number(nutrient.get("value"))
             if label and value is not None:
                 unit = str(nutrient.get("unitName", "")).strip().lower()
@@ -257,6 +285,8 @@ def fetch_nutrition(product: str) -> dict:
 
     candidates = []
     for item in products:
+        if not is_raw_produce_candidate(item):
+            continue
         values = _extract(item)
         if values:
             candidates.append((len(values), item, values))
@@ -309,10 +339,26 @@ def get_many(products: set[str]) -> dict:
     changed = False
     for product in sorted(products):
         # Successful and definitive misses are cached. Transient request
-        # failures remain retryable on the next build.
+        # failures remain retryable on the next build. A historical bug stored
+        # FoodData Central Vitamin A, IU values as dietary Vitamin A; refresh
+        # those entries so the direct Vitamin A, RAE value replaces them.
         entry = cache.get(product, {})
-        if (not product or entry.get("schema_version") == CACHE_VERSION
-                and entry.get("status") in {"found", "not_found"}):
+        vitamin_a = entry.get("values", {}).get("Vitamin A", {})
+        legacy_vitamin_a_iu = str(vitamin_a.get("unit", "")).lower() in {"iu", "i.u."}
+        source = str(entry.get("source", ""))
+        source_product = str(entry.get("source_product", ""))
+        legacy_processed_open_food = source.startswith("Open Food Facts") and not is_raw_produce_candidate(
+            {"product_name": source_product}
+        )
+        if (
+            not product
+            or (
+                entry.get("schema_version") == CACHE_VERSION
+                and entry.get("status") in {"found", "not_found"}
+                and not legacy_vitamin_a_iu
+                and not legacy_processed_open_food
+            )
+        ):
             continue
         print(f"Looking up nutrition: {product}")
         cache[product] = fetch_nutrition(product)

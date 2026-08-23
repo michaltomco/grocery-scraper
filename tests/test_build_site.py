@@ -92,7 +92,12 @@ class SiteHelperTests(unittest.TestCase):
     def test_rda_calculations_convert_micrograms_and_milligrams(self) -> None:
         self.assertEqual(build_site.rda_percent("Vitamin C", 45, "mg"), 50)
         self.assertEqual(build_site.rda_percent("Vitamin A", 450, "µg"), 50)
+        self.assertEqual(build_site.rda_percent("Vitamin A", 157, "ug"), 17)
         self.assertEqual(build_site.rda_amount_in_unit("Vitamin A", "mg"), 0.9)
+
+    def test_vitamin_a_iu_without_rae_does_not_receive_an_rda_percentage(self) -> None:
+        self.assertIsNone(build_site.rda_percent("Vitamin A", 3130, "iu"))
+        self.assertIsNone(build_site.rda_amount_in_unit("Vitamin A", "iu"))
 
     def test_html_escaping_and_sparkline_do_not_emit_raw_markup(self) -> None:
         self.assertEqual(build_site.esc('<apple & "pear">'), "&lt;apple &amp; &quot;pear&quot;&gt;")

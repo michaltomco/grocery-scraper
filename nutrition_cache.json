@@ -2,39 +2,47 @@
   "ananas": {
     "status": "found",
     "query": "pineapple",
-    "source": "USDA FoodData Central",
-    "source_product": "Pineapple, raw, all varieties",
+    "source": "Open Food Facts + USDA FoodData Central",
+    "source_product": "Twister Mini Pineapple Ananas",
     "values": {
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
+      "Calories": {
+        "value": 100.0,
+        "unit": "kcal"
       },
-      "Vitamin K": {
-        "value": 0.7,
-        "unit": "ug"
-      },
-      "Vitamin C": {
-        "value": 47.8,
-        "unit": "mg"
-      },
-      "Vitamin B1": {
-        "value": 0.08,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.03,
-        "unit": "mg"
-      },
-      "Vitamin B9": {
-        "value": 18.0,
-        "unit": "ug"
-      },
-      "Vitamin A": {
-        "value": 58.0,
-        "unit": "iu"
+      "Energy": {
+        "value": 417.0,
+        "unit": "kJ"
       },
       "Protein": {
-        "value": 0.54,
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 22.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 17.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.03,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.01,
         "unit": "g"
       },
       "Iron": {
@@ -49,8 +57,12 @@
         "value": 8.0,
         "unit": "mg"
       },
-      "Sodium": {
-        "value": 1.0,
+      "Vitamin C": {
+        "value": 47.8,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.12,
         "unit": "mg"
       },
       "Copper": {
@@ -61,6 +73,34 @@
         "value": 0.93,
         "unit": "mg"
       },
+      "Selenium": {
+        "value": 0.1,
+        "unit": "ug"
+      },
+      "Vitamin A": {
+        "value": 3.0,
+        "unit": "ug"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.7,
+        "unit": "ug"
+      },
+      "Vitamin B1": {
+        "value": 0.08,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.03,
+        "unit": "mg"
+      },
+      "Vitamin B9": {
+        "value": 18.0,
+        "unit": "ug"
+      },
       "Calcium": {
         "value": 13.0,
         "unit": "mg"
@@ -68,14 +108,6 @@
       "Potassium": {
         "value": 109.0,
         "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.12,
-        "unit": "mg"
-      },
-      "Fat": {
-        "value": 0.12,
-        "unit": "g"
       },
       "Vitamin B3": {
         "value": 0.5,
@@ -88,22 +120,6 @@
       "Vitamin B6": {
         "value": 0.11,
         "unit": "mg"
-      },
-      "Calories": {
-        "value": 50.0,
-        "unit": "kcal"
-      },
-      "Fiber": {
-        "value": 1.4,
-        "unit": "g"
-      },
-      "Carbs": {
-        "value": 13.1,
-        "unit": "g"
-      },
-      "Selenium": {
-        "value": 0.1,
-        "unit": "ug"
       },
       "Omega-9 fat": {
         "value": 0.01,
@@ -122,7 +138,9 @@
         "unit": "ug"
       }
     },
-    "schema_version": 13
+    "updated_at": "2026-08-23T16:03:44+00:00",
+    "schema_version": 13,
+    "fallback_source_product": "Pineapple, raw, all varieties"
   },
   "banany": {
     "status": "found",
@@ -558,8 +576,8 @@
         "unit": "kcal"
       },
       "Vitamin A": {
-        "value": 2.0,
-        "unit": "iu"
+        "value": 0.0,
+        "unit": "ug"
       },
       "Vitamin C": {
         "value": 19.7,
@@ -683,8 +701,8 @@
         "unit": "kcal"
       },
       "Vitamin A": {
-        "value": 2.0,
-        "unit": "iu"
+        "value": 0.0,
+        "unit": "ug"
       },
       "Vitamin C": {
         "value": 19.7,
@@ -808,8 +826,8 @@
         "unit": "kcal"
       },
       "Vitamin A": {
-        "value": 2.0,
-        "unit": "iu"
+        "value": 0.0,
+        "unit": "ug"
       },
       "Vitamin C": {
         "value": 19.7,
@@ -1197,8 +1215,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 449.0,
-        "unit": "iu"
+        "value": 22.0,
+        "unit": "ug"
       },
       "Phosphorus": {
         "value": 24.0,
@@ -1389,9 +1407,97 @@
   "cibule_bio_nature_s_promise": {
     "status": "found",
     "query": "onion",
-    "source": "USDA FoodData Central",
-    "source_product": "Onions, raw",
+    "source": "Open Food Facts + USDA FoodData Central",
+    "source_product": "Middle Eastern Falafels",
     "values": {
+      "Calories": {
+        "value": 221.0,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 926.0,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 7.6,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 9.9,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 1.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.8,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 1.3,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.52,
+        "unit": "g"
+      },
+      "Iron": {
+        "value": 0.21,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 10.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 29.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 7.4,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.17,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.04,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.13,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.5,
+        "unit": "ug"
+      },
+      "Vitamin A": {
+        "value": 0.0,
+        "unit": "ug"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin K": {
+        "value": 0.4,
+        "unit": "ug"
+      },
       "Vitamin D": {
         "value": 0.0,
         "unit": "ug"
@@ -1424,34 +1530,6 @@
         "value": 146.0,
         "unit": "mg"
       },
-      "Zinc": {
-        "value": 0.17,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.5,
-        "unit": "ug"
-      },
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
-      },
-      "Fat": {
-        "value": 0.1,
-        "unit": "g"
-      },
-      "Carbs": {
-        "value": 9.34,
-        "unit": "g"
-      },
-      "Calories": {
-        "value": 39.67,
-        "unit": "kcal"
-      },
-      "Vitamin C": {
-        "value": 7.4,
-        "unit": "mg"
-      },
       "Vitamin B1": {
         "value": 0.05,
         "unit": "mg"
@@ -1464,52 +1542,14 @@
         "value": 19.0,
         "unit": "ug"
       },
-      "Vitamin K": {
-        "value": 0.4,
-        "unit": "ug"
-      },
-      "Protein": {
-        "value": 1.1,
-        "unit": "g"
-      },
-      "Fiber": {
-        "value": 1.7,
-        "unit": "g"
-      },
-      "Iron": {
-        "value": 0.21,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 10.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 29.0,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 4.0,
-        "unit": "mg"
-      },
-      "Copper": {
-        "value": 0.04,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.13,
-        "unit": "mg"
-      },
-      "Vitamin A": {
-        "value": 2.0,
-        "unit": "iu"
-      },
       "Vitamin B12": {
         "value": 0.0,
         "unit": "ug"
       }
     },
-    "schema_version": 13
+    "updated_at": "2026-08-23T16:03:53+00:00",
+    "schema_version": 13,
+    "fallback_source_product": "Onions, raw"
   },
   "cibule_kuchynska_zluta": {
     "status": "found",
@@ -1626,8 +1666,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 2.0,
-        "unit": "iu"
+        "value": 0.0,
+        "unit": "ug"
       },
       "Vitamin B12": {
         "value": 0.0,
@@ -1893,12 +1933,112 @@
   "dyne_hokkaido": {
     "status": "found",
     "query": "pumpkin",
-    "source": "USDA FoodData Central",
-    "source_product": "Pumpkin, raw",
+    "source": "Open Food Facts + USDA FoodData Central",
+    "source_product": "100% Pure Pumpkin",
     "values": {
-      "Carbs": {
-        "value": 6.5,
+      "Calories": {
+        "value": 36.9,
+        "unit": "kcal"
+      },
+      "Energy": {
+        "value": 188.19,
+        "unit": "kJ"
+      },
+      "Protein": {
+        "value": 0.82,
         "unit": "g"
+      },
+      "Carbs": {
+        "value": 8.2,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.41,
+        "unit": "g"
+      },
+      "Saturated fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Trans fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.46,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.1,
+        "unit": "g"
+      },
+      "Starch": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.01,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1.0,
+        "unit": "mg"
+      },
+      "Alcohol": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Cholesterol": {
+        "value": 0.01,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 0.02,
+        "unit": "mg"
+      },
+      "Iron": {
+        "value": 0.8,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 12.0,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 44.0,
+        "unit": "mg"
+      },
+      "Vitamin C": {
+        "value": 9.0,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 0.33,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.32,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.13,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.12,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.3,
+        "unit": "ug"
+      },
+      "Vitamin A": {
+        "value": 426.0,
+        "unit": "ug"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "ug"
       },
       "Vitamin E": {
         "value": 0.0,
@@ -1908,41 +2048,9 @@
         "value": 1.1,
         "unit": "ug"
       },
-      "Fiber": {
-        "value": 0.5,
-        "unit": "g"
-      },
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Calories": {
-        "value": 26.0,
-        "unit": "kcal"
-      },
       "Vitamin B9": {
         "value": 16.0,
         "unit": "ug"
-      },
-      "Vitamin A": {
-        "value": 8510.0,
-        "unit": "iu"
-      },
-      "Fat": {
-        "value": 0.1,
-        "unit": "g"
-      },
-      "Calcium": {
-        "value": 21.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 340.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.32,
-        "unit": "mg"
       },
       "Omega-9 fat": {
         "value": 0.01,
@@ -1964,38 +2072,6 @@
         "value": 0.06,
         "unit": "mg"
       },
-      "Protein": {
-        "value": 1.0,
-        "unit": "g"
-      },
-      "Iron": {
-        "value": 0.8,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 12.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 44.0,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 1.0,
-        "unit": "mg"
-      },
-      "Copper": {
-        "value": 0.13,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.12,
-        "unit": "mg"
-      },
-      "Vitamin C": {
-        "value": 9.0,
-        "unit": "mg"
-      },
       "Vitamin B1": {
         "value": 0.05,
         "unit": "mg"
@@ -2007,13 +2083,11 @@
       "Vitamin B12": {
         "value": 0.0,
         "unit": "ug"
-      },
-      "Selenium": {
-        "value": 0.3,
-        "unit": "ug"
       }
     },
-    "schema_version": 13
+    "updated_at": "2026-08-23T16:03:57+00:00",
+    "schema_version": 13,
+    "fallback_source_product": "Pumpkin, raw"
   },
   "fiky_cerstve": {
     "status": "found",
@@ -2284,8 +2358,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 25.0,
-        "unit": "iu"
+        "value": 1.0,
+        "unit": "ug"
       },
       "Calcium": {
         "value": 9.0,
@@ -3176,7 +3250,7 @@
       },
       "Vitamin A": {
         "value": 0.0,
-        "unit": "iu"
+        "unit": "ug"
       },
       "Vitamin B9": {
         "value": 57.0,
@@ -3332,8 +3406,8 @@
         "unit": "ug"
       },
       "Vitamin A": {
-        "value": 23.0,
-        "unit": "iu"
+        "value": 1.0,
+        "unit": "ug"
       },
       "Omega-9 fat": {
         "value": 0.01,
@@ -3509,8 +3583,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 33.0,
-        "unit": "iu"
+        "value": 2.0,
+        "unit": "ug"
       },
       "Copper": {
         "value": 0.09,
@@ -3634,8 +3708,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 33.0,
-        "unit": "iu"
+        "value": 2.0,
+        "unit": "ug"
       },
       "Copper": {
         "value": 0.09,
@@ -3840,8 +3914,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 1080.0,
-        "unit": "iu"
+        "value": 54.0,
+        "unit": "ug"
       },
       "Protein": {
         "value": 0.82,
@@ -4066,8 +4140,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 1930.0,
-        "unit": "iu"
+        "value": 96.0,
+        "unit": "ug"
       },
       "Copper": {
         "value": 0.08,
@@ -4438,7 +4512,7 @@
       },
       "Vitamin A": {
         "value": 0.0,
-        "unit": "iu"
+        "unit": "ug"
       },
       "Vitamin B9": {
         "value": 57.0,
@@ -4634,8 +4708,8 @@
         "unit": "ug"
       },
       "Vitamin A": {
-        "value": 332.0,
-        "unit": "iu"
+        "value": 17.0,
+        "unit": "ug"
       },
       "Fiber": {
         "value": 1.7,
@@ -5422,8 +5496,8 @@
         "unit": "kcal"
       },
       "Vitamin A": {
-        "value": 2370.0,
-        "unit": "iu"
+        "value": 119.0,
+        "unit": "ug"
       }
     },
     "schema_version": 13
@@ -5435,8 +5509,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -5556,126 +5630,103 @@
   "salat_fresco_mix": {
     "status": "found",
     "query": "lettuce",
-    "source": "USDA FoodData Central",
-    "source_product": "Lettuce, cos or romaine, raw",
+    "source": "Open Food Facts",
+    "source_product": "Sweet and Crunchy Salad",
     "values": {
-      "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+      "Calories": {
+        "value": 25.0,
+        "unit": "kcal"
       },
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
+      "Energy": {
+        "value": 102.2,
+        "unit": "kJ"
       },
-      "Vitamin B9": {
-        "value": 136.0,
-        "unit": "ug"
-      },
-      "Omega-9 fat": {
-        "value": 0.01,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.05,
+      "Protein": {
+        "value": 0.6,
         "unit": "g"
       },
       "Carbs": {
-        "value": 3.29,
+        "value": 3.1,
         "unit": "g"
-      },
-      "Calories": {
-        "value": 17.21,
-        "unit": "kcal"
-      },
-      "Sodium": {
-        "value": 8.0,
-        "unit": "mg"
-      },
-      "Vitamin C": {
-        "value": 4.0,
-        "unit": "mg"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin E": {
-        "value": 0.13,
-        "unit": "mg"
       },
       "Fat": {
-        "value": 0.3,
+        "value": 0.5,
         "unit": "g"
       },
-      "Vitamin B3": {
-        "value": 0.31,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.14,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 33.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 247.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.23,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.4,
-        "unit": "ug"
-      },
-      "Copper": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.15,
-        "unit": "mg"
-      },
-      "Vitamin K": {
-        "value": 102.0,
-        "unit": "ug"
-      },
-      "Vitamin B1": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.07,
-        "unit": "mg"
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
       },
       "Fiber": {
-        "value": 2.1,
+        "value": 2.6,
         "unit": "g"
       },
+      "Sugars": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 0.06,
+        "unit": "mg"
+      },
       "Iron": {
-        "value": 0.97,
+        "value": 0.0,
         "unit": "mg"
       },
       "Magnesium": {
-        "value": 14.0,
+        "value": 0.02,
         "unit": "mg"
       },
-      "Phosphorus": {
-        "value": 30.0,
+      "Vitamin C": {
+        "value": 0.01,
         "unit": "mg"
       },
-      "Protein": {
-        "value": 1.23,
-        "unit": "g"
+      "Potassium": {
+        "value": 0.5,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
       }
     },
+    "updated_at": "2026-08-23T16:04:28+00:00",
     "schema_version": 13
   },
   "salat_krupavy_crispy": {
@@ -5685,8 +5736,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -5810,8 +5861,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -5935,8 +5986,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -6060,8 +6111,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -6185,8 +6236,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -6306,126 +6357,103 @@
   "salat_rodinny_mix": {
     "status": "found",
     "query": "lettuce",
-    "source": "USDA FoodData Central",
-    "source_product": "Lettuce, cos or romaine, raw",
+    "source": "Open Food Facts",
+    "source_product": "Sweet and Crunchy Salad",
     "values": {
-      "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+      "Calories": {
+        "value": 25.0,
+        "unit": "kcal"
       },
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
+      "Energy": {
+        "value": 102.2,
+        "unit": "kJ"
       },
-      "Vitamin B9": {
-        "value": 136.0,
-        "unit": "ug"
-      },
-      "Omega-9 fat": {
-        "value": 0.01,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.05,
+      "Protein": {
+        "value": 0.6,
         "unit": "g"
       },
       "Carbs": {
-        "value": 3.29,
+        "value": 3.1,
         "unit": "g"
-      },
-      "Calories": {
-        "value": 17.21,
-        "unit": "kcal"
-      },
-      "Sodium": {
-        "value": 8.0,
-        "unit": "mg"
-      },
-      "Vitamin C": {
-        "value": 4.0,
-        "unit": "mg"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin E": {
-        "value": 0.13,
-        "unit": "mg"
       },
       "Fat": {
-        "value": 0.3,
+        "value": 0.5,
         "unit": "g"
       },
-      "Vitamin B3": {
-        "value": 0.31,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.14,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 33.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 247.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.23,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.4,
-        "unit": "ug"
-      },
-      "Copper": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.15,
-        "unit": "mg"
-      },
-      "Vitamin K": {
-        "value": 102.0,
-        "unit": "ug"
-      },
-      "Vitamin B1": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.07,
-        "unit": "mg"
+      "Saturated fat": {
+        "value": 0.1,
+        "unit": "g"
       },
       "Fiber": {
-        "value": 2.1,
+        "value": 2.6,
         "unit": "g"
       },
+      "Sugars": {
+        "value": 2.8,
+        "unit": "g"
+      },
+      "Salt": {
+        "value": 0.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.05,
+        "unit": "g"
+      },
+      "Calcium": {
+        "value": 0.06,
+        "unit": "mg"
+      },
       "Iron": {
-        "value": 0.97,
+        "value": 0.0,
         "unit": "mg"
       },
       "Magnesium": {
-        "value": 14.0,
+        "value": 0.02,
         "unit": "mg"
       },
-      "Phosphorus": {
-        "value": 30.0,
+      "Vitamin C": {
+        "value": 0.01,
         "unit": "mg"
       },
-      "Protein": {
-        "value": 1.23,
-        "unit": "g"
+      "Potassium": {
+        "value": 0.5,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Selenium": {
+        "value": 0.0,
+        "unit": "µg"
+      },
+      "Vitamin E": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B1": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.0,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.0,
+        "unit": "mg"
       }
     },
+    "updated_at": "2026-08-23T16:04:38+00:00",
     "schema_version": 13
   },
   "salat_s_cervenou_repou": {
@@ -6435,8 +6463,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -6765,8 +6793,8 @@
         "unit": "mg"
       },
       "Vitamin A": {
-        "value": 345.0,
-        "unit": "iu"
+        "value": 17.0,
+        "unit": "ug"
       },
       "Copper": {
         "value": 0.06,
@@ -6937,65 +6965,83 @@
     "query": "red bell pepper raw",
     "source": "USDA FoodData Central",
     "source_product": "Peppers, sweet, red, raw",
+    "updated_at": "2026-08-23T16:08:36+00:00",
+    "schema_version": 13,
     "values": {
-      "Fiber": {
-        "value": 2.1,
-        "unit": "g"
-      },
-      "Vitamin B9": {
-        "value": 46.0,
-        "unit": "ug"
-      },
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
-      },
       "Calories": {
         "value": 26.53,
         "unit": "kcal"
       },
-      "Omega-9 fat": {
-        "value": 0.0,
+      "Protein": {
+        "value": 0.99,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 6.03,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.1,
         "unit": "g"
       },
       "Omega-6 fat": {
         "value": 0.1,
         "unit": "g"
       },
-      "Vitamin C": {
-        "value": 128.0,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 4.0,
-        "unit": "mg"
-      },
       "Vitamin A": {
-        "value": 3130.0,
-        "unit": "iu"
+        "value": 157.0,
+        "unit": "ug"
       },
-      "Carbs": {
-        "value": 6.03,
-        "unit": "g"
-      },
-      "Vitamin E": {
-        "value": 1.58,
+      "Vitamin B1": {
+        "value": 0.05,
         "unit": "mg"
+      },
+      "Vitamin B2": {
+        "value": 0.09,
+        "unit": "mg"
+      },
+      "Vitamin B3": {
+        "value": 0.98,
+        "unit": "mg"
+      },
+      "Vitamin B5": {
+        "value": 0.32,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.29,
+        "unit": "mg"
+      },
+      "Vitamin B9": {
+        "value": 46.0,
+        "unit": "ug"
       },
       "Vitamin B12": {
         "value": 0.0,
         "unit": "ug"
       },
+      "Vitamin C": {
+        "value": 128.0,
+        "unit": "mg"
+      },
+      "Vitamin D": {
+        "value": 0.0,
+        "unit": "ug"
+      },
+      "Vitamin E": {
+        "value": 1.58,
+        "unit": "mg"
+      },
       "Vitamin K": {
         "value": 4.9,
         "unit": "ug"
       },
-      "Manganese": {
-        "value": 0.11,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.32,
+      "Calcium": {
+        "value": 7.0,
         "unit": "mg"
       },
       "Copper": {
@@ -7010,52 +7056,31 @@
         "value": 12.0,
         "unit": "mg"
       },
+      "Manganese": {
+        "value": 0.11,
+        "unit": "mg"
+      },
       "Phosphorus": {
         "value": 26.0,
-        "unit": "mg"
-      },
-      "Protein": {
-        "value": 0.99,
-        "unit": "g"
-      },
-      "Vitamin B1": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.09,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 7.0,
         "unit": "mg"
       },
       "Potassium": {
         "value": 211.0,
         "unit": "mg"
       },
-      "Zinc": {
-        "value": 0.25,
-        "unit": "mg"
-      },
       "Selenium": {
         "value": 0.1,
         "unit": "ug"
       },
-      "Vitamin B3": {
-        "value": 0.98,
+      "Sodium": {
+        "value": 4.0,
         "unit": "mg"
       },
-      "Vitamin B6": {
-        "value": 0.29,
+      "Zinc": {
+        "value": 0.25,
         "unit": "mg"
-      },
-      "Fat": {
-        "value": 0.3,
-        "unit": "g"
       }
-    },
-    "schema_version": 13
+    }
   },
   "brokolice_menu_inspirace": {
     "status": "found",
@@ -7318,8 +7343,8 @@
     "source_product": "Lettuce, cos or romaine, raw",
     "values": {
       "Vitamin A": {
-        "value": 8710.0,
-        "unit": "iu"
+        "value": 436.0,
+        "unit": "ug"
       },
       "Vitamin D": {
         "value": 0.0,
@@ -7862,8 +7887,8 @@
         "unit": "g"
       },
       "Vitamin A": {
-        "value": 50.0,
-        "unit": "iu"
+        "value": 2.0,
+        "unit": "ug"
       },
       "Iron": {
         "value": 0.6,
@@ -8039,8 +8064,8 @@
         "unit": "kcal"
       },
       "Vitamin A": {
-        "value": 16700.0,
-        "unit": "iu"
+        "value": 835.0,
+        "unit": "ug"
       },
       "Fiber": {
         "value": 2.8,
@@ -8148,8 +8173,8 @@
         "unit": "ug"
       },
       "Vitamin A": {
-        "value": 370.0,
-        "unit": "iu"
+        "value": 18.0,
+        "unit": "ug"
       },
       "Calories": {
         "value": 20.0,
