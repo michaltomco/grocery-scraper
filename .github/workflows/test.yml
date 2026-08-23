@@ -1,0 +1,16 @@
+name: Test grocery scraper
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Run regression suite
+        run: uv run python -m unittest discover -s tests -v

@@ -402,8 +402,14 @@ def is_active_offer(date_range: str, today: date, stale_horizon_days: int = 14) 
     so the "what's current" rule lives in exactly one place.
     """
     start_iso, end_iso = parsed_date_range(date_range)
-    end = date.fromisoformat(end_iso) if end_iso else None
-    start = date.fromisoformat(start_iso) if start_iso else None
+    try:
+        end = date.fromisoformat(end_iso) if end_iso else None
+    except ValueError:
+        end = None
+    try:
+        start = date.fromisoformat(start_iso) if start_iso else None
+    except ValueError:
+        start = None
     if end is None:
         return True
     stale_horizon = today + timedelta(days=stale_horizon_days)

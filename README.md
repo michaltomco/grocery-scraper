@@ -24,6 +24,17 @@ Each scraper refreshes its store snapshot (`albert.csv`, `lidl.csv`, or
 refreshes `all_discounts.csv` from the three snapshots. All files are written
 at the repository root, regardless of the current working directory.
 
+## Tests
+
+The regression suite uses Python's built-in `unittest` module, so no separate
+test runner is required:
+
+```bash
+uv run python -m unittest discover -s tests -v
+```
+
+GitHub Actions runs the same command on every push and pull request.
+
 ## CSV schema
 
 All output CSVs use the same columns, in this order:

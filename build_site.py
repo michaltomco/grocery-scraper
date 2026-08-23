@@ -705,7 +705,7 @@ def build() -> str:
         if is_true(r.get("loyalty_required", "")) and lp is not None:
             disp_val = lp
         s, en = parsed_date_range(r.get("date_range", ""))
-        end = date.fromisoformat(en) if en else None
+        end = _iso(en)
         existing = current_entries.get((product, store))
         if existing is None or (end is not None and (existing["_end"] is None or end > existing["_end"])):
             current_entries[(product, store)] = {
@@ -813,9 +813,10 @@ def build() -> str:
             color = store_color(e["store"])
             dr = e.get("date_range", "") or ""
             s, en = parsed_date_range(dr)
-            if s and (union_start is None or s < union_start):
+            start_date, end_date = _iso(s), _iso(en)
+            if start_date and (union_start is None or s < union_start):
                 union_start = s
-            if en and (union_end is None or en > union_end):
+            if end_date and (union_end is None or en > union_end):
                 union_end = en
             # Price cell is only meaningful when we have a parsed value.
             v = e["val"]
@@ -824,14 +825,13 @@ def build() -> str:
                     f'<div class="ppcell" data-store="{esc(e["store"])}">'
                     f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
                 )
-            # Date cell: render whenever the entry has a date range, independent
-            # of whether the price parsed — a discount date is valid data on its own.
-            if s and en:
-                active_start = date.fromisoformat(s)
-                active_end = date.fromisoformat(en)
+            # Render date cells only for a fully parseable range. A malformed
+            # upstream value remains visible as a price row rather than crashing
+            # the static-site build.
+            if start_date and end_date:
                 day_items = []
                 for day_index, day in enumerate(timeline_days):
-                    active = active_start <= day <= active_end
+                    active = start_date <= day <= end_date
                     classes = "day"
                     if active:
                         classes += " active"
@@ -842,8 +842,8 @@ def build() -> str:
                 day_html = group_weeks(day_items)
                 date_cells.append(
                     f'<div class="dcell" data-store="{esc(e["store"])}" '
-                    f'data-s="{esc(s or "")}" data-e="{esc(en or "")}" '
-                    f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr)) or "no dates"}" '
+                    f'data-s="{esc(s)}" data-e="{esc(en)}" '
+                    f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr))}" '
                     f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
                 )
         spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
@@ -949,9 +949,7 @@ def build() -> str:
     all_ends = []
     for e in current_entries.values():
         s, en = parsed_date_range(e.get("date_range", ""))
-        for d in (s, en):
-            if d:
-                all_ends.append(d)
+        all_ends.extend(d for d in (s, en) if _iso(d))
     date_min = today_iso
     date_max = max([today_iso] + all_ends) if all_ends else today_iso
     # Slider uses integer day offsets: 0 = today. The PICKER spans the full
