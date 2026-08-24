@@ -165,10 +165,11 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
-
-# mypy
+# generated dashboard: generated HTML stays local, but normalized product
+# thumbnails are versioned so GitHub Pages does not rely on Kupi CDN downloads.
+/site/*
+!/site/img/
+!/site/img/**
 .mypy_cache/
 .dmypy.json
 dmypy.json
@@ -217,8 +218,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-# generated dashboard
-site/
-
-site/img/
