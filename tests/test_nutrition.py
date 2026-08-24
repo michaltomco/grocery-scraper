@@ -157,10 +157,21 @@ class NutritionExtractionTests(unittest.TestCase):
         with patch.object(nutrition, "fetch_usda_nutrition", side_effect=[{}, usda]), patch.object(
             nutrition.requests, "get", return_value=Response()
         ):
-            result = nutrition.fetch_nutrition("salat_rodinny_mix")
+            result = nutrition.fetch_nutrition("salat_little_gem")
 
         self.assertEqual(result["source"], "USDA FoodData Central")
         self.assertEqual(result["values"]["Calories"], {"value": 17, "unit": "kcal"})
+
+    def test_ambiguous_salad_mix_is_marked_unavailable_without_lookup(self) -> None:
+        with patch.object(nutrition, "fetch_usda_nutrition") as fetch:
+            result = nutrition.fetch_nutrition("salat_baby_listy_mix")
+
+        fetch.assert_not_called()
+        self.assertEqual(result["status"], "not_found")
+        self.assertEqual(result["values"], {})
+
+    def test_polnicek_resolves_to_lambs_lettuce(self) -> None:
+        self.assertEqual(nutrition.resolve_nutrition_query("salat_polnicek"), "lamb lettuce raw")
 
 
 class NutritionCacheTests(unittest.TestCase):
