@@ -1,5 +1,6 @@
 """Tests for data-to-HTML behavior in the static dashboard builder."""
 
+import csv
 from datetime import date, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -7,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 import build_site
+from kupi_history import KUPI_PRICE_HISTORY_FIELDS
 from scrapers.common import FIELDNAMES, write_csv
 
 
@@ -173,6 +175,54 @@ class DashboardBuilderTests(unittest.TestCase):
 
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
         self.assertIn("139.60 / kg", html)
+
+
+class HistoricalTrendTests(unittest.TestCase):
+    def test_kupi_graph_lowest_series_normalizes_units_and_excludes_future_dates(self) -> None:
+        today = date.today()
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "kupi_price_history.csv"
+            rows = [
+                {
+                    "product_id": "2", "canonical_product_name": "banany", "product_name": "Banány",
+                    "observed_date": (today - timedelta(days=2)).isoformat(), "series": "lowest_discount",
+                    "price": "30", "currency": "Kč", "unit": "1 kg", "store_logo_url": "", "source": "kupi_graph",
+                },
+                {
+                    "product_id": "2", "canonical_product_name": "banany", "product_name": "Banány",
+                    "observed_date": (today - timedelta(days=1)).isoformat(), "series": "lowest_discount",
+                    "price": "2.5", "currency": "Kč", "unit": "100 g", "store_logo_url": "", "source": "kupi_graph",
+                },
+                {
+                    "product_id": "2", "canonical_product_name": "banany", "product_name": "Banány",
+                    "observed_date": (today + timedelta(days=1)).isoformat(), "series": "lowest_discount",
+                    "price": "10", "currency": "Kč", "unit": "1 kg", "store_logo_url": "", "source": "kupi_graph",
+                },
+                {
+                    "product_id": "2", "canonical_product_name": "banany", "product_name": "Banány",
+                    "observed_date": (today - timedelta(days=1)).isoformat(), "series": "regular_price",
+                    "price": "40", "currency": "Kč", "unit": "1 kg", "store_logo_url": "", "source": "kupi_graph",
+                },
+            ]
+            with path.open("w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=KUPI_PRICE_HISTORY_FIELDS)
+                writer.writeheader()
+                writer.writerows(rows)
+            series = build_site.kupi_graph_lowest_series(path, today)
+
+        self.assertEqual(series[("banany", "kg")][today - timedelta(days=2)], 30.0)
+        self.assertEqual(series[("banany", "kg")][today - timedelta(days=1)], 25.0)
+        self.assertNotIn(today + timedelta(days=1), series[("banany", "kg")])
+
+    def test_local_daily_price_overrides_kupi_graph_price_for_same_day(self) -> None:
+        day = date.today()
+        graph = {day - timedelta(days=1): 30.0, day: 25.0}
+        local = {day: 20.0}
+
+        merged = build_site.merge_daily_trends(graph, local)
+
+        self.assertEqual(merged[day - timedelta(days=1)], 30.0)
+        self.assertEqual(merged[day], 20.0)
 
 
 class SiteHelperTests(unittest.TestCase):

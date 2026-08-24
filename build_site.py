@@ -38,6 +38,7 @@ SITE_DIR = ROOT / "site"
 IMG_DIR = SITE_DIR / "img"
 PRODUCTS_DIR = SITE_DIR / "products"
 INDEX_HTML = SITE_DIR / "index.html"
+KUPI_PRICE_HISTORY_CSV = ROOT / "kupi_price_history.csv"
 
 # Download each product image exactly once, keyed by product_id. Already-cached
 # files are never re-fetched. Each image is normalized onto a square white
@@ -109,6 +110,64 @@ def cache_image(product_id: str, image_url: str) -> str:
             except OSError:
                 pass
     return f"img/{dest.name}"
+
+
+def normalize_kupi_graph_price(price: str, unit: str) -> tuple[float | None, str]:
+    """Normalize a Kupi graph price to the dashboard's kg/piece units."""
+    value = number(price)
+    normalized_unit = " ".join(str(unit).lower().split())
+    if value is None:
+        return None, ""
+    if normalized_unit == "1 kg":
+        return value, "kg"
+    if normalized_unit == "100 g":
+        return value * 10, "kg"
+    if normalized_unit in {"1 ks", "1 pc", "1 piece"}:
+        return value, "ks"
+    return None, ""
+
+
+def kupi_graph_lowest_series(
+    path: Path = KUPI_PRICE_HISTORY_CSV,
+    today: date | None = None,
+) -> dict[tuple[str, str], dict[date, float]]:
+    """Load Kupi's historical lowest-discount graph as normalized daily prices.
+
+    Future graph points are excluded because the dashboard's offer timeline owns
+    future pricing; graph rows are only historical context for the sparkline.
+    """
+    today = today or date.today()
+    output: dict[tuple[str, str], dict[date, float]] = defaultdict(dict)
+    if not path.exists():
+        return output
+    with path.open(newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row.get("series") != "lowest_discount":
+                continue
+            try:
+                observed = date.fromisoformat(row.get("observed_date", ""))
+            except ValueError:
+                continue
+            if observed > today:
+                continue
+            value, unit = normalize_kupi_graph_price(row.get("price", ""), row.get("unit", ""))
+            if value is None:
+                continue
+            key = (row.get("canonical_product_name", ""), unit)
+            previous = output[key].get(observed)
+            if previous is None or value < previous:
+                output[key][observed] = value
+    return output
+
+
+def merge_daily_trends(
+    graph_days: dict[date, float],
+    local_days: dict[date, float],
+) -> dict[date, float]:
+    """Overlay exact local observations onto Kupi's aggregate historical graph."""
+    merged = dict(graph_days)
+    merged.update(local_days)
+    return merged
 
 
 def normalized(row: dict) -> tuple[float | None, str]:
@@ -688,7 +747,7 @@ def build() -> str:
     # deduplicate only identical offer identities—not by (product, store)—or an
     # overlapping current/next-week offer from the same store disappears.
     current_entries: dict[tuple[str, ...], dict] = {}
-    series: dict[tuple[str, str], list[tuple[datetime, float]]] = defaultdict(list)
+    series: dict[tuple[str, str, str], list[tuple[datetime, float]]] = defaultdict(list)
     stores_seen: set[str] = set()
     for r in rows:
         store = r.get("store", "")
@@ -699,8 +758,8 @@ def build() -> str:
         stores_seen.add(store)
         val, unit = normalized(r)
         ts = parse_ts(r.get("scraped_at", ""))
-        if val is not None:
-            series[(product, store)].append((ts, val))
+        if val is not None and unit:
+            series[(product, store, unit)].append((ts, val))
         if not is_active_offer(r.get("date_range", ""), today_date):
             continue
         lp = number(r.get("loyalty_price", ""))
@@ -749,26 +808,37 @@ def build() -> str:
         if existing is None or entry["_scraped_at"] > existing["_scraped_at"]:
             current_entries[visual_key] = entry
 
-    # Combined per-product trend: for each calendar day, the LOWEST price across
-    # all stores (so the single product sparkline shows the best available deal
-    # over time). Keyed by product -> sorted list of (datetime, float).
-    day_min: dict[str, dict[date, float]] = defaultdict(dict)
-    for (product, _store), pts in series.items():
-        for ts, val in pts:
-            d = ts.date()
-            cur = day_min[product].get(d)
-            if cur is None or val < cur:
-                day_min[product][d] = val
-    lowest_series: dict[str, list[tuple[datetime, float]]] = {}
-    for product, dm in day_min.items():
-        lowest_series[product] = sorted(
-            [(datetime(d.year, d.month, d.day), v) for d, v in dm.items()],
-            key=lambda p: p[0],
-        )
-
     products: dict[str, list[dict]] = defaultdict(list)
     for e in current_entries.values():
         products[e["product"]].append(e)
+
+    # Combine local exact observations with Kupi's product-level graph history.
+    # Both are unit-aware: a canonical product can have kg and piece offers, but
+    # a single sparkline must never mix the two price bases.
+    local_day_min: dict[tuple[str, str], dict[date, float]] = defaultdict(dict)
+    for (product, _store, unit), pts in series.items():
+        for ts, val in pts:
+            observed = ts.date()
+            current = local_day_min[(product, unit)].get(observed)
+            if current is None or val < current:
+                local_day_min[(product, unit)][observed] = val
+    graph_day_min = kupi_graph_lowest_series(today=today_date)
+    lowest_series: dict[str, list[tuple[datetime, float]]] = {}
+    for product, entries in products.items():
+        active_units = {entry["unit"] for entry in entries if entry.get("unit")}
+        trend_unit = "kg" if "kg" in active_units else ("ks" if "ks" in active_units else "")
+        if not trend_unit:
+            continue
+        daily = merge_daily_trends(
+            graph_day_min.get((product, trend_unit), {}),
+            local_day_min.get((product, trend_unit), {}),
+        )
+        if daily:
+            lowest_series[product] = sorted(
+                [(datetime(day.year, day.month, day.day), value) for day, value in daily.items()],
+                key=lambda point: point[0],
+            )
+
     write_product_pages(products, nutrition)
 
     # Store brand colors/logos come from the single STORE_BRAND registry in
