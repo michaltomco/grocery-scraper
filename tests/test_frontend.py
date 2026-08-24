@@ -171,6 +171,26 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
         self.assert_browser_clean()
 
+    def test_mobile_theme_controls_left_and_action_controls_right_on_one_row(self) -> None:
+        mobile = self.browser.new_context(viewport={"width": 390, "height": 844})
+        page = mobile.new_page()
+        errors: list[str] = []
+        page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+        page.on("pageerror", lambda exception: errors.append(str(exception)))
+        page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        controls = page.locator(".controls").bounding_box()
+        theme = page.locator("#themeSwitch").bounding_box()
+        actions = page.locator(".toggles").bounding_box()
+
+        self.assertIsNotNone(controls)
+        self.assertIsNotNone(theme)
+        self.assertIsNotNone(actions)
+        self.assertLess(abs(theme["x"] - controls["x"]), 2)
+        self.assertLess(abs((actions["x"] + actions["width"]) - (controls["x"] + controls["width"])), 2)
+        self.assertLess(abs(theme["y"] - actions["y"]), 2)
+        self.assertEqual(errors, [])
+        mobile.close()
+
     def test_product_detail_nutrition_mode_persists(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         href = self.page.locator("#t a.product-link").first.get_attribute("href")

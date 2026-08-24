@@ -1239,8 +1239,9 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 @media (max-width:700px) {{
   body {{ padding:12px; }}
   .topbar h1 {{ font-size:1.25rem; }}
-  .controls {{ width:100%; flex-wrap:wrap; justify-content:space-between; margin-left:0; }}
-  .theme, .toggles {{ flex-wrap:wrap; }}
+  .controls {{ width:100%; flex-wrap:nowrap; justify-content:space-between; gap:4px; margin-left:0; }}
+  .theme, .toggles {{ flex-wrap:nowrap; gap:4px; }}
+  .theme button, .toggle {{ padding:4px 6px; font-size:.72rem; white-space:nowrap; }}
   .legend {{ flex-wrap:wrap; gap:6px; }}
   .page > .card {{ overflow-x:auto; }}
   #t, #rankingTable {{ min-width:760px; }}
