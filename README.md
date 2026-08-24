@@ -43,6 +43,22 @@ uv run playwright install chromium
 GitHub Actions installs Chromium and runs the same test command on every push
 and pull request.
 
+## Kupi historical price trends
+
+`history.csv` contains exact store offers observed by this scraper. For earlier
+history, Kupi product pages expose a separate daily chart of aggregate prices.
+The backfill stores those graph points in `kupi_price_history.csv` so they are
+not confused with exact store-level offers:
+
+```bash
+uv run python kupi_history.py
+```
+
+The graph CSV contains Kupi's lowest promotional price, average promotional
+price, and regular price series, with `source=kupi_graph`. It can cover roughly
+three months depending on the product, but it is not a complete historical list
+of every store's individual offer.
+
 ## CSV schema
 
 All output CSVs use the same columns, in this order:
