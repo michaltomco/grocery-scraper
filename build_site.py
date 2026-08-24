@@ -180,9 +180,17 @@ def rda_amount_in_unit(label: str, unit: str) -> float | None:
 
 
 def parse_ts(value: str) -> datetime:
+    text = value.strip()
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        if parsed.tzinfo is not None:
+            return parsed.astimezone(timezone.utc).replace(tzinfo=None)
+        return parsed
+    except ValueError:
+        pass
     for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M"):
         try:
-            return datetime.strptime(value.strip(), fmt)
+            return datetime.strptime(text, fmt)
         except ValueError:
             continue
     return datetime.min
@@ -675,14 +683,11 @@ def build() -> str:
     last_run = all_scrape_dates[0] if all_scrape_dates else ""
     has_history = len(all_scrape_dates) > 1
 
-    # ACTIVE-WINDOW model (replaces the old single-"current run" day):
-    # show every discount that is still valid today — not just rows from the
-    # one global latest scrape day. Stores finish their daily cron on different
-    # calendar days, and Kupi flyers are forward-dated, so a product scraped a
-    # few days ago with a range covering today is a current offer and must be
-    # shown. For each (product, store) keep the still-active entry with the
-    # *latest* end date (longest-valid offer wins).
-    current_entries: dict[tuple[str, str], dict] = {}
+    # ACTIVE-WINDOW model: show every distinct discount that is valid today or
+    # starts within the next two weeks. History has one copy per scrape day, so
+    # deduplicate only identical offer identities—not by (product, store)—or an
+    # overlapping current/next-week offer from the same store disappears.
+    current_entries: dict[tuple[str, ...], dict] = {}
     series: dict[tuple[str, str], list[tuple[datetime, float]]] = defaultdict(list)
     stores_seen: set[str] = set()
     for r in rows:
@@ -696,26 +701,53 @@ def build() -> str:
         ts = parse_ts(r.get("scraped_at", ""))
         if val is not None:
             series[(product, store)].append((ts, val))
-        # Is this discount still active (end date >= today, not hopelessly stale)?
         if not is_active_offer(r.get("date_range", ""), today_date):
             continue
-        # keep the most-valid (latest-ending) still-active entry per store
         lp = number(r.get("loyalty_price", ""))
-        disp_val = val
-        if is_true(r.get("loyalty_required", "")) and lp is not None:
-            disp_val = lp
+        disp_val = lp if is_true(r.get("loyalty_required", "")) and lp is not None else val
         s, en = parsed_date_range(r.get("date_range", ""))
         end = _iso(en)
-        existing = current_entries.get((product, store))
-        if existing is None or (end is not None and (existing["_end"] is None or end > existing["_end"])):
-            current_entries[(product, store)] = {
-                "product": product, "store": store,
+        source_identity = r.get("product_id", "") or r.get("product_name", "")
+        offer_key = (
+            product,
+            store,
+            source_identity,
+            str(disp_val if disp_val is not None else ""),
+            unit,
+        )
+        existing = current_entries.get(offer_key)
+        if existing is None or ts > existing["_scraped_at"]:
+            current_entries[offer_key] = {
+                "product": product,
+                "store": store,
                 "val": disp_val if disp_val is not None else val,
-                "unit": unit, "date_range": r.get("date_range", ""), "raw_name": r.get("product_name", product),
+                "unit": unit,
+                "date_range": r.get("date_range", ""),
+                "raw_name": r.get("product_name", product),
                 "product_id": r.get("product_id", ""),
                 "image_url": r.get("image_url", ""),
                 "_end": end,
+                "_scraped_at": ts,
             }
+
+    # Main-page rows group product variants under one canonical name. After
+    # preserving distinct source offers above, collapse only visually identical
+    # lines (same canonical product, store, price, unit, and date range). This
+    # keeps genuinely different future prices/windows while avoiding three
+    # indistinguishable "Rajčata cherry · Albert · 139.60/kg" rows.
+    source_entries = current_entries
+    current_entries = {}
+    for entry in source_entries.values():
+        visual_key = (
+            entry["product"],
+            entry["store"],
+            str(entry["val"] if entry["val"] is not None else ""),
+            entry["unit"],
+            entry["date_range"],
+        )
+        existing = current_entries.get(visual_key)
+        if existing is None or entry["_scraped_at"] > existing["_scraped_at"]:
+            current_entries[visual_key] = entry
 
     # Combined per-product trend: for each calendar day, the LOWEST price across
     # all stores (so the single product sparkline shows the best available deal
@@ -735,8 +767,8 @@ def build() -> str:
         )
 
     products: dict[str, list[dict]] = defaultdict(list)
-    for (product, store), e in current_entries.items():
-        products[product].append(e)
+    for e in current_entries.values():
+        products[e["product"]].append(e)
     write_product_pages(products, nutrition)
 
     # Store brand colors/logos come from the single STORE_BRAND registry in
@@ -808,7 +840,8 @@ def build() -> str:
         pp_cells = []
         date_cells = []
         union_start, union_end = None, None
-        for e in entries:
+        for entry_index, e in enumerate(entries):
+            line_id = f"{product}:{entry_index}"
             logo = store_logo(e["store"])
             color = store_color(e["store"])
             dr = e.get("date_range", "") or ""
@@ -822,7 +855,7 @@ def build() -> str:
             v = e["val"]
             if v is not None:
                 pp_cells.append(
-                    f'<div class="ppcell" data-store="{esc(e["store"])}">'
+                    f'<div class="ppcell" data-store="{esc(e["store"])}" data-line="{esc(line_id)}">'
                     f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
@@ -841,7 +874,7 @@ def build() -> str:
                     ))
                 day_html = group_weeks(day_items)
                 date_cells.append(
-                    f'<div class="dcell" data-store="{esc(e["store"])}" '
+                    f'<div class="dcell" data-store="{esc(e["store"])}" data-line="{esc(line_id)}" '
                     f'data-s="{esc(s)}" data-e="{esc(en)}" '
                     f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr))}" '
                     f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
@@ -1298,15 +1331,15 @@ function applyFilters() {{
   }});
 
   rows.forEach(r => {{
-    // Pair each store line's price cell (.ppcell) and date cell (.dcell) so we
-    // can show/hide them together — that keeps the Price column and the date
-    // column aligned when individual lines drop out.
+    // Pair each rendered offer's price cell (.ppcell) and date cell (.dcell)
+    // by data-line, not by store. A store can now have several overlapping
+    // discounts for the same product inside the two-week window.
     const lines = [];
-    const ppByStore = {{}};
-    r.querySelectorAll('.ppcell').forEach(c => {{ ppByStore[c.dataset.store] = c; }});
+    const ppByLine = {{}};
+    r.querySelectorAll('.ppcell').forEach(c => {{ ppByLine[c.dataset.line] = c; }});
     r.querySelectorAll('.dcell').forEach(c => {{
       const st = c.dataset.store;
-      lines.push({{ store: st, pp: ppByStore[st] || null, dc: c }});
+      lines.push({{ store: st, pp: ppByLine[c.dataset.line] || null, dc: c }});
     }});
     let visibleStores = 0;
     let anyLineShown = false;

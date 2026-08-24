@@ -87,6 +87,81 @@ class NutritionExtractionTests(unittest.TestCase):
         self.assertEqual(result["status"], "not_found")
         self.assertEqual(result["values"], {})
 
+    def test_usda_rejects_kiwi_juice_for_kiwi_query(self) -> None:
+        class Response:
+            def raise_for_status(self) -> None:
+                pass
+
+            def json(self) -> dict:
+                return {
+                    "foods": [
+                        {
+                            "description": "Beverages, Kiwi Strawberry Juice Drink",
+                            "foodNutrients": [
+                                {"nutrientName": "Energy", "value": 50, "unitName": "KCAL"},
+                            ],
+                        }
+                    ]
+                }
+
+        with patch.object(nutrition.requests, "get", return_value=Response()):
+            self.assertEqual(nutrition.fetch_usda_nutrition("kiwi"), {})
+
+    def test_onion_query_rejects_unrelated_falafel_fallback(self) -> None:
+        """A candidate without the queried produce term cannot supply its macros."""
+        class Response:
+            def raise_for_status(self) -> None:
+                pass
+
+            def json(self) -> dict:
+                return {
+                    "products": [
+                        {
+                            "product_name": "Middle Eastern Falafels",
+                            "categories_tags": ["en:plant-based-foods"],
+                            "nutriments": {"energy-kcal_100g": 221, "fat_100g": 9.9},
+                        }
+                    ]
+                }
+
+        with patch.object(nutrition, "fetch_usda_nutrition", return_value={}), patch.object(
+            nutrition.requests, "get", return_value=Response()
+        ):
+            result = nutrition.fetch_nutrition("cibule_bio_nature_s_promise")
+
+        self.assertEqual(result["status"], "not_found")
+        self.assertEqual(result["values"], {})
+
+    def test_usda_second_pass_replaces_open_food_macros(self) -> None:
+        """When USDA recovers, generic produce must not retain fallback macros."""
+        class Response:
+            def raise_for_status(self) -> None:
+                pass
+
+            def json(self) -> dict:
+                return {
+                    "products": [
+                        {
+                            "product_name": "Lettuce, Cos Or Romaine, Raw",
+                            "categories_tags": ["en:lettuce"],
+                            "nutriments": {"energy-kcal_100g": 1, "fat_100g": 0.02},
+                        }
+                    ]
+                }
+
+        usda = {
+            "source": "USDA FoodData Central",
+            "source_product": "Lettuce, cos or romaine, raw",
+            "values": {"Calories": {"value": 17, "unit": "kcal"}, "Fat": {"value": 0.3, "unit": "g"}},
+        }
+        with patch.object(nutrition, "fetch_usda_nutrition", side_effect=[{}, usda]), patch.object(
+            nutrition.requests, "get", return_value=Response()
+        ):
+            result = nutrition.fetch_nutrition("salat_rodinny_mix")
+
+        self.assertEqual(result["source"], "USDA FoodData Central")
+        self.assertEqual(result["values"]["Calories"], {"value": 17, "unit": "kcal"})
+
 
 class NutritionCacheTests(unittest.TestCase):
     def test_get_many_keeps_current_successful_entries_without_fetching(self) -> None:
@@ -98,6 +173,7 @@ class NutritionCacheTests(unittest.TestCase):
                         "jablka": {
                             "status": "found",
                             "schema_version": nutrition.CACHE_VERSION,
+                            "query": "apple",
                             "values": {"Calories": {"value": 52, "unit": "kcal"}},
                         }
                     }
@@ -212,6 +288,87 @@ class NutritionCacheTests(unittest.TestCase):
 
         fetch.assert_called_once_with("limety")
         self.assertEqual(result["limety"]["status"], "not_found")
+
+    def test_get_many_refreshes_open_food_entry_that_does_not_match_query(self) -> None:
+        with TemporaryDirectory() as directory:
+            cache = Path(directory) / "nutrition_cache.json"
+            cache.write_text(
+                json.dumps(
+                    {
+                        "cibule_bio_nature_s_promise": {
+                            "status": "found",
+                            "schema_version": nutrition.CACHE_VERSION,
+                            "query": "onion",
+                            "source": "Open Food Facts + USDA FoodData Central",
+                            "source_product": "Middle Eastern Falafels",
+                            "values": {"Calories": {"value": 221, "unit": "kcal"}},
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            replacement = {"status": "found", "schema_version": nutrition.CACHE_VERSION, "values": {}}
+            with patch.object(nutrition, "CACHE_PATH", cache), patch.object(
+                nutrition, "fetch_nutrition", return_value=replacement
+            ) as fetch:
+                result = nutrition.get_many({"cibule_bio_nature_s_promise"})
+
+        fetch.assert_called_once_with("cibule_bio_nature_s_promise")
+        self.assertEqual(result["cibule_bio_nature_s_promise"]["status"], "found")
+
+    def test_get_many_refreshes_usda_juice_entry_for_raw_kiwi(self) -> None:
+        with TemporaryDirectory() as directory:
+            cache = Path(directory) / "nutrition_cache.json"
+            cache.write_text(
+                json.dumps(
+                    {
+                        "kiwi": {
+                            "status": "found",
+                            "schema_version": nutrition.CACHE_VERSION,
+                            "query": "kiwi",
+                            "source": "USDA FoodData Central",
+                            "source_product": "Beverages, Kiwi Strawberry Juice Drink",
+                            "values": {"Calories": {"value": 50, "unit": "kcal"}},
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            replacement = {"status": "found", "schema_version": nutrition.CACHE_VERSION, "values": {}}
+            with patch.object(nutrition, "CACHE_PATH", cache), patch.object(
+                nutrition, "fetch_nutrition", return_value=replacement
+            ) as fetch:
+                result = nutrition.get_many({"kiwi"})
+
+        fetch.assert_called_once_with("kiwi")
+        self.assertEqual(result["kiwi"]["status"], "found")
+
+    def test_get_many_refreshes_legacy_mixed_open_food_and_usda_entry(self) -> None:
+        with TemporaryDirectory() as directory:
+            cache = Path(directory) / "nutrition_cache.json"
+            cache.write_text(
+                json.dumps(
+                    {
+                        "salat_rodinny_mix": {
+                            "status": "found",
+                            "schema_version": nutrition.CACHE_VERSION,
+                            "query": "lettuce raw",
+                            "source": "Open Food Facts + USDA FoodData Central",
+                            "source_product": "Lettuce, Cos Or Romaine, Raw",
+                            "values": {"Calories": {"value": 1, "unit": "kcal"}},
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            replacement = {"status": "found", "schema_version": nutrition.CACHE_VERSION, "values": {}}
+            with patch.object(nutrition, "CACHE_PATH", cache), patch.object(
+                nutrition, "fetch_nutrition", return_value=replacement
+            ) as fetch:
+                result = nutrition.get_many({"salat_rodinny_mix"})
+
+        fetch.assert_called_once_with("salat_rodinny_mix")
+        self.assertEqual(result["salat_rodinny_mix"]["status"], "found")
 
 
 if __name__ == "__main__":

@@ -70,7 +70,7 @@ QUERY_ALIASES = {
     "bataty": "sweet potato orange flesh raw",
     "boruvky": "blueberry",
     "brambory": "potato",
-    "ananas": "pineapple",
+    "ananas": "pineapple raw",
     "citrony_bio_nature_s_promise": "lemons",
     "broskve": "peach",
     "hrozny": "grapes",
@@ -88,10 +88,24 @@ QUERY_ALIASES = {
     "rajcata": "red tomatoes",
     "rajcata_cherry": "red tomatoes",
     "rajcata_cherry_kerikova": "red tomatoes",
+    "rajcata_kerikova": "red tomatoes",
+    "meloun_vodni": "watermelon raw",
     "zampiony": "button mushrooms",
     "paprika_cervena": "red bell pepper raw",
     "paprika_bila": "white pepper raw",
-    "paprika": "green sweet pepper raw",
+    "dyne_hokkaido": "pumpkin raw",
+    "dyne_hokkaido_ceska_farma": "pumpkin raw",
+    "sojove_klicky_menu_inspirace": "mung bean sprouts raw",
+    "salat_rodinny_mix": "lettuce raw",
+}
+
+# These are multiple-ingredient or prepared products. A single generic USDA
+# ingredient profile would be more misleading than an explicit no-data state.
+UNSUPPORTED_NUTRITION_PRODUCTS = {
+    "mix_do_polevek_a_omacek_menu_inspirace",
+    "mix_farmarsky_menu_inspirace",
+    "mix_zeleninovy_menu_inspirace",
+    "mrkev_kvetak",
 }
 
 SUBSTRING_ALIASES = {
@@ -103,6 +117,18 @@ SUBSTRING_ALIASES = {
     "rukola": "arugula", "salat": "lettuce", "svest": "plum", "rajcat": "tomato",
     "paprik": "pepper", "celer": "celery", "cesnek": "garlic", "mrkev": "carrot",
 }
+
+
+def resolve_nutrition_query(product: str) -> str | None:
+    if product in UNSUPPORTED_NUTRITION_PRODUCTS:
+        return None
+    query = QUERY_ALIASES.get(product)
+    if query is not None:
+        return query
+    return next(
+        (value for key, value in SUBSTRING_ALIASES.items() if key in product),
+        product.replace("_", " "),
+    )
 
 USDA_LABELS = {
     "energy": "Calories", "protein": "Protein", "carbohydrate": "Carbs",
@@ -129,16 +155,47 @@ PROCESSED_FOOD_MARKERS = {
     "juice", "drink", "soda", "sauce", "seasoning", "powder", "candy",
     "cereal", "cookie", "crisp", "crackers", "cheese", "yogurt", "kefir",
 }
+USDA_PROCESSED_MARKERS = PROCESSED_FOOD_MARKERS | {
+    "beverage", "restaurant", "macaroni", "prepared", "mixed species",
+}
+OPTIONAL_QUERY_TERMS = {
+    "raw", "fresh", "without", "skin", "flesh", "bell", "white", "orange",
+}
 
 
-def is_raw_produce_candidate(item: dict) -> bool:
+def candidate_matches_query(text: str, query: str) -> bool:
+    terms = [
+        term for term in re.findall(r"[a-z]+", query.lower())
+        if len(term) > 2 and term not in OPTIONAL_QUERY_TERMS
+    ]
+    normalized = text.lower()
+    return not terms or all(
+        term in normalized
+        or term.rstrip("s") in normalized
+        or (len(term) > 4 and term[:5] in normalized)
+        for term in terms
+    )
+
+
+def is_raw_produce_candidate(item: dict, query: str = "") -> bool:
     text = " ".join(
         [
             str(item.get("product_name", "")),
             " ".join(str(tag) for tag in item.get("categories_tags", [])),
         ]
     ).lower()
-    return not any(marker in text for marker in PROCESSED_FOOD_MARKERS)
+    return not any(marker in text for marker in PROCESSED_FOOD_MARKERS) and candidate_matches_query(
+        text, query
+    )
+
+
+def is_raw_usda_candidate(food: dict, query: str) -> bool:
+    description = str(food.get("description", "")).lower()
+    return (
+        "raw" in description
+        and not any(marker in description for marker in USDA_PROCESSED_MARKERS)
+        and candidate_matches_query(description, query)
+    )
 
 
 def load_cache() -> dict:
@@ -191,10 +248,9 @@ def fetch_usda_nutrition(query: str) -> dict:
     except (requests.RequestException, ValueError):
         return {}
     candidates = []
-    query_terms = [term for term in re.findall(r"[a-z]+", query.lower()) if term not in {"raw", "fresh", "without", "skin"} and len(term) > 2]
     for food in foods:
         description = str(food.get("description", "")).lower()
-        if query_terms and not any(term in description or term.rstrip("s") in description or term[:4] in description for term in query_terms):
+        if not is_raw_usda_candidate(food, query):
             continue
         if "grape" in query.lower() and ("leaf" in description or "leav" in description or "tomato" in description):
             continue
@@ -249,9 +305,14 @@ def fetch_usda_nutrition(query: str) -> dict:
 
 
 def fetch_nutrition(product: str) -> dict:
-    query = QUERY_ALIASES.get(product)
+    query = resolve_nutrition_query(product)
     if query is None:
-        query = next((value for key, value in SUBSTRING_ALIASES.items() if key in product), product.replace("_", " "))
+        return {
+            "status": "not_found",
+            "query": "",
+            "values": {},
+            "schema_version": CACHE_VERSION,
+        }
     # USDA is the canonical source for generic produce profiles. Open Food
     # Facts is used only below when USDA cannot return a matching record.
     primary = fetch_usda_nutrition(query)
@@ -285,7 +346,7 @@ def fetch_nutrition(product: str) -> dict:
 
     candidates = []
     for item in products:
-        if not is_raw_produce_candidate(item):
+        if not is_raw_produce_candidate(item, query):
             continue
         values = _extract(item)
         if values:
@@ -324,13 +385,18 @@ def fetch_nutrition(product: str) -> dict:
     }
     if query in QUERY_ALIASES.values() or len(nonzero_micros) < 5:
         fallback = fetch_usda_nutrition(query)
-        values.update({
-            key: value for key, value in fallback.get("values", {}).items()
-            if key not in values or values[key].get("value", 0) == 0
-        })
         if fallback:
-            result["source"] = "Open Food Facts + USDA FoodData Central"
-            result["fallback_source_product"] = fallback.get("source_product", "")
+            # USDA is the canonical generic-produce source. Once it becomes
+            # available, replace the entire Open Food Facts fallback rather
+            # than retaining potentially incompatible branded-product macros.
+            return {
+                "status": "found",
+                "query": query,
+                "source": fallback["source"],
+                "source_product": fallback.get("source_product", ""),
+                "values": fallback["values"],
+                "schema_version": CACHE_VERSION,
+            }
     return result
 
 
@@ -347,16 +413,25 @@ def get_many(products: set[str]) -> dict:
         legacy_vitamin_a_iu = str(vitamin_a.get("unit", "")).lower() in {"iu", "i.u."}
         source = str(entry.get("source", ""))
         source_product = str(entry.get("source_product", ""))
+        expected_query = resolve_nutrition_query(product) or ""
+        legacy_query_mismatch = str(entry.get("query", "")) != expected_query
         legacy_processed_open_food = source.startswith("Open Food Facts") and not is_raw_produce_candidate(
-            {"product_name": source_product}
+            {"product_name": source_product}, str(entry.get("query", ""))
         )
+        legacy_bad_usda = source.startswith("USDA FoodData Central") and not is_raw_usda_candidate(
+            {"description": source_product}, str(entry.get("query", ""))
+        )
+        legacy_mixed_source = source == "Open Food Facts + USDA FoodData Central"
         if (
             not product
             or (
                 entry.get("schema_version") == CACHE_VERSION
                 and entry.get("status") in {"found", "not_found"}
                 and not legacy_vitamin_a_iu
+                and not legacy_query_mismatch
                 and not legacy_processed_open_food
+                and not legacy_bad_usda
+                and not legacy_mixed_source
             )
         ):
             continue

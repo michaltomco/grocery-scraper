@@ -229,6 +229,9 @@ def canonical_product_name(product_name: str) -> str:
         if "kerikova" in descriptors:
             return "rajcata_cherry"
 
+    if unique_canonical_words == ["meloun"] and "vodni" in descriptors:
+        return "meloun_vodni"
+
     if unique_canonical_words == ["paprika"]:
         if "cervena" in descriptors:
             return "paprika_cervena"
@@ -630,6 +633,12 @@ def run_kupi_scraper(config: KupiStoreConfig) -> None:
         return
 
     print(f"Found {len(products)} products")
+    if not products:
+        # A transient Kupi response or selector change must not erase the last
+        # known-good store snapshot and make the site look like the store has no
+        # produce offers. Keep the existing CSV for the next merge/website build.
+        print(f"No {config.store} products returned; keeping existing snapshot unchanged.")
+        return
     print_products_by_date(products)
     write_csv(config.csv_path, products)
     append_history(HISTORY_CSV, products)

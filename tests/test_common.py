@@ -70,6 +70,10 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(canonical_product_name("Rajčata cherry 250 g"), "rajcata_cherry")
         self.assertEqual(canonical_product_name("Rajčata keříková 250 g"), "rajcata_cherry")
 
+    def test_canonical_name_keeps_watermelon_separate_from_generic_melon(self) -> None:
+        self.assertEqual(canonical_product_name("Meloun vodní 1 kg"), "meloun_vodni")
+        self.assertEqual(canonical_product_name("Meloun cukrový 1 kg"), "meloun")
+
     def test_unit_price_normalizes_grams_and_pieces(self) -> None:
         self.assertEqual(normalize_unit_price("12,50 Kč / 100 g")["price_per_kg"], 125.0)
         self.assertEqual(normalize_unit_price("39,80 Kč / 2 ks")["price_per_piece"], 19.9)
@@ -99,6 +103,27 @@ class StoreBrandTests(unittest.TestCase):
 
 
 class HistoryAndMergeTests(unittest.TestCase):
+    def test_empty_fetch_preserves_existing_snapshot(self) -> None:
+        with TemporaryDirectory() as directory:
+            snapshot = Path(directory) / "albert.csv"
+            existing = row()
+            write_csv(snapshot, [existing])
+            config = KupiStoreConfig(
+                store="Albert",
+                url="https://example.test/albert",
+                csv_path=snapshot,
+                store_location="Prague",
+                loyalty_program="Můj Albert",
+            )
+            with patch("scrapers.common.fetch_kupi_products", return_value=[]), patch(
+                "scrapers.common.append_history"
+            ) as append:
+                from scrapers.common import run_kupi_scraper
+                run_kupi_scraper(config)
+
+            self.assertEqual(read_csv(snapshot), [{field: str(existing.get(field, "")) for field in FIELDNAMES}])
+            append.assert_not_called()
+
     def test_history_keeps_daily_rescrapes_but_deduplicates_identical_rows(self) -> None:
         with TemporaryDirectory() as directory:
             history = Path(directory) / "history.csv"

@@ -73,6 +73,107 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertNotIn('href="products/mrkev.html"', html)
         self.assertIn(f"Last run: {today.isoformat()}", html)
 
+    def test_build_keeps_overlapping_same_store_offers_for_the_next_two_weeks(self) -> None:
+        today = date.today()
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(
+                history,
+                [
+                    history_row(
+                        price="20.0",
+                        unit_price="20,00 Kč / 1 kg",
+                        price_per_kg="20.0",
+                        date_range=f"{today.isoformat()} - {(today + timedelta(days=1)).isoformat()}",
+                    ),
+                    history_row(
+                        price="30.0",
+                        unit_price="30,00 Kč / 1 kg",
+                        price_per_kg="30.0",
+                        date_range=f"{(today + timedelta(days=2)).isoformat()} - {(today + timedelta(days=5)).isoformat()}",
+                        scraped_at=f"{today.isoformat()}T06:01:00+02:00",
+                    ),
+                ],
+            )
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "write_product_pages"), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+
+        self.assertIn("20.00 / kg", html)
+        self.assertIn("30.00 / kg", html)
+        self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 2)
+
+    def test_build_collapses_repeated_scrapes_of_the_same_source_offer(self) -> None:
+        today = date.today()
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(
+                history,
+                [
+                    history_row(
+                        price="20.0",
+                        unit_price="20,00 Kč / 1 kg",
+                        price_per_kg="20.0",
+                        date_range=f"{today.isoformat()} - {(today + timedelta(days=1)).isoformat()}",
+                    ),
+                    history_row(
+                        price="20.0",
+                        unit_price="20,00 Kč / 1 kg",
+                        price_per_kg="20.0",
+                        date_range=f"{(today + timedelta(days=1)).isoformat()} - {(today + timedelta(days=3)).isoformat()}",
+                        scraped_at=f"{today.isoformat()}T06:01:00+02:00",
+                    ),
+                ],
+            )
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "write_product_pages"), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+
+        self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
+        self.assertIn(f'data-s="{(today + timedelta(days=1)).isoformat()}"', html)
+
+    def test_build_collapses_same_visual_offer_from_different_source_products(self) -> None:
+        today = date.today()
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(
+                history,
+                [
+                    history_row(
+                        product_id="cherry-a",
+                        product_name="Rajčata cherry A 0.25 kg",
+                        canonical_product_name="rajcata_cherry",
+                        price="34.9",
+                        unit_price="139,60 Kč / 1 kg",
+                        price_per_kg="139.6",
+                    ),
+                    history_row(
+                        product_id="cherry-b",
+                        product_name="Rajčata cherry B 0.25 kg",
+                        canonical_product_name="rajcata_cherry",
+                        price="34.9",
+                        unit_price="139,60 Kč / 1 kg",
+                        price_per_kg="139.6",
+                        scraped_at=f"{today.isoformat()}T06:01:00+02:00",
+                    ),
+                ],
+            )
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "write_product_pages"), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+
+        self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
+        self.assertIn("139.60 / kg", html)
+
 
 class SiteHelperTests(unittest.TestCase):
     def test_normalized_falls_back_to_product_weight_when_unit_price_is_missing(self) -> None:

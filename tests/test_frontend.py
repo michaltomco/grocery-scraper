@@ -63,6 +63,14 @@ class DashboardBrowserTests(unittest.TestCase):
             [
                 history_row(),
                 history_row(
+                    product_id="apple-1",
+                    price="24.9",
+                    unit_price="24,90 Kč / 1 kg",
+                    price_per_kg="24.9",
+                    date_range=f"{(date.today() + timedelta(days=3)).isoformat()} - {(date.today() + timedelta(days=5)).isoformat()}",
+                    scraped_at=f"{date.today().isoformat()}T06:01:00+02:00",
+                ),
+                history_row(
                     store="Tesco",
                     product_id="apple-2",
                     price="34.9",
@@ -131,6 +139,13 @@ class DashboardBrowserTests(unittest.TestCase):
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         self.assertEqual(self.page.locator("#t tbody tr").count(), 1)
+        self.assertEqual(self.page.locator('.ppcell[data-store="Albert"]').count(), 2)
+        self.assertEqual(
+            self.page.locator('.ppcell[data-store="Albert"]').evaluate_all(
+                "cells => new Set(cells.map(cell => cell.dataset.line)).size"
+            ),
+            2,
+        )
 
         self.page.get_by_role("button", name="Light").click()
         self.assertEqual(self.page.locator("html").get_attribute("data-theme"), "light")
