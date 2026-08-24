@@ -107,6 +107,7 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertIn("20.00 / kg", html)
         self.assertIn("30.00 / kg", html)
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 2)
+        self.assertIn('<div class="controls">', html)
 
     def test_build_collapses_repeated_scrapes_of_the_same_source_offer(self) -> None:
         today = date.today()
