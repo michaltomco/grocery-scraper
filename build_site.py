@@ -1201,10 +1201,9 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   user-select: none; transition: background .15s, border-color .15s; }}
 .toggle.on {{ background: var(--accent); color: var(--thumb-border); border-color: var(--accent); }}
 .toggles {{ display: flex; align-items: center; gap: 8px; }}
-.controls {{ display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-left:auto; }}
-.topbar {{ display: flex; align-items: center; gap: 16px;
-  margin: 0 0 10px; }}
-.topbar h1 {{ margin: 0; font-size: 1.5rem; }}
+.controls {{ display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; }}
+.topbar {{ margin: 0 0 10px; }}
+.topbar h1 {{ margin: 0 0 10px; font-size: 1.5rem; }}
 .theme {{ display: inline-flex; border: 1px solid var(--track); border-radius: 999px; overflow: hidden; }}
 .theme button {{ cursor: pointer; border: 0; background: var(--toggle-bg); color: var(--fg);
   font-size: .85rem; padding: 6px 12px; }}
@@ -1239,9 +1238,8 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .ranking-drange .day.sel {{ position:relative; z-index:2; outline:2px solid var(--fg); outline-offset:1px; border:2px solid var(--fg); box-shadow:inset 0 0 0 1px var(--surface); }}
 @media (max-width:700px) {{
   body {{ padding:12px; }}
-  .topbar {{ flex-wrap:wrap; align-items:flex-start; gap:10px; }}
-  .topbar h1 {{ flex:1 1 100%; font-size:1.25rem; }}
-  .controls {{ width:100%; flex-wrap:wrap; justify-content:flex-end; margin-left:0; }}
+  .topbar h1 {{ font-size:1.25rem; }}
+  .controls {{ width:100%; flex-wrap:wrap; justify-content:space-between; margin-left:0; }}
   .theme, .toggles {{ flex-wrap:wrap; }}
   .legend {{ flex-wrap:wrap; gap:6px; }}
   .page > .card {{ overflow-x:auto; }}
