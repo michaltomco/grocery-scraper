@@ -1,0 +1,66 @@
+name: Refresh grocery data
+
+on:
+  schedule:
+    # GitHub Actions schedules in UTC. The job below gates execution to 06:00
+    # Europe/Prague so this remains correct across CET/CEST daylight saving.
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: grocery-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - id: time
+        name: Check Prague scrape time
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(TZ=Europe/Prague date +%H)" = "06" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Outside the 06:00 Europe/Prague scrape window; no data refresh needed."
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.time.outputs.run == 'true'
+        with:
+          persist-credentials: true
+
+      - uses: astral-sh/setup-uv@v7
+        if: steps.time.outputs.run == 'true'
+
+      - name: Update from main
+        if: steps.time.outputs.run == 'true'
+        run: git pull --rebase origin main
+
+      - name: Install locked dependencies
+        if: steps.time.outputs.run == 'true'
+        run: uv sync --locked
+
+      - name: Scrape Kupi and refresh nutrition cache
+        if: steps.time.outputs.run == 'true'
+        env:
+          USDA_API_KEY: ${{ secrets.USDA_API_KEY }}
+        run: |
+          uv run python run.py
+          uv run python build_site.py
+
+      - name: Commit refreshed data
+        if: steps.time.outputs.run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add albert.csv billa.csv lidl.csv tesco.csv all_discounts.csv history.csv nutrition_cache.json
+          if git diff --cached --quiet; then
+            echo "No refreshed data changes to commit."
+          else
+            git commit -m "chore: daily scrape $(TZ=Europe/Prague date +%F) [github-actions]"
+            git push origin main
+          fi
