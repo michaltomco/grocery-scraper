@@ -4919,9 +4919,80 @@
     "schema_version": 13
   },
   "salat_krupavy_crispy": {
-    "status": "not_found",
-    "query": "",
-    "values": {},
+    "status": "found",
+    "query": "iceberg lettuce raw",
+    "source": "USDA FoodData Central",
+    "source_product": "Lettuce, iceberg, raw",
+    "values": {
+      "Iron": {
+        "value": 0.03,
+        "unit": "mg"
+      },
+      "Magnesium": {
+        "value": 6.31,
+        "unit": "mg"
+      },
+      "Phosphorus": {
+        "value": 19.2,
+        "unit": "mg"
+      },
+      "Potassium": {
+        "value": 139.0,
+        "unit": "mg"
+      },
+      "Sodium": {
+        "value": 16.1,
+        "unit": "mg"
+      },
+      "Zinc": {
+        "value": 0.17,
+        "unit": "mg"
+      },
+      "Copper": {
+        "value": 0.03,
+        "unit": "mg"
+      },
+      "Fat": {
+        "value": 0.07,
+        "unit": "g"
+      },
+      "Vitamin B1": {
+        "value": 0.06,
+        "unit": "mg"
+      },
+      "Manganese": {
+        "value": 0.08,
+        "unit": "mg"
+      },
+      "Vitamin B3": {
+        "value": 0.22,
+        "unit": "mg"
+      },
+      "Vitamin B6": {
+        "value": 0.04,
+        "unit": "mg"
+      },
+      "Calcium": {
+        "value": 14.2,
+        "unit": "mg"
+      },
+      "Protein": {
+        "value": 0.74,
+        "unit": "g"
+      },
+      "Carbs": {
+        "value": 3.37,
+        "unit": "g"
+      },
+      "Calories": {
+        "value": 14.5,
+        "unit": "kcal"
+      },
+      "Vitamin K": {
+        "value": 20.5,
+        "unit": "ug"
+      }
+    },
     "schema_version": 13
   },
   "salat_little_gem": {

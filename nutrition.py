@@ -98,6 +98,7 @@ QUERY_ALIASES = {
     "sojove_klicky_menu_inspirace": "mung bean sprouts raw",
     "salat_rodinny_mix": "lettuce raw",
     "salat_polnicek": "lamb lettuce raw",
+    "salat_krupavy_crispy": "iceberg lettuce raw",
 }
 
 # These are multiple-ingredient or prepared products. A single generic USDA
@@ -109,7 +110,6 @@ UNSUPPORTED_NUTRITION_PRODUCTS = {
     "mrkev_kvetak",
     "salat_baby_listy_mix",
     "salat_fresco_mix",
-    "salat_krupavy_crispy",
     "salat_party_mix_ready",
     "salat_rodinny",
     "salat_rodinny_mix",

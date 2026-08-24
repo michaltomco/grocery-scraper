@@ -173,6 +173,9 @@ class NutritionExtractionTests(unittest.TestCase):
     def test_polnicek_resolves_to_lambs_lettuce(self) -> None:
         self.assertEqual(nutrition.resolve_nutrition_query("salat_polnicek"), "lamb lettuce raw")
 
+    def test_crispy_salad_resolves_to_iceberg_lettuce(self) -> None:
+        self.assertEqual(nutrition.resolve_nutrition_query("salat_krupavy_crispy"), "iceberg lettuce raw")
+
 
 class NutritionCacheTests(unittest.TestCase):
     def test_get_many_keeps_current_successful_entries_without_fetching(self) -> None:
