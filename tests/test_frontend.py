@@ -77,6 +77,15 @@ class DashboardBrowserTests(unittest.TestCase):
                     unit_price="34,90 Kč / 1 kg",
                     price_per_kg="34.9",
                 ),
+                history_row(
+                    product_id="bread-1",
+                    product_name="Chléb",
+                    canonical_product_name="chleb",
+                    category="Pečivo",
+                    price="29.9",
+                    unit_price="29,90 Kč / 1 kg",
+                    price_per_kg="29.9",
+                ),
             ],
         )
         nutrition = {
@@ -138,10 +147,11 @@ class DashboardBrowserTests(unittest.TestCase):
 
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.assertEqual(self.page.locator("#t tbody tr").count(), 1)
-        self.assertEqual(self.page.locator('.ppcell[data-store="Albert"]').count(), 2)
+        self.assertEqual(self.page.locator("#t tbody tr").count(), 2)
+        apple_row = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
+        self.assertEqual(apple_row.locator('.ppcell[data-store="Albert"]').count(), 2)
         self.assertEqual(
-            self.page.locator('.ppcell[data-store="Albert"]').evaluate_all(
+            apple_row.locator('.ppcell[data-store="Albert"]').evaluate_all(
                 "cells => new Set(cells.map(cell => cell.dataset.line)).size"
             ),
             2,
@@ -191,9 +201,19 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(errors, [])
         mobile.close()
 
+    def test_category_dropdown_filters_offer_lines(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.page.locator("#categoryFilter").select_option(label="Pečivo")
+
+        bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
+        apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
+        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "none")
+        self.assert_browser_clean()
+
     def test_product_detail_nutrition_mode_persists(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        href = self.page.locator("#t a.product-link").first.get_attribute("href")
+        href = self.page.locator('#t a.product-link[href="products/jablka.html"]').get_attribute("href")
         self.assertIsNotNone(href)
         self.page.goto(f"{self.base_url}/{href}", wait_until="networkidle")
 

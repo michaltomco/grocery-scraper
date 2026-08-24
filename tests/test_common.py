@@ -8,7 +8,10 @@ from unittest.mock import patch
 
 from scrapers.common import (
     FIELDNAMES,
+    KUPI_FOOD_CATEGORIES,
     KupiStoreConfig,
+    category_configs,
+    run_kupi_food_scraper,
     append_history,
     canonical_product_name,
     extract_kupi_products,
@@ -103,6 +106,30 @@ class StoreBrandTests(unittest.TestCase):
 
 
 class HistoryAndMergeTests(unittest.TestCase):
+    def test_food_category_runner_combines_category_snapshots(self) -> None:
+        with TemporaryDirectory() as directory:
+            snapshot = Path(directory) / "albert.csv"
+            base = KupiStoreConfig(
+                store="Albert",
+                url="https://www.kupi.cz/slevy/ovoce-a-zelenina/albert",
+                csv_path=snapshot,
+                store_location="Prague",
+                loyalty_program="Můj Albert",
+            )
+            produce = KupiStoreConfig(**{**base.__dict__, "category": "Ovoce a zelenina"})
+            bakery = KupiStoreConfig(**{**base.__dict__, "category": "Pečivo"})
+            produce_row = row(category="Ovoce a zelenina")
+            bakery_row = row(product_id="bread-1", product_name="Chléb", category="Pečivo")
+            with patch("scrapers.common.category_configs", return_value=[produce, bakery]), patch(
+                "scrapers.common.fetch_kupi_products", side_effect=[[produce_row], [bakery_row]]
+            ), patch("scrapers.common.append_history") as append:
+                run_kupi_food_scraper(base)
+
+            rows = read_csv(snapshot)
+            self.assertEqual({item["category"] for item in rows}, {"Ovoce a zelenina", "Pečivo"})
+            append.assert_called_once()
+            self.assertEqual(len(append.call_args.args[1]), 2)
+
     def test_empty_fetch_preserves_existing_snapshot(self) -> None:
         with TemporaryDirectory() as directory:
             snapshot = Path(directory) / "albert.csv"
@@ -168,6 +195,22 @@ class HistoryAndMergeTests(unittest.TestCase):
 
 
 class KupiExtractionTests(unittest.TestCase):
+    def test_category_configs_cover_all_food_categories_for_store(self) -> None:
+        base = KupiStoreConfig(
+            store="Albert",
+            url="https://www.kupi.cz/slevy/ovoce-a-zelenina/albert",
+            csv_path=Path("albert.csv"),
+            store_location="Prague",
+            loyalty_program="Můj Albert",
+        )
+
+        configs = category_configs(base)
+
+        self.assertEqual(len(configs), len(KUPI_FOOD_CATEGORIES))
+        self.assertEqual(configs[0].category, "Ovoce a zelenina")
+        self.assertEqual(configs[0].url, "https://www.kupi.cz/slevy/ovoce-a-zelenina/albert")
+        self.assertIn("https://www.kupi.cz/slevy/pecivo/albert", [config.url for config in configs])
+
     def test_extract_products_reads_price_dates_loyalty_and_image(self) -> None:
         html = """
         <div class="product--wrap" data-product-id="123">
@@ -189,6 +232,7 @@ class KupiExtractionTests(unittest.TestCase):
             csv_path=Path("albert.csv"),
             store_location="Prague",
             loyalty_program="Můj Albert",
+            category="Pečivo",
         )
         with patch("scrapers.common.today_timestamp", return_value="2026-08-23T06:00:00+02:00"), patch(
             "scrapers.common.datetime"
@@ -199,6 +243,7 @@ class KupiExtractionTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         extracted = rows[0]
         self.assertEqual(extracted["product_name"], "Jablka Gala 1 kg")
+        self.assertEqual(extracted["category"], "Pečivo")
         self.assertEqual(extracted["canonical_product_name"], "jablka")
         self.assertEqual(extracted["price"], 29.9)
         self.assertEqual(extracted["old_price"], 59.8)

@@ -57,7 +57,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add albert.csv billa.csv lidl.csv tesco.csv all_discounts.csv history.csv nutrition_cache.json
+          git add albert.csv billa.csv lidl.csv tesco.csv all_discounts.csv history.csv nutrition_cache.json site/img
           if git diff --cached --quiet; then
             echo "No refreshed data changes to commit."
           else

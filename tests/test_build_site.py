@@ -177,6 +177,32 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
         self.assertIn("139.60 / kg", html)
 
+    def test_build_category_dropdown_includes_all_products_first(self) -> None:
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(
+                history,
+                [
+                    history_row(category="Ovoce a zelenina"),
+                    history_row(
+                        product_id="bread-1",
+                        product_name="Chléb",
+                        canonical_product_name="chleb",
+                        category="Pečivo",
+                    ),
+                ],
+            )
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "write_product_pages"), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+
+        self.assertIn('<select id="categoryFilter">', html)
+        self.assertLess(html.index('value="all">All products'), html.index('value="Pečivo">Pečivo'))
+        self.assertIn('data-category="Pečivo"', html)
+
 
 class HistoricalTrendTests(unittest.TestCase):
     def test_kupi_graph_lowest_series_normalizes_units_and_excludes_future_dates(self) -> None:

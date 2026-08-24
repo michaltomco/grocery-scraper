@@ -1,7 +1,7 @@
 import csv
 import re
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from urllib.parse import urljoin
@@ -23,8 +23,26 @@ KUPI_HEADERS = {
     "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.8",
 }
 
+# Top-level Kupi categories that represent grocery/food products. Keep the
+# Kupi-visible Czech labels so the website filter mirrors the source taxonomy.
+KUPI_FOOD_CATEGORIES = (
+    ("Ovoce a zelenina", "ovoce-a-zelenina"),
+    ("Pečivo", "pecivo"),
+    ("Mléčné výrobky a vejce", "mlecne-vyrobky-a-vejce"),
+    ("Maso, uzeniny a ryby", "maso-drubez-a-ryby"),
+    ("Lahůdky", "lahudky"),
+    ("Konzervy", "konzervy"),
+    ("Mražené a instantní potraviny", "mrazene-a-instantni-potraviny"),
+    ("Nealko nápoje", "nealko-napoje"),
+    ("Vaření a pečení", "vareni-a-peceni"),
+    ("Sladkosti a slané snacky", "sladkosti-a-slane-snacky"),
+    ("Zdravá výživa", "zdrava-vyziva"),
+    ("Alkohol", "alkohol"),
+)
+
 FIELDNAMES = [
     "store",
+    "category",
     "product_id",
     "product_name",
     "canonical_product_name",
@@ -182,6 +200,20 @@ class KupiStoreConfig:
     csv_path: Path
     store_location: str
     loyalty_program: str
+    category: str = "Ovoce a zelenina"
+
+
+def category_configs(config: KupiStoreConfig) -> list[KupiStoreConfig]:
+    """Expand one store config into Kupi's top-level grocery category URLs."""
+    store_slug = config.url.rstrip("/").rsplit("/", 1)[-1]
+    return [
+        replace(
+            config,
+            url=f"{KUPI_BASE_URL}/slevy/{slug}/{store_slug}",
+            category=label,
+        )
+        for label, slug in KUPI_FOOD_CATEGORIES
+    ]
 
 
 def today_timestamp() -> str:
@@ -518,6 +550,7 @@ def extract_kupi_discount(
 
     return {
         "store": config.store,
+        "category": config.category,
         "product_id": product_id,
         "product_name": product_name,
         "canonical_product_name": canonical_product_name(product_name),
@@ -644,6 +677,39 @@ def run_kupi_scraper(config: KupiStoreConfig) -> None:
     append_history(HISTORY_CSV, products)
 
 
+def run_kupi_food_scraper(config: KupiStoreConfig) -> None:
+    """Scrape every configured Kupi grocery category for one store."""
+    products: list[dict] = []
+    for category_config in category_configs(config):
+        try:
+            category_products = fetch_kupi_products(category_config)
+        except requests.RequestException as error:
+            print(
+                f"Could not fetch {category_config.category} for {config.store} from Kupi.cz: {error}"
+            )
+            continue
+        print(f"{category_config.category}: found {len(category_products)} products")
+        products.extend(category_products)
+
+    if not products:
+        print(f"No {config.store} grocery products returned; keeping existing snapshot unchanged.")
+        return
+
+    # Kupi may surface an item under more than one top-level category. Keep one
+    # exact category-tagged offer instead of duplicating it in the store CSV.
+    deduped: dict[tuple[str, ...], dict] = {}
+    for product in products:
+        key = tuple(
+            str(product.get(field, ""))
+            for field in ("store", "category", "product_id", "price", "unit_price", "date_range", "url")
+        )
+        deduped[key] = product
+    snapshot = list(deduped.values())
+    print_products_by_date(snapshot)
+    write_csv(config.csv_path, snapshot)
+    append_history(HISTORY_CSV, snapshot)
+
+
 def write_csv(path: str | Path, rows: list[dict]) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -665,7 +731,7 @@ def history_key(row: dict) -> tuple[str, ...]:
     # key, leaving the newest run with no rows for that store.
     return tuple(
         row.get(field, "")
-        for field in ("store", "product_id", "date_range", "price", "unit_price", "scraped_at")
+        for field in ("store", "category", "product_id", "date_range", "price", "unit_price", "scraped_at")
     )
 
 
@@ -701,6 +767,7 @@ def merge_csvs(input_paths: list[str | Path], output_path: str | Path) -> list[d
             normalized_row = {field: row.get(field, "") for field in FIELDNAMES}
             dedupe_key = (
                 normalized_row["store"],
+                normalized_row["category"],
                 normalized_row["product_id"],
                 normalized_row["price"],
                 normalized_row["unit_price"],

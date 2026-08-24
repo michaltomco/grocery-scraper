@@ -1,4 +1,4 @@
-from scrapers.common import KupiStoreConfig, run_kupi_scraper
+from scrapers.common import KupiStoreConfig, run_kupi_food_scraper
 from pathlib import Path
 
 
@@ -12,7 +12,7 @@ CONFIG = KupiStoreConfig(
 
 
 def main() -> None:
-    run_kupi_scraper(CONFIG)
+    run_kupi_food_scraper(CONFIG)
 
 
 if __name__ == "__main__":

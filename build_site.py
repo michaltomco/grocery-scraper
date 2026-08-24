@@ -23,6 +23,7 @@ from scrapers.common import (
     read_csv,
     ROOT,
     HISTORY_CSV,
+    KUPI_FOOD_CATEGORIES,
     STORE_WORDS,
     number,
     parsed_date_range,
@@ -416,7 +417,11 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
         entries = products[product]
         first = entries[0] if entries else {}
         pretty = display_name(product, first.get("raw_name", product))
-        img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
+        img_path = (
+            cache_image(first.get("product_id", product), first.get("image_url", ""))
+            if first.get("category", "Ovoce a zelenina") == "Ovoce a zelenina"
+            else ""
+        )
         image_html = (
             f'<img class="hero" src="../{esc(img_path)}" alt="{esc(pretty)}">'
             if img_path else ""
@@ -715,17 +720,21 @@ def build() -> str:
     if not HISTORY_CSV.exists():
         rows = []
     else:
-        # Normalize any already-cached images onto white square canvases, so every
-        # thumbnail shares one aspect ratio (covers stale files whose product no
-        # longer has an image_url in the latest run).
-        if IMG_DIR.exists():
-            for f in IMG_DIR.glob("*.*"):
-                if f.name.startswith(".raw_"):
-                    continue
-                normalize_image_file(f)
+        # cache_image normalizes new downloads before saving them. Avoid
+        # re-encoding the tracked cache on every build: repeated lossy writes
+        # create noisy image diffs without improving the deployed asset.
         rows = read_csv(HISTORY_CSV)
 
-    nutrition = get_many({canonical_product_name(r.get("product_name", "")) for r in rows})
+    # Nutrition enrichment is currently designed and validated for fresh produce.
+    # Other grocery categories remain price-only until they have category-specific
+    # nutrition mappings rather than unsafe generic-product guesses.
+    nutrition = get_many(
+        {
+            canonical_product_name(r.get("product_name", ""))
+            for r in rows
+            if (r.get("category") or "Ovoce a zelenina") == "Ovoce a zelenina"
+        }
+    )
 
     today_iso = date.today().isoformat()
     today_date = date.fromisoformat(today_iso)
@@ -751,6 +760,7 @@ def build() -> str:
     stores_seen: set[str] = set()
     for r in rows:
         store = r.get("store", "")
+        category = r.get("category") or "Ovoce a zelenina"
         # Re-canonicalize from the raw product name so that any recent
         # canonicalizer enhancements (e.g. avocado subcategories) take
         # effect even for rows whose CSV column predates the change.
@@ -769,6 +779,7 @@ def build() -> str:
         source_identity = r.get("product_id", "") or r.get("product_name", "")
         offer_key = (
             product,
+            category,
             store,
             source_identity,
             str(disp_val if disp_val is not None else ""),
@@ -778,6 +789,7 @@ def build() -> str:
         if existing is None or ts > existing["_scraped_at"]:
             current_entries[offer_key] = {
                 "product": product,
+                "category": category,
                 "store": store,
                 "val": disp_val if disp_val is not None else val,
                 "unit": unit,
@@ -799,6 +811,7 @@ def build() -> str:
     for entry in source_entries.values():
         visual_key = (
             entry["product"],
+            entry["category"],
             entry["store"],
             str(entry["val"] if entry["val"] is not None else ""),
             entry["unit"],
@@ -897,7 +910,11 @@ def build() -> str:
                 )
         elif nutrition_entry.get("status") == "not_found":
             nutrition_html = '<span class="nutrition dim">Nutrition data unavailable</span>'
-        img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
+        img_path = (
+            cache_image(first.get("product_id", product), first.get("image_url", ""))
+            if first.get("category", "Ovoce a zelenina") == "Ovoce a zelenina"
+            else ""
+        )
         img_tag = (
             f'<img class="thumb" src="{img_path}" width="40" height="40" alt="" aria-hidden="true">'
             if img_path else '<span class="dim">no img</span>'
@@ -925,7 +942,7 @@ def build() -> str:
             v = e["val"]
             if v is not None:
                 pp_cells.append(
-                    f'<div class="ppcell" data-store="{esc(e["store"])}" data-line="{esc(line_id)}">'
+                    f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
                     f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
@@ -944,7 +961,7 @@ def build() -> str:
                     ))
                 day_html = group_weeks(day_items)
                 date_cells.append(
-                    f'<div class="dcell" data-store="{esc(e["store"])}" data-line="{esc(line_id)}" '
+                    f'<div class="dcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}" '
                     f'data-s="{esc(s)}" data-e="{esc(en)}" '
                     f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr))}" '
                     f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
@@ -963,6 +980,13 @@ def build() -> str:
     last_run = last_run or "unknown"
     n_products = len(table_rows)
     n_stores = len(stores_seen)
+    active_categories = {entry.get("category", "Ovoce a zelenina") for entry in current_entries.values()}
+    ordered_categories = [label for label, _slug in KUPI_FOOD_CATEGORIES if label in active_categories]
+    ordered_categories.extend(sorted(active_categories - set(ordered_categories)))
+    category_options = '<option value="all">All products</option>' + "".join(
+        f'<option value="{esc(category)}">{esc(category)}</option>'
+        for category in ordered_categories
+    )
     ranking_data = []
     ranking_labels = {}
     ranking_rdas = {}
@@ -1002,7 +1026,7 @@ def build() -> str:
                 # fairly with per-kilogram offers, so it is omitted by default.
                 continue
             ranking_data.append({
-                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
+                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry.get("category", "Ovoce a zelenina"), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
                 "price": price, "basis": basis, "factor": nutrient_factor,
                 "start": start or "", "end": end or "",
                 "values": {label: nutrient.get("value") for label, nutrient in vals.items()
@@ -1209,6 +1233,8 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   font-size: .85rem; padding: 6px 12px; }}
 .theme button + button {{ border-left: 1px solid var(--track); }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
+.category-filter {{ display:flex; align-items:center; gap:8px; margin:0 0 10px; font-size:.85rem; }}
+.category-filter select {{ background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
 .ranking-card[hidden] {{ display:none; }}
@@ -1266,6 +1292,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
     </div>
   </div>
 </div>
+<div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div>
 <div class="card ranking-card" id="rankingCard" hidden>
   <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
   <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
@@ -1332,6 +1359,7 @@ document.querySelectorAll('th').forEach(th => {{
 // Combined filters: store mute + date-range / single-date slider.
 const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
+const categoryFilter = document.getElementById('categoryFilter');
 const chips = [...document.querySelectorAll('.legend .chip')];
 const rankingData = {ranking_json};
 const rankingUnits = {ranking_units_json};
@@ -1353,7 +1381,7 @@ refreshRankingNutrients();
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
   const label = rankingNutrient.value;
-  const ranked = rankingData.filter(item => (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
+  const ranked = rankingData.filter(item => (categoryFilter.value === 'all' || item.category === categoryFilter.value) && (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
     .map(item => ({{ ...item, amount: item.values[label] * item.factor, rdaCost: item.price * item.rdas[label] / (item.values[label] * item.factor), datedim: !(item.start <= rangeEnd && (item.end || item.start) >= rangeStart), storedim: hidden.has(item.store) }}))
     .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
     .sort((a, b) => a.rdaCost - b.rdaCost)
@@ -1367,6 +1395,7 @@ document.getElementById('rankToggle').onclick = () => {{
   updateRanking();
 }};
 rankingNutrient.onchange = updateRanking;
+categoryFilter.onchange = () => applyFilters();
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
@@ -1398,8 +1427,10 @@ function applyFilters() {{
     const ds = d.dataset.date;
     const owner = d.closest('.dcell');
     const ownerStore = owner && owner.dataset.store;
+    const ownerCategory = owner && owner.dataset.category;
     const muted = !!(ownerStore && hidden.has(ownerStore));
-    const on = !!ds && !muted && (ds === rangeStart || ds === rangeEnd);
+    const categoryHidden = !!(ownerCategory && categoryFilter.value !== 'all' && ownerCategory !== categoryFilter.value);
+    const on = !!ds && !muted && !categoryHidden && (ds === rangeStart || ds === rangeEnd);
     d.classList.toggle('sel', on);
   }});
 
@@ -1420,18 +1451,19 @@ function applyFilters() {{
     lines.forEach(L => {{
       const st = L.store;
       const muted = !!(st && hidden.has(st));
+      const categoryHidden = categoryFilter.value !== 'all' && L.dc.dataset.category !== categoryFilter.value;
       if (L.pp) L.pp.classList.toggle('muted', muted);
       L.dc.classList.toggle('muted', muted);
-      if (!muted) visibleStores++;
+      if (!muted && !categoryHidden) visibleStores++;
       const ds = L.dc.dataset.s, de = L.dc.dataset.e;
       const hasDate = !!ds;
       const overlap = hasDate && ds <= rangeEnd && (de || ds) >= rangeStart;
       const inWin = hasDate ? overlap : true;   // a line with no date isn't date-filtered
-      if (!muted && inWin) shown++;
-      const dim = !muted && hasDate && !overlap;
+      if (!muted && !categoryHidden && inWin) shown++;
+      const dim = !muted && !categoryHidden && hasDate && !overlap;
       if (L.pp) L.pp.classList.toggle('datedim', dim);
       L.dc.classList.toggle('datedim', dim);
-      const lineShown = !hideIrrelevant ? true : (!muted && overlap);
+      const lineShown = !categoryHidden && (!hideIrrelevant || (!muted && overlap));
       if (lineShown) anyLineShown = true;
       const disp = lineShown ? '' : 'none';
       if (L.pp) L.pp.style.display = disp;
@@ -1449,7 +1481,6 @@ function applyFilters() {{
     const fullyOut = hideIrrelevant && ((visibleStores === 0) || !inRange(r));
     r.classList.toggle('rowout', fullyOut);
     let show = anyLineShown;
-    if (!hideIrrelevant) show = true;                // default: keep all rows
     r.style.display = show ? '' : 'none';
   }});
   updateRanking();
