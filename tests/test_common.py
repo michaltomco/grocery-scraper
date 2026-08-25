@@ -80,6 +80,12 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(canonical_product_name("Meloun vodní 1 kg"), "meloun_vodni")
         self.assertEqual(canonical_product_name("Meloun cukrový 1 kg"), "meloun")
 
+    def test_canonical_name_keeps_compote_separate_from_fresh_strawberries(self) -> None:
+        self.assertEqual(
+            canonical_product_name("Kompot jahody Giana 400 g"),
+            "kompot_jahody_giana",
+        )
+
     def test_unit_price_normalizes_grams_and_pieces(self) -> None:
         self.assertEqual(normalize_unit_price("12,50 Kč / 100 g")["price_per_kg"], 125.0)
         self.assertEqual(normalize_unit_price("39,80 Kč / 2 ks")["price_per_piece"], 19.9)

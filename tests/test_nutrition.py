@@ -170,6 +170,14 @@ class NutritionExtractionTests(unittest.TestCase):
         self.assertEqual(result["status"], "not_found")
         self.assertEqual(result["values"], {})
 
+    def test_strawberry_compote_is_marked_unavailable_without_lookup(self) -> None:
+        with patch.object(nutrition, "fetch_usda_nutrition") as fetch:
+            result = nutrition.fetch_nutrition("kompot_jahody_giana")
+
+        fetch.assert_not_called()
+        self.assertEqual(result["status"], "not_found")
+        self.assertEqual(result["values"], {})
+
     def test_polnicek_resolves_to_lambs_lettuce(self) -> None:
         self.assertEqual(nutrition.resolve_nutrition_query("salat_polnicek"), "lamb lettuce raw")
 

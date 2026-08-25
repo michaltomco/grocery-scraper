@@ -239,6 +239,12 @@ def canonical_product_name(product_name: str) -> str:
     text = re.sub(r"\b\d+(?:[,.]\d+)?\s*(?:kg|g|ks|ml|l)\b", " ", text)
     text = re.sub(r"[^a-z0-9 ]+", " ", text)
 
+    # A preserved fruit is not equivalent to its fresh-produce counterpart.
+    # Keep compotes as their own products so, for example, Giana strawberry
+    # compote never appears in the fresh-strawberries comparison.
+    if "kompot" in text.split():
+        return "_".join(word for word in text.split() if not word.isdigit())
+
     canonical_words = []
     descriptors = []
     for word in text.split():

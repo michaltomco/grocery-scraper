@@ -130,7 +130,7 @@ SUBSTRING_ALIASES = {
 
 
 def resolve_nutrition_query(product: str) -> str | None:
-    if product in UNSUPPORTED_NUTRITION_PRODUCTS:
+    if product in UNSUPPORTED_NUTRITION_PRODUCTS or product.startswith("kompot_"):
         return None
     query = QUERY_ALIASES.get(product)
     if query is not None:
