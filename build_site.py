@@ -1125,33 +1125,29 @@ html {{ background: var(--bg); color-scheme: dark light; scrollbar-gutter: stabl
 html {{ overflow-y: scroll; }}
 body {{ font-family: -apple-system, system-ui, sans-serif; max-width:900px; margin:0 auto;
   background: var(--bg); color: var(--fg); padding:24px; }}
-/* Center the whole page horizontally while keeping the table's fixed column
-   widths: width:max-content sizes the wrapper to the table's natural width
-   (all columns preserved), margin:0 auto centers it on wide screens, and
-   max-width:100% lets it shrink (the table's own max-width:100% then
-   compresses the date column) instead of overflowing on narrow screens. */
+/* Keep the page aligned to the viewport. On narrow screens .table-scroll owns
+   the horizontal scroll so the fixed, full-width timeline stays intact. */
 .page {{ width:100%; max-width:100%; margin:0 auto; }}
+.table-scroll {{ width:100%; overflow-x:auto; }}
 h1 {{ font-size: 1.3rem; margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: .85rem; margin-bottom: 14px; }}
-table {{ width:100%; max-width:100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
-/* max-content keeps each column at its set width (no leftover space to
-   balloon a column); max-width:100% prevents overflow on small screens. */
+table {{ width:100%; min-width:837px; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }}
+/* The two-week timeline is an information-bearing column, not flexible
+   decoration: it must never be squeezed below its 14-day width. Narrow
+   screens scroll the table rather than clipping or compressing its days. */
 th, td {{ text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
   vertical-align: top; overflow: hidden; }}
 th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
   position: sticky; top: 0; background: var(--th-bg); }}
 /* Fixed column widths keep the header stable whether the body is full, empty,
    or showing a date with no matches — no reflow / left-shift. The product column
-   is wide enough to show full Czech product names without truncation; the date
-   column absorbs the remaining width. */
-/* The date column is pinned (by JS, fitDateColumn) to the real timeline width +
-   a few px of slack so there is no empty clickable strip to the right of the
-   last day square. Without that, the wide column let clicks far right of the
-   dates Voronoi-map onto the last day (wireBodyDrag). The product column (auto)
-   absorbs the table's leftover width instead. */
+   is wide enough to show full Czech product names without truncation. */
+/* Keep enough inline room for all 14 day cells (including week gap and cell
+   padding). This is explicit instead of depending on the browser's leftover
+   table width, which previously made the timeline shrink at some viewports. */
 th[data-k="prod"] {{ width: 220px; }}
 th[data-k="pricelist"] {{ width: 120px; }}
-th[data-k="drange"] {{ width: auto; }}
+th[data-k="drange"] {{ width:276px; min-width:276px; max-width:276px; }}
 th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
 th[data-k="prod"], td.prod {{ width: 220px; min-width: 220px; max-width: 220px; }}
@@ -1237,6 +1233,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .category-filter select {{ background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
+.ranking-card {{ overflow-x:auto; }}
 .ranking-card[hidden] {{ display:none; }}
 .ranking-heading {{ display:flex; align-items:center; justify-content:space-between; gap:12px; }}
 .ranking-heading h2 {{ margin:0; }}
@@ -1270,7 +1267,8 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   .theme button, .toggle {{ padding:4px 6px; font-size:.72rem; white-space:nowrap; }}
   .legend {{ flex-wrap:wrap; gap:6px; }}
   .page > .card {{ overflow-x:auto; }}
-  #t, #rankingTable {{ min-width:760px; }}
+  #t {{ min-width:837px; }}
+  #rankingTable {{ min-width:760px; }}
   .ranking-heading {{ flex-wrap:wrap; }}
   .ranking-heading > div {{ display:flex; flex-wrap:wrap; gap:6px; width:100%; }}
   .ranking-heading select {{ flex:1 1 140px; min-width:0; }}
@@ -1306,7 +1304,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   <span class="chip" data-store="Albert">{store_logo("Albert")} Albert</span>
   <span class="chip" data-store="Billa">{store_logo("Billa")} Billa</span>
 </div>
-<table id="t">
+<div class="table-scroll"><table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
 <th data-k="pricelist">Price</th>
@@ -1317,7 +1315,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 </tr></thead>
 <tbody>
 {''.join(table_rows)}
-{empty_notice}</tbody></table>
+{empty_notice}</tbody></table></div>
 </div>
 <script>
 const t = document.getElementById('t');
@@ -1610,29 +1608,6 @@ hideBtn.onclick = () => {{
   hideBtn.classList.toggle('on', hideIrrelevant);
   applyFilters();
 }};
-
-// Pin the date column to the real timeline width (+ a few px slack) so there
-// is no empty clickable strip to the right of the last day square. The body
-// drag handler (wireBodyDrag) maps any X right of the timeline to the nearest
-// day square by center, so a wide "auto" column let far-right clicks collapse
-// the selection onto the last day. We measure the CONTENT span (first -> last
-// day square), not the .timeline box, because .timeline is display:flex and
-// stretches to fill the cell — its box width would be the (wrong) full column.
-function fitDateColumn() {{
-  const ref = document.querySelector('#t tbody .dcell .timeline');
-  const th = document.querySelector('th[data-k="drange"]');
-  if (!ref || !th) return;
-  const days = ref.querySelectorAll('.day');
-  let w = 0;
-  if (days.length) {{
-    const a = days[0].getBoundingClientRect();
-    const b = days[days.length - 1].getBoundingClientRect();
-    w = b.right - a.left;
-  }}
-  th.style.width = (Math.ceil(w) + 10) + 'px';
-}}
-fitDateColumn();
-window.addEventListener('resize', fitDateColumn);
 
 // Light / Dark / System theme switcher (persisted in localStorage).
 const themeSwitch = document.getElementById('themeSwitch');

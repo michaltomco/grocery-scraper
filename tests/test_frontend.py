@@ -181,6 +181,50 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
         self.assert_browser_clean()
 
+    def test_main_date_column_keeps_the_full_timeline_visible(self) -> None:
+        # 900px is the dashboard's maximum desktop width, where all four table
+        # columns must coexist without collapsing the two-week timeline.
+        self.page.set_viewport_size({"width": 900, "height": 1000})
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        metrics = self.page.locator("#t tbody .dcell").first.evaluate(
+            """cell => {
+                const timeline = cell.querySelector('.timeline');
+                const cellBox = cell.getBoundingClientRect();
+                const timelineBox = timeline.getBoundingClientRect();
+                return {
+                    cellWidth: cellBox.width,
+                    timelineWidth: timelineBox.width,
+                    timelineRight: timelineBox.right,
+                    cellRight: cellBox.right,
+                    overflowing: timeline.scrollWidth > cell.clientWidth,
+                };
+            }"""
+        )
+        self.assertFalse(metrics["overflowing"], metrics)
+        self.assertLessEqual(metrics["timelineRight"], metrics["cellRight"], metrics)
+
+        mobile = self.browser.new_context(viewport={"width": 390, "height": 844})
+        page = mobile.new_page()
+        errors: list[str] = []
+        page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
+        page.on("pageerror", lambda exception: errors.append(str(exception)))
+        page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        mobile_metrics = page.locator("#t tbody .dcell").first.evaluate(
+            """cell => {
+                const timeline = cell.querySelector('.timeline');
+                const wrap = document.querySelector('.table-scroll');
+                return {
+                    clipped: timeline.scrollWidth > cell.clientWidth,
+                    scrollable: wrap.scrollWidth > wrap.clientWidth,
+                };
+            }"""
+        )
+        self.assertFalse(mobile_metrics["clipped"], mobile_metrics)
+        self.assertTrue(mobile_metrics["scrollable"], mobile_metrics)
+        self.assertEqual(errors, [])
+        mobile.close()
+        self.assert_browser_clean()
+
     def test_mobile_theme_controls_left_and_action_controls_right_on_one_row(self) -> None:
         mobile = self.browser.new_context(viewport={"width": 390, "height": 844})
         page = mobile.new_page()
