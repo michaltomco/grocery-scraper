@@ -686,7 +686,7 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
         discount_rows = "".join(
             f'<tr data-store="{esc(info.get("store", ""))}" data-start="{esc(parsed_date_range(info.get("date_range", ""))[0])}" data-end="{esc(parsed_date_range(info.get("date_range", ""))[1])}">'
             f'<td>{esc(raw_name)}</td><td>{store_chip(info.get("store", ""))}</td>'
-            f'<td class="discount-price">{info.get("val")} / {esc(info.get("unit", ""))}</td>'
+            f'<td class="discount-price">{info.get("val")}</td>'
             f'<td>{detail_timeline(info.get("date_range", ""), info.get("store", ""), today_iso)}</td></tr>'
         )
         canonical_name = info.get("canonical_product_name", slug)
@@ -1016,7 +1016,7 @@ def build() -> str:
     ordered_categories = [label for label, _slug in KUPI_FOOD_CATEGORIES if label in active_categories]
     ordered_categories.extend(sorted(active_categories - set(ordered_categories)))
     category_options = '<option value="all">All products</option>' + "".join(
-        f'<option value="{esc(category)}">{esc(category)}</option>'
+        f'<option value="{esc(category)}"{" selected" if category == "Ovoce a zelenina" else ""}>{esc(category)}</option>'
         for category in ordered_categories
     )
     ranking_data = []

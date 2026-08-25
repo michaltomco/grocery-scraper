@@ -48,7 +48,7 @@ class DashboardBuilderTests(unittest.TestCase):
         )
         self.assertIn('href="exact/actimel_danone_100_g__albert.html"', link)
 
-    def test_exact_page_keeps_retailer_stated_price_and_unit(self) -> None:
+    def test_exact_page_shows_price_without_appended_unit(self) -> None:
         row_data = history_row(
             product_name="Zelí bílé kysané Albert 500 g",
             canonical_product_name="zeli",
@@ -67,10 +67,11 @@ class DashboardBuilderTests(unittest.TestCase):
                 build_site.build()
             page = build_site.PRODUCTS_EXACT_DIR / "zelí_bílé_kysané_albert_500_g.html"
             html = page.read_text(encoding="utf-8")
-        self.assertIn("14.9 / 100 g", html)
+        self.assertIn("14.9", html)
+        self.assertNotIn("14.9 / 100 g", html)
         self.assertNotIn("29.8 / kg", html)
 
-    def test_exact_page_keeps_raw_price_when_source_unit_is_missing(self) -> None:
+    def test_exact_page_shows_raw_price_without_appended_unit_when_source_unit_missing(self) -> None:
         row_data = history_row(
             product_name="Jogurt bílý 500 g",
             canonical_product_name="jogurt",
@@ -90,7 +91,8 @@ class DashboardBuilderTests(unittest.TestCase):
                 build_site.build()
             page = build_site.PRODUCTS_EXACT_DIR / f"{build_site.slugify(row_data['product_name'])}.html"
             html = page.read_text(encoding="utf-8")
-        self.assertIn("14.9 / ks", html)
+        self.assertIn("14.9", html)
+        self.assertNotIn("14.9 / ks", html)
         self.assertNotIn("29.8 / kg", html)
 
     def test_build_keeps_malformed_date_rows_without_crashing(self) -> None:
@@ -277,7 +279,7 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertIn('<a class="exact-link" href="exact/rajčata_cherry_žlutá_250_g.html"', html)
         self.assertIn('>Rajčata cherry žlutá 250 g</a></td>', html)
 
-    def test_build_category_dropdown_includes_all_products_first(self) -> None:
+    def test_build_category_dropdown_defaults_to_produce(self) -> None:
         with TemporaryDirectory() as directory:
             history = Path(directory) / "history.csv"
             write_csv(
@@ -302,6 +304,7 @@ class DashboardBuilderTests(unittest.TestCase):
 
         self.assertIn('<select id="categoryFilter">', html)
         self.assertLess(html.index('value="all">All products'), html.index('value="Pečivo">Pečivo'))
+        self.assertIn('value="Ovoce a zelenina" selected', html)
         self.assertIn('data-category="Pečivo"', html)
         cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg")
 
