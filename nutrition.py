@@ -462,7 +462,7 @@ def fetch_nutrition(product: str) -> dict:
     return result
 
 
-def get_many(products: set[str]) -> dict:
+def get_many(products: set[str], *, fetch_missing: bool = True) -> dict:
     cache = load_cache()
     # Hand-curated NutriData.cz records for non-produce categories take priority
     # over the generic USDA/Open Food Facts produce pipeline: they were verified
@@ -507,6 +507,8 @@ def get_many(products: set[str]) -> dict:
                 and not legacy_mixed_source
             )
         ):
+            continue
+        if not fetch_missing:
             continue
         print(f"Looking up nutrition: {product}")
         cache[product] = fetch_nutrition(product)

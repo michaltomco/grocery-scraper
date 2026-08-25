@@ -186,6 +186,18 @@ class NutritionExtractionTests(unittest.TestCase):
 
 
 class NutritionCacheTests(unittest.TestCase):
+    def test_get_many_can_use_cache_without_network_requests(self) -> None:
+        with TemporaryDirectory() as directory:
+            cache = Path(directory) / "nutrition_cache.json"
+            cache.write_text("{}", encoding="utf-8")
+            with patch.object(nutrition, "CACHE_PATH", cache), patch.object(
+                nutrition, "fetch_nutrition"
+            ) as fetch:
+                result = nutrition.get_many({"new_product"}, fetch_missing=False)
+
+        fetch.assert_not_called()
+        self.assertNotIn("new_product", result)
+
     def test_get_many_keeps_current_successful_entries_without_fetching(self) -> None:
         with TemporaryDirectory() as directory:
             cache = Path(directory) / "nutrition_cache.json"

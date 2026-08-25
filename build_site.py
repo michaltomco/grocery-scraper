@@ -672,7 +672,7 @@ h1 {{ margin-bottom: 6px; }} h2 {{ margin-top: 0; font-size: 1rem; }}
 </style></head><body>
 <p><a class="back-button" href="../index.html">Back</a></p>
 <div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
-<div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>Current discounts</h2><table id="discountTable"><thead><tr><th>Exact produce name</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
+<div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>Current discounts</h2><table id="discountTable"><thead><tr><th>Name</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
 <div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
 </body><script>
 const key = 'grocery-theme';
@@ -750,7 +750,8 @@ def build() -> str:
         {
             canonical_product_name(r.get("product_name", ""))
             for r in rows
-        }
+        },
+        fetch_missing=False,
     )
 
     today_iso = date.today().isoformat()
@@ -1048,7 +1049,9 @@ def build() -> str:
                 # fairly with per-kilogram offers, so it is omitted by default.
                 continue
             ranking_data.append({
-                "product": pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry.get("category", "Ovoce a zelenina"), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
+                # Nutrition remains associated with the canonical product, while
+                # the ranking labels each offer with the store's exact name.
+                "product": entry.get("raw_name") or pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry.get("category", "Ovoce a zelenina"), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
                 "price": price, "basis": basis, "factor": nutrient_factor,
                 "start": start or "", "end": end or "",
                 "values": {label: nutrient.get("value") for label, nutrient in vals.items()

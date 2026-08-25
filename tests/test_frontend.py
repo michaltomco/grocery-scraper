@@ -176,6 +176,10 @@ class DashboardBrowserTests(unittest.TestCase):
         self.page.locator("#rankingCategory").select_option(index=0)
         self.page.locator("#rankingNutrient").select_option(index=0)
         self.assertGreater(self.page.locator("#rankingTable tbody tr").count(), 0)
+        self.assertEqual(
+            self.page.locator("#rankingTable .ranking-product span").all_text_contents(),
+            ["Jablka Gala 1 kg", "Jablka Gala 1 kg", "Jablka Gala 1 kg"],
+        )
 
         self.page.locator("#t .dcell .day").first.click()
         self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
@@ -277,7 +281,7 @@ class DashboardBrowserTests(unittest.TestCase):
         self.page.goto(f"{self.base_url}/{href}", wait_until="networkidle")
         self.assertEqual(
             self.page.locator("#discountTable thead th").all_text_contents(),
-            ["Exact produce name", "Store", "Price", "Discount days"],
+            ["Name", "Store", "Price", "Discount days"],
         )
         self.assertEqual(
             self.page.locator("#discountTable tbody .discount-produce").all_text_contents(),

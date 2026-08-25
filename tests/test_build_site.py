@@ -177,7 +177,7 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
         self.assertIn("139.60 / kg", html)
 
-    def test_product_page_current_discounts_shows_exact_produce_name_first(self) -> None:
+    def test_product_page_current_discounts_shows_name_first(self) -> None:
         """Variants grouped under one canonical product remain identifiable."""
         today = date.today()
         entries = [
@@ -209,7 +209,7 @@ class DashboardBuilderTests(unittest.TestCase):
             html = (products_dir / "rajcata_cherry.html").read_text(encoding="utf-8")
 
         self.assertIn(
-            "<th>Exact produce name</th><th>Store</th><th>Price</th><th>Discount days</th>",
+            "<th>Name</th><th>Store</th><th>Price</th><th>Discount days</th>",
             html,
         )
         self.assertIn('<td class="discount-produce">Rajčata cherry červená 250 g</td><td>', html)
