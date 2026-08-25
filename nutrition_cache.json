@@ -9558,8 +9558,45 @@
       "schema_version": 13
     },
     "exact:Acidofilní mléko Mlékárna Kunín 300 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Mlékárna Kunín Acidofilní mléko",
+      "source_url": "https://www.ferpotravina.cz/mlecne-napoje/mlekarna-kunin-acidofilni-mleko",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 43.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 3.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.0,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 0.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Adámkův párek 100 g": {
@@ -9703,8 +9740,41 @@
       "schema_version": 13
     },
     "exact:Balkánský sýr Madeta 115 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Balkánský sýr",
+      "source_url": "https://www.ferpotravina.cz/nezrajici-syr/balkansky-syr-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 257.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 19.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 13.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 4.3,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Balkánský sýr Pilos 200 g": {
@@ -10323,18 +10393,117 @@
       "schema_version": 13
     },
     "exact:Bílý jogurt Activia Danone 120 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Activia Bílá jogurt",
+      "source_url": "https://www.ferpotravina.cz/jogurt/activia-bila-danone-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 69.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 4.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 2.2,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.15,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bílý jogurt Klasik Olma 1000 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Klasik bílý jogurt",
+      "source_url": "https://www.ferpotravina.cz/jogurt/klasik-bily-jogurt-olma-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 60.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 4.9,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 2.7,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.13,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bílý jogurt Klasik Olma 400 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Klasik bílý jogurt",
+      "source_url": "https://www.ferpotravina.cz/jogurt/klasik-bily-jogurt-olma-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 60.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 4.9,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 2.7,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.13,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bílý jogurt Pilos 500 g": {
@@ -10343,8 +10512,41 @@
       "schema_version": 13
     },
     "exact:Bílý jogurt selský Hollandia 200 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Hollandia selský jogurt bílý",
+      "source_url": "https://www.ferpotravina.cz/jogurt/hollandia-selsky-jogurt-bily-hollandia-karlovy-vary-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 67.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 3.7,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 4.5,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.8,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 2.7,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.12,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bílý jogurt selský Hollandia 500 g": {
@@ -10353,8 +10555,41 @@
       "schema_version": 13
     },
     "exact:Bílý jogurt selský Mlékárna Kunín 400 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Mlékárna Kunín- Selský jogurt",
+      "source_url": "https://www.ferpotravina.cz/jogurt/mlekarna-kunin-selsky-jogurt",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 100.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 3.7,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 13.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 12.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.6,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.8,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bílý jogurt smetanový Choceňský 150 g": {
@@ -11798,8 +12033,41 @@
       "schema_version": 13
     },
     "exact:Jogurt Activia Danone 120 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Activia Bílá jogurt",
+      "source_url": "https://www.ferpotravina.cz/jogurt/activia-bila-danone-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 69.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 4.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 2.2,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.15,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Jogurt Fantasia Danone 100 g": {
@@ -13798,8 +14066,33 @@
       "schema_version": 13
     },
     "exact:Mléko trvanlivé Pilos - 3,5% plnotučné 1 l": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Pilos Mléko trvanlivé",
+      "source_url": "https://www.ferpotravina.cz/mlecne-vyrobky/pilos-mleko-trvanlive-mlekarna-pragolaktos-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 63.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 3.3,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 4.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 2.3,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Mléko trvanlivé Tatra - 1,5% polotučné 1 l": {
@@ -13953,8 +14246,41 @@
       "schema_version": 13
     },
     "exact:Máslo Česká chuť 250 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Máslo - česká chuť",
+      "source_url": "https://www.ferpotravina.cz/maslo/maslo-ceska-chut-olma-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 740.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 0.6,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 83.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 51.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.02,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Míchané nápoje 0.25 l": {
@@ -17392,13 +17718,79 @@
       "schema_version": 13
     },
     "exact:Smetana ke šlehání 30% Primo Zott 200 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Zott smetana ke šlehání",
+      "source_url": "https://www.ferpotravina.cz/smetana/zott-smetana-ke-slehani",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 70.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.3,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 30.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 20.1,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana ke šlehání 33% Bohemilk Opočno 250 ml": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Smetana ke šlehání",
+      "source_url": "https://www.ferpotravina.cz/smetana/smetana-ke-slehani-bohemilk-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 312.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.2,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 2.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 33.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 22.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana ke šlehání Krajanka 33% 250 ml": {
@@ -17407,13 +17799,79 @@
       "schema_version": 13
     },
     "exact:Smetana ke šlehání Mlékárna Kunín 31% 200 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Smetana ke šlehání 31%",
+      "source_url": "https://www.ferpotravina.cz/smetana/smetana-ke-slehani-mlekarna-kunin-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 294.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.1,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 31.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 21.7,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana ke šlehání Olma 33% 200 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Olma smetana ke šlehání",
+      "source_url": "https://www.ferpotravina.cz/smetana/olma-smetana-ke-slehani",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 312.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.2,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 2.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 33.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 19.8,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.07,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana na vaření Mlékárna Kunín 12% 200 g": {
@@ -17427,13 +17885,79 @@
       "schema_version": 13
     },
     "exact:Smetana zakysaná Jihočeská Madeta 11% 180 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Lahůdka zakysaná smetana",
+      "source_url": "https://www.ferpotravina.cz/smetanove-dezerty/lahudka-zakysana-smetana-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 155.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 15.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 14.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 9.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 6.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana zakysaná Jihočeská Madeta 180 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Lahůdka zakysaná smetana",
+      "source_url": "https://www.ferpotravina.cz/smetanove-dezerty/lahudka-zakysana-smetana-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 155.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 15.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 14.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 9.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 6.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Smetana zakysaná Olma 16% 200 g": {
@@ -17792,8 +18316,41 @@
       "schema_version": 13
     },
     "exact:Sýr Cheddar Albert 100 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "ALB sýr Cheddar",
+      "source_url": "https://www.ferpotravina.cz/syr/alb-syr-cheddar-albert-ceska-republika-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 389.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 26.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 32.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 22.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.0,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr Cheddar El Tequito 200 g": {
@@ -17807,8 +18364,41 @@
       "schema_version": 13
     },
     "exact:Sýr Cheddar Président 100 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Président Cheddar",
+      "source_url": "https://www.ferpotravina.cz/aromaticke-syry/president-cheddar",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 305.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 25.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.01,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 35.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 22.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.8,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr Cottage Blaník 150 g": {
@@ -17842,8 +18432,41 @@
       "schema_version": 13
     },
     "exact:Sýr Eidam 45% Albert 250 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Eidam 45% syr",
+      "source_url": "https://www.ferpotravina.cz/syr/eidam-45-albert-ceska-republika-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 328.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 24.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 26.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 17.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.7,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr Eidam 45% Sýýýr! 100 g": {
@@ -18167,8 +18790,41 @@
       "schema_version": 13
     },
     "exact:Sýr tavený smetanový Madetka 100 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Madetka tavený smetanový sýr",
+      "source_url": "https://www.ferpotravina.cz/mlecne-vyrobky/madetka-taveny-smetanovy-syr",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 231.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.6,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 19.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 12.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr tavený smetanový Philadelphia 125 g": {
@@ -18677,8 +19333,41 @@
       "schema_version": 13
     },
     "exact:Tvaroh polotučný Jihočeský Madeta 250 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Tvaroh polotučný",
+      "source_url": "https://www.ferpotravina.cz/tvaroh/tvaroh-polotucny-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 95.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 10.2,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 3.6,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.6,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 4.4,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.09,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Tvaroh polotučný Olomoucký Olma 250 g": {
