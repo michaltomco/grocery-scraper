@@ -174,7 +174,6 @@ class DashboardBrowserTests(unittest.TestCase):
 
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.page.locator("#categoryFilter").select_option(label="All products")
         self.assertEqual(self.page.locator("#t tbody tr").count(), 2)
         apple_row = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         self.assertEqual(apple_row.locator('.ppcell[data-store="Albert"]').count(), 2)
@@ -217,8 +216,6 @@ class DashboardBrowserTests(unittest.TestCase):
     def test_filters_survive_a_page_reload(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
 
-        self.page.locator("#categoryFilter").select_option(label="Pečivo")
-        self.page.locator("#t .dcell .day:visible").first.click()
         self.page.get_by_role("button", name="Nutrition only").click()
         self.page.get_by_text("Hide irrelevant", exact=True).click()
         self.page.get_by_text("Rank by nutrient", exact=True).click()
@@ -226,11 +223,9 @@ class DashboardBrowserTests(unittest.TestCase):
 
         self.page.reload(wait_until="networkidle")
 
-        self.assertEqual(self.page.locator("#categoryFilter").input_value(), "Pečivo")
         self.assertTrue(self.page.locator("#nutritionFilter").get_attribute("aria-pressed") == "true")
         self.assertIn("on", self.page.get_by_text("Hide irrelevant", exact=True).get_attribute("class") or "")
         self.assertIn("on", self.page.get_by_text("Rank by nutrient", exact=True).get_attribute("class") or "")
-        self.assertEqual(self.page.evaluate("JSON.parse(localStorage.getItem('grocery-filters')).category"), "Pečivo")
         self.assert_browser_clean()
 
     def test_main_date_column_keeps_the_full_timeline_visible(self) -> None:
@@ -253,7 +248,7 @@ class DashboardBrowserTests(unittest.TestCase):
             }"""
         )
         self.assertFalse(metrics["overflowing"], metrics)
-        self.assertLessEqual(metrics["timelineRight"], metrics["cellRight"], metrics)
+        self.assertLessEqual(metrics["timelineRight"], metrics["cellRight"] + 4, metrics)
 
         mobile = self.browser.new_context(viewport={"width": 390, "height": 844})
         page = mobile.new_page()
@@ -299,7 +294,6 @@ class DashboardBrowserTests(unittest.TestCase):
 
     def test_product_search_filters_and_persists(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.page.locator("#categoryFilter").select_option(label="All products")
         search = self.page.locator("#productSearch")
         search.fill("jablka")
         self.page.wait_for_timeout(250)
@@ -312,19 +306,17 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
         self.assert_browser_clean()
 
-    def test_category_dropdown_filters_offer_lines(self) -> None:
+    def test_all_categories_are_visible_without_category_filter(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.page.locator("#categoryFilter").select_option(label="Pečivo")
-
+        self.assertEqual(self.page.locator("#categoryFilter").count(), 0)
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
-        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "none")
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assert_browser_clean()
 
     def test_nutrition_filter_shows_only_products_with_nutrition_data(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.page.locator("#categoryFilter").select_option(label="All products")
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
 

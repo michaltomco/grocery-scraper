@@ -310,7 +310,7 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertIn('<a class="exact-link" href="exact/rajčata_cherry_žlutá_250_g.html"', html)
         self.assertIn('>Rajčata cherry žlutá 250 g</a></td>', html)
 
-    def test_build_category_dropdown_defaults_to_produce(self) -> None:
+    def test_build_shows_all_categories_without_category_filter(self) -> None:
         with TemporaryDirectory() as directory:
             history = Path(directory) / "history.csv"
             write_csv(
@@ -333,9 +333,8 @@ class DashboardBuilderTests(unittest.TestCase):
             ) as cache_image:
                 html = build_site.build()
 
-        self.assertIn('<select id="categoryFilter">', html)
-        self.assertLess(html.index('value="all">All products'), html.index('value="Pečivo">Pečivo'))
-        self.assertIn('value="Ovoce a zelenina" selected', html)
+        self.assertNotIn('id="categoryFilter"', html)
+        self.assertIn('id="productSearch"', html)
         self.assertIn('data-category="Pečivo"', html)
         cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg")
 

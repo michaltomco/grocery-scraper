@@ -1355,7 +1355,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
     </div>
   </div>
 </div>
-<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><div class="search-filter"><label for="productSearch">Search</label><input id="productSearch" type="search" placeholder="Find products" autocomplete="off"></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
+<div class="filter-controls"><div class="search-filter"><label for="productSearch">Search</label><input id="productSearch" type="search" placeholder="Find products" autocomplete="off"></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
 <div class="card ranking-card" id="rankingCard" hidden>
   <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
   <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
@@ -1423,7 +1423,6 @@ document.querySelectorAll('th').forEach(th => {{
 const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 let nutritionOnly = false;
-const categoryFilter = document.getElementById('categoryFilter');
 const productSearch = document.getElementById('productSearch');
 const FILTERS_KEY = 'grocery-filters';
 let savedFilterState = null;
@@ -1435,7 +1434,6 @@ function saveFilters() {{
   try {{
     localStorage.setItem(FILTERS_KEY, JSON.stringify({{
       hiddenStores: [...hidden],
-      category: categoryFilter.value,
       search: productSearch.value,
       hideIrrelevant,
       nutritionOnly,
@@ -1483,7 +1481,7 @@ function applyProductSearch() {{
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
   const label = rankingNutrient.value;
-  const ranked = rankingData.filter(item => (!productSearch.value || searchKey(item.product).includes(searchKey(productSearch.value))) && (categoryFilter.value === 'all' || item.category === categoryFilter.value) && (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
+  const ranked = rankingData.filter(item => (!productSearch.value || searchKey(item.product).includes(searchKey(productSearch.value))) && (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
     .map(item => ({{ ...item, amount: item.values[label] * item.factor, rdaCost: item.price * item.rdas[label] / (item.values[label] * item.factor), datedim: !(item.start <= rangeEnd && (item.end || item.start) >= rangeStart), storedim: hidden.has(item.store) }}))
     .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
     .sort((a, b) => a.rdaCost - b.rdaCost)
@@ -1498,7 +1496,6 @@ document.getElementById('rankToggle').onclick = () => {{
   saveFilters();
 }};
 rankingNutrient.onchange = () => {{ updateRanking(); saveFilters(); }};
-categoryFilter.onchange = () => {{ applyFilters(); saveFilters(); }};
 let searchTimer;
 productSearch.oninput = () => {{
   clearTimeout(searchTimer);
@@ -1538,10 +1535,8 @@ function applyFilters() {{
     const ds = d.dataset.date;
     const owner = d.closest('.dcell');
     const ownerStore = owner && owner.dataset.store;
-    const ownerCategory = owner && owner.dataset.category;
     const muted = !!(ownerStore && hidden.has(ownerStore));
-    const categoryHidden = !!(ownerCategory && categoryFilter.value !== 'all' && ownerCategory !== categoryFilter.value);
-    const on = !!ds && !muted && !categoryHidden && (ds === rangeStart || ds === rangeEnd);
+    const on = !!ds && !muted && (ds === rangeStart || ds === rangeEnd);
     d.classList.toggle('sel', on);
   }});
 
@@ -1563,19 +1558,18 @@ function applyFilters() {{
     lines.forEach(L => {{
       const st = L.store;
       const muted = !!(st && hidden.has(st));
-      const categoryHidden = categoryFilter.value !== 'all' && L.dc.dataset.category !== categoryFilter.value;
       if (L.pp) L.pp.classList.toggle('muted', muted);
       L.dc.classList.toggle('muted', muted);
-      if (!muted && !categoryHidden) visibleStores++;
+      if (!muted) visibleStores++;
       const ds = L.dc.dataset.s, de = L.dc.dataset.e;
       const hasDate = !!ds;
       const overlap = hasDate && ds <= rangeEnd && (de || ds) >= rangeStart;
       const inWin = hasDate ? overlap : true;   // a line with no date isn't date-filtered
-      if (!muted && !categoryHidden && inWin) shown++;
-      const dim = !muted && !categoryHidden && hasDate && !overlap;
+      if (!muted && inWin) shown++;
+      const dim = !muted && hasDate && !overlap;
       if (L.pp) L.pp.classList.toggle('datedim', dim);
       L.dc.classList.toggle('datedim', dim);
-      const lineShown = !searchHidden && !categoryHidden && (!hideIrrelevant || (!muted && overlap));
+      const lineShown = !searchHidden && (!hideIrrelevant || (!muted && overlap));
       if (lineShown) anyLineShown = true;
       const disp = lineShown ? '' : 'none';
       if (L.pp) L.pp.style.display = disp;
@@ -1787,8 +1781,6 @@ applyTheme(saved);
 // Restore the dashboard filters after all controls and their handlers exist.
 // Invalid or stale values are ignored so a changed build cannot get stuck.
 if (savedFilterState && typeof savedFilterState === 'object') {{
-  if ([...categoryFilter.options].some(o => o.value === savedFilterState.category))
-    categoryFilter.value = savedFilterState.category;
   if (typeof savedFilterState.search === 'string')
     productSearch.value = savedFilterState.search;
   if (Array.isArray(savedFilterState.hiddenStores)) {{
