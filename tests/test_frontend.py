@@ -255,6 +255,21 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "none")
         self.assert_browser_clean()
 
+    def test_nutrition_filter_shows_only_products_with_nutrition_data(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
+        bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
+
+        self.page.get_by_role("button", name="Nutrition only").click()
+        self.assertIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
+
+        self.page.get_by_role("button", name="Nutrition only").click()
+        self.assertNotIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assert_browser_clean()
+
     def test_product_detail_nutrition_mode_persists(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         href = self.page.locator('#t a.product-link[href="products/jablka.html"]').get_attribute("href")

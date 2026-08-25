@@ -893,6 +893,13 @@ def build() -> str:
         pretty = display_name(product, first.get("raw_name", product))
         nutrition_entry = nutrition.get(product, {})
         nutrition_values = nutrition_entry.get("values", {})
+        has_nutrition = (
+            nutrition_entry.get("status") == "found"
+            and any(
+                isinstance(value, dict) and value.get("value") is not None
+                for value in nutrition_values.values()
+            )
+        )
         nutrition_html = ""
         if nutrition_entry.get("status") == "found":
             labels = ("Energy", "Protein", "Carbs", "Fiber", "Vitamin C")
@@ -965,7 +972,7 @@ def build() -> str:
                 )
         spark_html = sparkline(lowest_series.get(product, [])) or '<span class="dim">1 run</span>'
         table_rows.append(
-            f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\">"
+            f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\" data-has-nutrition=\"{'true' if has_nutrition else 'false'}\">"
             f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html" aria-label="{esc(pretty)}">'
             f'{img_tag}<span class="pname">{esc(pretty)}</span></a></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
@@ -1226,7 +1233,8 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   font-size: .85rem; padding: 6px 12px; }}
 .theme button + button {{ border-left: 1px solid var(--track); }}
 .theme button.active {{ background: var(--accent); color: var(--thumb-border); font-weight: 600; }}
-.category-filter {{ display:flex; align-items:center; gap:8px; margin:0 0 10px; font-size:.85rem; }}
+.filter-controls {{ display:flex; align-items:center; gap:12px; margin:0 0 10px; }}
+.category-filter {{ display:flex; align-items:center; gap:8px; font-size:.85rem; }}
 .category-filter select {{ background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
@@ -1287,7 +1295,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
     </div>
   </div>
 </div>
-<div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div>
+<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
 <div class="card ranking-card" id="rankingCard" hidden>
   <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
   <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
@@ -1354,6 +1362,7 @@ document.querySelectorAll('th').forEach(th => {{
 // Combined filters: store mute + date-range / single-date slider.
 const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
+let nutritionOnly = false;
 const categoryFilter = document.getElementById('categoryFilter');
 const chips = [...document.querySelectorAll('.legend .chip')];
 const rankingData = {ranking_json};
@@ -1475,7 +1484,8 @@ function applyFilters() {{
     // "Hide irrelevant" is on. By default every row stays fully visible.
     const fullyOut = hideIrrelevant && ((visibleStores === 0) || !inRange(r));
     r.classList.toggle('rowout', fullyOut);
-    let show = anyLineShown;
+    const matchesNutrition = !nutritionOnly || r.dataset.hasNutrition === 'true';
+    const show = anyLineShown && matchesNutrition;
     r.style.display = show ? '' : 'none';
   }});
   updateRanking();
@@ -1603,6 +1613,14 @@ const hideBtn = document.getElementById('hideToggle');
 hideBtn.onclick = () => {{
   hideIrrelevant = !hideIrrelevant;
   hideBtn.classList.toggle('on', hideIrrelevant);
+  applyFilters();
+}};
+
+const nutritionFilterBtn = document.getElementById('nutritionFilter');
+nutritionFilterBtn.onclick = () => {{
+  nutritionOnly = !nutritionOnly;
+  nutritionFilterBtn.classList.toggle('on', nutritionOnly);
+  nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
   applyFilters();
 }};
 
