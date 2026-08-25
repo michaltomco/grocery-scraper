@@ -140,7 +140,12 @@ class DashboardBrowserTests(unittest.TestCase):
         cls.base_url = f"http://127.0.0.1:{cls.server.server_port}"
 
         cls.playwright = sync_playwright().start()
-        cls.browser: Browser = cls.playwright.chromium.launch()
+        # --no-sandbox: CI runners execute as root, where Chromium's sandbox
+        # cannot start. --disable-dev-shm-usage avoids the small /dev/shm on
+        # shared runners. Both are safe for local runs too.
+        cls.browser: Browser = cls.playwright.chromium.launch(
+            args=["--no-sandbox", "--disable-dev-shm-usage"]
+        )
 
     @classmethod
     def tearDownClass(cls) -> None:
