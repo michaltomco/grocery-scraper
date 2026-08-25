@@ -1360,6 +1360,27 @@ const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 let nutritionOnly = false;
 const categoryFilter = document.getElementById('categoryFilter');
+const FILTERS_KEY = 'grocery-filters';
+let savedFilterState = null;
+try {{
+  const raw = localStorage.getItem(FILTERS_KEY);
+  if (raw) savedFilterState = JSON.parse(raw);
+}} catch (e) {{}}
+function saveFilters() {{
+  try {{
+    localStorage.setItem(FILTERS_KEY, JSON.stringify({{
+      hiddenStores: [...hidden],
+      category: categoryFilter.value,
+      hideIrrelevant,
+      nutritionOnly,
+      rankingVisible: !rankingCard.hidden,
+      rankingCategory: rankingCategory.value,
+      rankingNutrient: rankingNutrient.value,
+      rangeStartOffset: offS,
+      rangeEndOffset: offE,
+    }}));
+  }} catch (e) {{}}
+}}
 const chips = [...document.querySelectorAll('.legend .chip')];
 const rankingData = {ranking_json};
 const rankingUnits = {ranking_units_json};
@@ -1376,7 +1397,7 @@ function refreshRankingNutrients() {{
   rankingNutrient.replaceChildren(...rankingGroups[rankingCategory.value].map(label => new Option(label.startsWith('Vitamin ') ? label.replace('Vitamin ', '').replace(/ \\(.*/, '') : label.replace(/ fat$/, ''), label)));
   updateRanking();
 }}
-rankingCategory.onchange = refreshRankingNutrients;
+rankingCategory.onchange = () => {{ refreshRankingNutrients(); saveFilters(); }};
 refreshRankingNutrients();
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
@@ -1393,9 +1414,10 @@ document.getElementById('rankToggle').onclick = () => {{
   rankingCard.hidden = !rankingCard.hidden;
   document.getElementById('rankToggle').classList.toggle('on', !rankingCard.hidden);
   updateRanking();
+  saveFilters();
 }};
-rankingNutrient.onchange = updateRanking;
-categoryFilter.onchange = () => applyFilters();
+rankingNutrient.onchange = () => {{ updateRanking(); saveFilters(); }};
+categoryFilter.onchange = () => {{ applyFilters(); saveFilters(); }};
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
@@ -1494,6 +1516,7 @@ function setStoreHidden(s, hide) {{
   const chip = chips.find(c => c.dataset.store === s);
   if (chip) chip.classList.toggle('off', hide);
   applyFilters();
+  saveFilters();
 }}
 chips.forEach(chip => {{
   chip.onclick = () => {{
@@ -1519,6 +1542,7 @@ function syncView() {{
   const ds = offsetToIso(offS), de = offsetToIso(offE);
   rangeStart = ds; rangeEnd = de;
   applyFilters();
+  saveFilters();
 }}
 // Drag-to-paint range selection: press a square (start), drag across to another
 // (end), release commits. Removes the "which edge moves?" ambiguity — you define
@@ -1610,6 +1634,7 @@ hideBtn.onclick = () => {{
   hideIrrelevant = !hideIrrelevant;
   hideBtn.classList.toggle('on', hideIrrelevant);
   applyFilters();
+  saveFilters();
 }};
 
 const nutritionFilterBtn = document.getElementById('nutritionFilter');
@@ -1618,6 +1643,7 @@ nutritionFilterBtn.onclick = () => {{
   nutritionFilterBtn.classList.toggle('on', nutritionOnly);
   nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
   t.classList.toggle('nutrition-only', nutritionOnly);
+  saveFilters();
 }};
 
 // Light / Dark / System theme switcher (persisted in localStorage).
@@ -1643,6 +1669,35 @@ themeSwitch.querySelectorAll('button').forEach(b => {{
 let saved = 'system';
 try {{ saved = localStorage.getItem(THEME_KEY) || 'system'; }} catch (e) {{}}
 applyTheme(saved);
+
+// Restore the dashboard filters after all controls and their handlers exist.
+// Invalid or stale values are ignored so a changed build cannot get stuck.
+if (savedFilterState && typeof savedFilterState === 'object') {{
+  if ([...categoryFilter.options].some(o => o.value === savedFilterState.category))
+    categoryFilter.value = savedFilterState.category;
+  if (Array.isArray(savedFilterState.hiddenStores)) {{
+    savedFilterState.hiddenStores.forEach(s => hidden.add(s));
+    chips.forEach(chip => chip.classList.toggle('off', hidden.has(chip.dataset.store)));
+  }}
+  hideIrrelevant = savedFilterState.hideIrrelevant === true;
+  nutritionOnly = savedFilterState.nutritionOnly === true;
+  hideBtn.classList.toggle('on', hideIrrelevant);
+  nutritionFilterBtn.classList.toggle('on', nutritionOnly);
+  nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
+  t.classList.toggle('nutrition-only', nutritionOnly);
+  if (Number.isInteger(savedFilterState.rangeStartOffset) && Number.isInteger(savedFilterState.rangeEndOffset)) {{
+    offS = Math.max(0, Math.min(SPAN_MAX, savedFilterState.rangeStartOffset));
+    offE = Math.max(offS, Math.min(SPAN_MAX, savedFilterState.rangeEndOffset));
+  }}
+  rankingCard.hidden = savedFilterState.rankingVisible !== true;
+  document.getElementById('rankToggle').classList.toggle('on', !rankingCard.hidden);
+  if ([...rankingCategory.options].some(o => o.value === savedFilterState.rankingCategory))
+    rankingCategory.value = savedFilterState.rankingCategory;
+  refreshRankingNutrients();
+  if ([...rankingNutrient.options].some(o => o.value === savedFilterState.rankingNutrient))
+    rankingNutrient.value = savedFilterState.rankingNutrient;
+  syncView();
+}}
 </script>
 </body></html>"""
     return html

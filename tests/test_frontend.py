@@ -207,6 +207,26 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
         self.assert_browser_clean()
 
+    def test_filters_survive_a_page_reload(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+
+        self.page.locator("#categoryFilter").select_option(label="Pečivo")
+        self.page.locator("#t .dcell .day:visible").first.click()
+        self.page.get_by_role("button", name="Nutrition only").click()
+        self.page.get_by_text("Hide irrelevant", exact=True).click()
+        self.page.get_by_text("Rank by nutrient", exact=True).click()
+        self.page.locator('.legend .chip[data-store="Tesco"]').click()
+
+        self.page.reload(wait_until="networkidle")
+
+        self.assertEqual(self.page.locator("#categoryFilter").input_value(), "Pečivo")
+        self.assertTrue(self.page.locator("#nutritionFilter").get_attribute("aria-pressed") == "true")
+        self.assertIn("on", self.page.get_by_text("Hide irrelevant", exact=True).get_attribute("class") or "")
+        self.assertIn("on", self.page.get_by_text("Rank by nutrient", exact=True).get_attribute("class") or "")
+        self.assertIn("off", self.page.locator('.legend .chip[data-store="Tesco"]').get_attribute("class") or "")
+        self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
+        self.assert_browser_clean()
+
     def test_main_date_column_keeps_the_full_timeline_visible(self) -> None:
         # 900px is the dashboard's maximum desktop width, where all four table
         # columns must coexist without collapsing the two-week timeline.
