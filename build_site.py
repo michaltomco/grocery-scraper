@@ -1204,7 +1204,7 @@ th {{ color: var(--muted); font-weight: 600; cursor: pointer; user-select: none;
    padding). This is explicit instead of depending on the browser's leftover
    table width, which previously made the timeline shrink at some viewports. */
 th[data-k="prod"] {{ width: 220px; }}
-th[data-k="pricelist"] {{ width: 120px; }}
+th[data-k="pricelist"] {{ width: 120px; text-align: right; }}
 th[data-k="drange"] {{ width:310px; min-width:310px; max-width:310px; }}
 th[data-k="spark"] {{ width: 150px; }}
 th:hover {{ color: var(--fg); }}
@@ -1222,8 +1222,8 @@ td.prod .pname {{ display: inline-block; vertical-align: middle; max-width: calc
   line-height: 1.2; overflow-wrap: anywhere; word-break: break-word; }}
 td.prod .nutrition {{ display: block; margin-top: 5px; font-size: .7rem; line-height: 1.35;
   font-weight: 400; color: var(--muted); white-space: normal; }}
-td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
-.ppcell {{ display: flex; flex-direction: row; justify-content: flex-start;
+td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; text-align: right; }}
+.ppcell {{ display: flex; flex-direction: row; justify-content: flex-end;
   align-items: center; gap: 6px; padding: 2px 0; min-height: 22px; box-sizing: border-box; cursor: pointer; }}
 .ppcell:hover {{ filter: brightness(1.15); }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
