@@ -9499,8 +9499,41 @@
   },
   "exact": {
     "exact:Actimel Danone 100 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Danone Actimel jogurtový nápoj",
+      "source_url": "https://www.ferpotravina.cz/mlecne-napoje/danone-actimel-jogurtovy-napoj",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 73.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 10.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 10.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.13,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Jablka": {
@@ -9645,8 +9678,41 @@
       "schema_version": 13
     },
     "exact:Anglická slanina Pikok 100 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Anglická slanina Pikok",
+      "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-pikok-le-co-ing-jiri-lenc-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 337.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.8,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 29.9,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 8.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.1,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Anglická slanina Premium Albertovo uzenářství 100 g": {
@@ -9655,8 +9721,37 @@
       "schema_version": 13
     },
     "exact:Anglická slanina speciál 100 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Anglická slanina speciál",
+      "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-special",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.8,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 8.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.3,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Aperitiv Aperitivo Bitterol 0.7 l": {
@@ -9778,8 +9873,41 @@
       "schema_version": 13
     },
     "exact:Balkánský sýr Pilos 200 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Balkánský sýr Pilos",
+      "source_url": "https://www.ferpotravina.cz/syr/balkansky-syr-pilos",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 231.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 3.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 18.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 10.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 4.0,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Banán sušený Emma 250 g": {
@@ -9788,8 +9916,17 @@
       "schema_version": 13
     },
     "exact:Banány 1 kg": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Banány",
+      "source_url": "https://www.ferpotravina.cz/susene-ovoce-a-plody/banany",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Banány Billa Bonvia 1 kg": {
@@ -9828,13 +9965,31 @@
       "schema_version": 13
     },
     "exact:Becherovka": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Becherovka original",
+      "source_url": "https://www.ferpotravina.cz/likery/becherovka-original",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Becherovka 0.7 l": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Becherovka original",
+      "source_url": "https://www.ferpotravina.cz/likery/becherovka-original",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Beraní rohy Viva 640 g": {
@@ -9858,8 +10013,17 @@
       "schema_version": 13
     },
     "exact:Bohemia Sekt Demi Sec 0.75 l": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Bohemia sekt demi sec",
+      "source_url": "https://www.ferpotravina.cz/vino/bohemia-sekt-demi-sec",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Bohemia Sekt Prestige 0.75 l": {
@@ -12855,8 +13019,41 @@
       "schema_version": 13
     },
     "exact:Koření Grilovací Vitana": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Vitana GORILOVACÍ (grilovací) koření na kuře",
+      "source_url": "https://www.ferpotravina.cz/korenici-smesy/vitana-gorilovaci-grilovaci-koreni-na-kure",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 176.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 4.6,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 23.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 14.7,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 3.7,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.7,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 55.0,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Koření Paprika lahůdková Kotányi 25 g": {
@@ -12865,8 +13062,17 @@
       "schema_version": 13
     },
     "exact:Koření Paprika sladká Vitana 100 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Paprika sladká mletá Vitana",
+      "source_url": "https://www.ferpotravina.cz/prirodni-koreni/paprika-sladka-mleta-vitana-vitana-a-s-provozovna-bysice",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Koření Pepř černý mletý Vitana 18 g": {
@@ -12875,8 +13081,41 @@
       "schema_version": 13
     },
     "exact:Koření Čína základ jídla Vitana 97 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Základ jídla Čína",
+      "source_url": "https://www.ferpotravina.cz/instantni-smes/zaklad-jidla-cina-vitana-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 72.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 10.1,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 6.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 3.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 2.2,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.8,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Krabí tyčinky Surimi mražené Mylord 125 g": {
@@ -12890,13 +13129,83 @@
       "schema_version": 13
     },
     "exact:Krekry Tuc 100 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Tuc original",
+      "source_url": "https://www.ferpotravina.cz/krekry/tuc-original-kraft-foods-cr",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 495.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 8.8,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 70.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 11.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 19.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.7,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 2.8,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.72,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Krekry makovky Vest 90 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Makovky",
+      "source_url": "https://www.ferpotravina.cz/krekry/makovky-vest-spol-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 492.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 10.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 59.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 7.4,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 23.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.9,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.2,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Krevetový špíz s kořením Deutsche See 120 g": {
@@ -12955,8 +13264,37 @@
       "schema_version": 13
     },
     "exact:Krůtí mleté maso 0.7 kg": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Krůtí  mleté maso",
+      "source_url": "https://www.ferpotravina.cz/mlete-maso/kruti-mlete-maso-zelenka-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 129.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 5.4,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.6,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Krůtí prsní medailonky 0.4 kg": {
@@ -12965,8 +13303,17 @@
       "schema_version": 13
     },
     "exact:Krůtí prsní řízky 1 kg": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Krůtí prsní řízky",
+      "source_url": "https://www.ferpotravina.cz/drubezi-maso/kruti-prsni-rizky",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Krůtí stehenní řízky 1 kg": {
@@ -13005,8 +13352,41 @@
       "schema_version": 13
     },
     "exact:Kukuřice sterilovaná Billa 150 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Kukuřice cukrová",
+      "source_url": "https://www.ferpotravina.cz/zelenina-sterilovana/kukurice-cukrova-billa-spol-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 69.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 2.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 11.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 7.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.2,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Kukuřice sterilovaná Gold Bonduelle 340 g": {
@@ -13015,8 +13395,17 @@
       "schema_version": 13
     },
     "exact:Kukuřice sterilovaná Tesco 340 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Kukuřice ve slaném nálevu",
+      "source_url": "https://www.ferpotravina.cz/zelenina-sterilovana/kukurice-ve-slanem-nalevu-tesco-stores-cr-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
       "schema_version": 13
     },
     "exact:Kukuřičné křupky Delfínci Pan Křupka Rej 20 g": {
@@ -15686,13 +16075,87 @@
       "schema_version": 13
     },
     "exact:Oplatky Miňonky Opavia 50 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Opavia Miňonky kakaové oplatky",
+      "source_url": "https://www.ferpotravina.cz/susenky/opavia-minonky-kakaove-oplatky",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 528.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 59.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 41.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 29.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 19.5,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.28,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Oplatky Miňonky Opavia 70 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Opavia Miňonky kakaové oplatky",
+      "source_url": "https://www.ferpotravina.cz/susenky/opavia-minonky-kakaove-oplatky",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 528.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 5.1,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 59.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 41.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 29.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 19.5,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.28,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Oplatky Orion 42 g": {
@@ -15716,8 +16179,45 @@
       "schema_version": 13
     },
     "exact:Oplatky Zlaté Opavia 146 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "OPAVIA zlaté kolečka",
+      "source_url": "https://www.ferpotravina.cz/susenky/opavia-zlate-kolecka",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 515.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 6.4,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 72.5,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 24.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 21.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 10.0,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 2.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.45,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Oplatky celomáčené Delissa Orion 30 g": {
@@ -18880,8 +19380,41 @@
       "schema_version": 13
     },
     "exact:Sýr Zottarella Zott 125 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Zott Zottarella Mozzarella",
+      "source_url": "https://www.ferpotravina.cz/pareny-syr/zott-zottarella-mozzarella",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 157.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 19.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 8.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 5.8,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr a křup Kiri 35 g": {
@@ -18920,13 +19453,79 @@
       "schema_version": 13
     },
     "exact:Sýr na pánev Madeta 100 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Sýr na pánev",
+      "source_url": "https://www.ferpotravina.cz/pareny-syr/syr-na-panev-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 289.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 26.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 13.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr na pánev Madeta 200 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Sýr na pánev",
+      "source_url": "https://www.ferpotravina.cz/pareny-syr/syr-na-panev-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 289.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 26.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 13.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sýr nitky Liptov 80 g": {
