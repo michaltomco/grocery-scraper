@@ -189,6 +189,15 @@ def normalized(row: dict) -> tuple[float | None, str]:
     return None, ""
 
 
+def normalized_offer_value(row: dict, price: float | str) -> tuple[float | None, str]:
+    """Normalize a displayed offer price using its explicit package weight."""
+    amount = number(str(price))
+    weight = explicit_weight_grams(row.get("product_name", ""))
+    if amount is not None and weight:
+        return round(amount * 1000 / weight, 2), "kg"
+    return normalized(row)
+
+
 def explicit_weight_grams(name: str) -> float | None:
     """Return package weight when it is explicitly present in the name."""
     match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(kg|g)\b", name or "", re.IGNORECASE)
@@ -429,9 +438,16 @@ def slugify(text):
     return slug or "product"
 
 
-def exact_link(label, raw_name):
-    """Render a raw_name as a link to its exact-SKU product page."""
-    href = f"exact/{slugify(raw_name)}.html"
+def exact_page_slug(raw_name: str, store: str = "") -> str:
+    """Stable exact-page slug, disambiguated when one label spans stores."""
+    base = slugify(raw_name)
+    return f"{base}__{slugify(store)}" if store else base
+
+
+def exact_link(label, raw_name, store="", exact_page_slugs=None):
+    """Render a raw_name as a link to its store-specific exact page."""
+    page_slug = (exact_page_slugs or {}).get((raw_name, store), exact_page_slug(raw_name))
+    href = f"exact/{page_slug}.html"
     return f'<a class="exact-link" href="{esc(href)}" aria-label="{label} nutrition">{label}</a>'
 
 
@@ -598,7 +614,7 @@ def render_product_page(pretty, image_html, nutrition_sections, source_html,
 </body>{PRODUCT_PAGE_HEAD_JS}{filter_js}</html>"""
 
 
-def write_product_pages(products, nutrition):
+def write_product_pages(products, nutrition, exact_page_slugs=None):
     """Write one static detail page per canonical produce item."""
     PRODUCTS_DIR.mkdir(parents=True, exist_ok=True)
     product_keys = sorted(products)
@@ -619,7 +635,7 @@ def write_product_pages(products, nutrition):
         source_html = source_html_for(nutrition_entry, with_unavailable=False)
         discount_rows = "".join(
             f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parsed_date_range(e.get("date_range", ""))[0])}" data-end="{esc(parsed_date_range(e.get("date_range", ""))[1])}">'
-            f'<td class="discount-produce">{exact_link(esc(e.get("raw_name", product)), e.get("raw_name", product))}</td>'
+            f'<td class="discount-produce">{exact_link(esc(e.get("raw_name", product)), e.get("raw_name", product), e.get("store", ""), exact_page_slugs)}</td>'
             f'<td>{store_chip(e.get("store", ""))}</td>'
             f'<td class="discount-price">{esc(e.get("val") if e.get("val") is not None else "-")} / {esc(e.get("unit", ""))}</td>'
             f'<td>{detail_timeline(e.get("date_range", ""), e.get("store", ""), today_iso)}</td></tr>'
@@ -655,7 +671,7 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
         if not source_image or any(m in source_image for m in ("no-image", "no_image", "/no_img/", "placeholder")):
             nutrition_entry = {}
         else:
-            nutrition_entry = exact_nutrition.get(slug, {})
+            nutrition_entry = exact_nutrition.get(slugify(raw_name), {})
         values = nutrition_entry.get("values", {})
         nutrition_sections = nutrition_sections_for(values)
         source_html = source_html_for(nutrition_entry, with_unavailable=True)
@@ -723,14 +739,16 @@ def build() -> str:
         # effect even for rows whose CSV column predates the change.
         product = canonical_product_name(r.get("product_name", ""))
         stores_seen.add(store)
-        val, unit = normalized(r)
+        val, unit = normalized_offer_value(r, r.get("price", ""))
         ts = parse_ts(r.get("scraped_at", ""))
         if val is not None and unit:
             series[(product, store, unit)].append((ts, val))
         if not is_active_offer(r.get("date_range", ""), today_date):
             continue
         lp = number(r.get("loyalty_price", ""))
-        disp_val = lp if is_true(r.get("loyalty_required", "")) and lp is not None else val
+        if is_true(r.get("loyalty_required", "")) and lp is not None:
+            val, unit = normalized_offer_value(r, lp)
+        disp_val = val
         s, en = parsed_date_range(r.get("date_range", ""))
         end = _iso(en)
         source_identity = r.get("product_id", "") or r.get("product_name", "")
@@ -809,27 +827,42 @@ def build() -> str:
                 key=lambda point: point[0],
             )
 
-    # Collect the most-recent active offer per distinct retailer label so each
-    # exact-SKU page links back to its canonical product and shows its own
-    # discount line. ``products`` already groups by canonical name; here we index
-    # the raw offer label for the exact variant pages.
+    # Build one exact page per raw label and store. A label such as Actimel
+    # can be sold by both Albert and Billa; using only the label as the key lets
+    # the later store overwrite the earlier store's offer and misroutes links.
+    label_stores = {}
+    for _r in rows:
+        _name = _r.get("product_name", "")
+        if _name:
+            label_stores.setdefault(_name, set()).add(_r.get("store", ""))
+    exact_page_slugs = {}
     exact_rows = {}
     for _r in rows:
         _name = _r.get("product_name", "")
         if not _name:
             continue
-        _slug = slugify(_name)
-        existing = exact_rows.get(_slug)
+        _store = _r.get("store", "")
+        _base_slug = slugify(_name)
+        _page_slug = exact_page_slug(_name, _store) if len(label_stores.get(_name, set())) > 1 else _base_slug
+        exact_page_slugs[(_name, _store)] = _page_slug
+        existing = exact_rows.get(_page_slug)
         _ts = parse_ts(_r.get("scraped_at", ""))
         if existing is None or _ts > existing.get("_ts", ""):
-            _normalized_value, _normalized_unit = normalized(_r)
-            exact_rows[_slug] = {
+            _real_price = number(_r.get("price", ""))
+            _loyalty_price = number(_r.get("loyalty_price", ""))
+            if is_true(_r.get("loyalty_required", "")) and _loyalty_price is not None:
+                _real_price = _loyalty_price
+            if _real_price is not None:
+                _normalized_value, _normalized_unit = normalized_offer_value(_r, _real_price)
+            else:
+                _normalized_value, _normalized_unit = normalized_offer_value(_r, _r.get("price", ""))
+            exact_rows[_page_slug] = {
                 "raw_name": _name,
                 "pretty": display_name(canonical_product_name(_name), _name),
                 "canonical_product_name": canonical_product_name(_name),
                 "product_id": _r.get("product_id", ""),
                 "image_url": _r.get("image_url", ""),
-                "store": _r.get("store", ""),
+                "store": _store,
                 "val": _normalized_value,
                 "unit": _normalized_unit,
                 "date_range": _r.get("date_range", ""),
@@ -841,7 +874,7 @@ def build() -> str:
     for _kk, _vv in exact_nutrition.items():
         if _kk.startswith("exact:"):
             exact_nutrition_by_slug[slugify(_kk[6:])] = _vv
-    write_product_pages(products, nutrition)
+    write_product_pages(products, nutrition, exact_page_slugs)
     write_exact_product_pages(exact_nutrition_by_slug, exact_rows)
 
     # Store brand colors/logos come from the single STORE_BRAND registry in

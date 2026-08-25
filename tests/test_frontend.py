@@ -350,10 +350,10 @@ class DashboardBrowserTests(unittest.TestCase):
         href = self.page.locator('#t a.product-link[href="products/jablka.html"]').get_attribute("href")
         assert href is not None
         self.page.goto(f"{self.base_url}/{href}", wait_until="networkidle")
-        self.assertIsNotNone(self.page.locator('a.exact-link[href="exact/jablka_gala_1_kg.html"]').first.get_attribute("href"))
+        self.assertIsNotNone(self.page.locator('a.exact-link[href="exact/jablka_gala_1_kg__albert.html"]').first.get_attribute("href"))
 
         # Exact variant page shows the exact manufacturer source link.
-        self.page.goto(f"{self.base_url}/products/exact/jablka_gala_1_kg.html", wait_until="networkidle")
+        self.page.goto(f"{self.base_url}/products/exact/jablka_gala_1_kg__albert.html", wait_until="networkidle")
         self.assertEqual(
             self.page.locator("p.muted").filter(has_text="Source:").all_inner_texts(),
             ["Source: Open Food Facts — Apple Gala · exact entry"],

@@ -33,6 +33,21 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def test_exact_links_are_store_specific_and_loyalty_prices_use_weight(self) -> None:
+        self.assertEqual(
+            build_site.exact_page_slug("Actimel Danone 100 g", "Albert"),
+            "actimel_danone_100_g__albert",
+        )
+        row_data = history_row(product_name="Actimel Danone 100 g")
+        self.assertEqual(build_site.normalized_offer_value(row_data, 69.9), (699.0, "kg"))
+        link = build_site.exact_link(
+            "Actimel Danone 100 g",
+            "Actimel Danone 100 g",
+            "Albert",
+            {("Actimel Danone 100 g", "Albert"): "actimel_danone_100_g__albert"},
+        )
+        self.assertIn('href="exact/actimel_danone_100_g__albert.html"', link)
+
     def test_exact_page_normalizes_source_unit_price_to_kg(self) -> None:
         row_data = history_row(
             product_name="Zelí bílé kysané Albert 500 g",
@@ -54,6 +69,29 @@ class DashboardBuilderTests(unittest.TestCase):
             html = page.read_text(encoding="utf-8")
         self.assertIn("29.8 / kg", html)
         self.assertNotIn("14.9 / 100 g", html)
+
+    def test_exact_page_derives_kg_price_from_real_package_price(self) -> None:
+        row_data = history_row(
+            product_name="Jogurt bílý 500 g",
+            canonical_product_name="jogurt",
+            price="14.9",
+            unit_price="14,90 Kč",
+            price_per_kg="",
+            price_per_piece="",
+        )
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(history, [row_data])
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "get_many_exact", return_value={}), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                build_site.build()
+            page = build_site.PRODUCTS_EXACT_DIR / f"{build_site.slugify(row_data['product_name'])}.html"
+            html = page.read_text(encoding="utf-8")
+        self.assertIn("29.8 / kg", html)
+        self.assertNotIn("14.9 / ks", html)
 
     def test_build_keeps_malformed_date_rows_without_crashing(self) -> None:
         """A malformed Kupi validity string must not make the site unavailable."""
