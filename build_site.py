@@ -33,6 +33,7 @@ from scrapers.common import (
     store_color,
     store_initial,
     explicit_volume_liters_for,
+    stated_volume_liters_for,
 )
 from nutrition import get_many, get_many_exact
 
@@ -182,10 +183,16 @@ def normalized(row: dict) -> tuple[float | None, str]:
         return pc, "ks"
     # Explicit volume (milk, ice cream, dressings…) normalizes to a per-litre
     # price so liquid goods compare on one basis instead of a meaningless
-    # per-piece price. Takes priority over the generic per-piece fallback.
+    # per-piece price. The volume may live in the name ("1 l") or only in the
+    # retailer's unit-price reference ("21,72 Kč / 100 ml"). Both take priority
+    # over the generic per-piece fallback.
     vol, vol_unit = explicit_volume_liters_for(
         number(row.get("price", "")), row.get("product_name", "")
     )
+    if vol is None:
+        vol, vol_unit = stated_volume_liters_for(
+            number(row.get("price", "")), row.get("unit_price", "")
+        )
     if vol is not None:
         return vol, vol_unit
     # Fallback: some scraped rows only carry a generic `price` (no per_kg/per_piece).

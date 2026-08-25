@@ -336,6 +336,32 @@ def parse_number(text: str) -> float | None:
         return None
 
 
+def stated_volume_liters(unit_price: str) -> float | None:
+    """Return the stated volume (litres) from a `Kč / N ml|l` reference.
+
+    Some liquid goods (ice-cream tubs, dressings) omit volume from the product
+    name and carry it only in the retailer's unit-price reference (e.g.
+    "21,72 Kč / 100 ml"). Use that reference to derive a per-litre price when
+    the name carries no volume of its own.
+    """
+    text = " ".join((unit_price or "").replace(" ", " ").split()).lower()
+    match = re.search(r"kč\s*/\s*(\d+(?:[,.]\d+)?)\s*(ml|l)\b", text)
+    if not match:
+        return None
+    value = float(match.group(1).replace(",", "."))
+    if value <= 0:
+        return None
+    return round(value / 1000, 6) if match.group(2) == "ml" else value
+
+
+def stated_volume_liters_for(price: float, unit_price: str) -> tuple[float | None, str]:
+    """Normalize a displayed price to per-litre from a `Kč / N ml|l` reference."""
+    liters = stated_volume_liters(unit_price)
+    if price is not None and liters:
+        return round(price / liters, 2), "l"
+    return None, ""
+
+
 def normalize_unit_price(unit_price: str) -> dict[str, float | str]:
     normalized = {"price_per_kg": "", "price_per_piece": ""}
     text = " ".join(unit_price.replace("\xa0", " ").split()).lower()

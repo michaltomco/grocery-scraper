@@ -22,6 +22,8 @@ from scrapers.common import (
     explicit_package_weight_grams,
     explicit_volume_liters,
     explicit_volume_liters_for,
+    stated_volume_liters,
+    stated_volume_liters_for,
     parse_validity,
     read_csv,
     store_color,
@@ -128,6 +130,19 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(explicit_volume_liters_for(99.9, "Zmrzlina 100 ml"), (999.0, "l"))
         # No trailing volume falls back to (None, "") so callers use kg/ks.
         self.assertEqual(explicit_volume_liters_for(14.9, "Zelí bílé kysané 500 g"), (None, ""))
+
+    def test_stated_volume_liters_reads_unit_price_reference(self) -> None:
+        # Some liquids (ice-cream tubs, dressings) carry volume only in the
+        # retailer's unit-price reference, not the product name.
+        self.assertEqual(stated_volume_liters("21,72 Kč / 100 ml"), 0.1)
+        self.assertEqual(stated_volume_liters("8,90 Kč / 1 l"), 1.0)
+        self.assertIsNone(stated_volume_liters("29,90 Kč / 1 kg"))
+
+    def test_stated_volume_price_normalizes_to_per_litre(self) -> None:
+        self.assertEqual(stated_volume_liters_for(99.9, "21,72 Kč / 100 ml"), (999.0, "l"))
+        self.assertEqual(stated_volume_liters_for(8.9, "8,90 Kč / 1 l"), (8.9, "l"))
+        # No volume reference falls back to (None, "") so callers use kg/ks.
+        self.assertEqual(stated_volume_liters_for(14.9, "29,90 Kč / 1 kg"), (None, ""))
 
     def test_validity_parses_czech_numeric_range(self) -> None:
         with patch("scrapers.common.datetime") as mocked_datetime:
