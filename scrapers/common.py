@@ -354,11 +354,35 @@ def stated_volume_liters(unit_price: str) -> float | None:
     return round(value / 1000, 6) if match.group(2) == "ml" else value
 
 
+def stated_price_per_liter(unit_price: str) -> float | None:
+    """Return the per-litre price stated in a `Kč / N ml|l` reference.
+
+    Unlike dividing the displayed price by the reference volume, this reads the
+    reference price directly, so it stays correct when the displayed price is for
+    a larger pack than the reference unit (e.g. an 8 l multipack whose reference
+    is "11,24 Kč / 1 l" -> 11.24 / l, not total/1l).
+    """
+    text = " ".join((unit_price or "").replace(" ", " ").split()).lower()
+    match = re.search(r"(\d+(?:[,.]\d+)?)\s*kč\s*/\s*(\d+(?:[,.]\d+)?)\s*(ml|l)\b", text)
+    if not match:
+        return None
+    ref_price = float(match.group(1).replace(",", "."))
+    ref_volume = float(match.group(2).replace(",", "."))
+    if ref_volume <= 0:
+        return None
+    liters = ref_volume / 1000 if match.group(3) == "ml" else ref_volume
+    return round(ref_price / liters, 2)
+
+
 def stated_volume_liters_for(price: float, unit_price: str) -> tuple[float | None, str]:
-    """Normalize a displayed price to per-litre from a `Kč / N ml|l` reference."""
-    liters = stated_volume_liters(unit_price)
-    if price is not None and liters:
-        return round(price / liters, 2), "l"
+    """Normalize a displayed price to per-litre using the `Kč / N ml|l` reference.
+
+    The reference already states the per-litre price (e.g. "11,24 Kč / 1 l" ->
+    11.24 / l), so read it directly rather than dividing the displayed price.
+    """
+    per_litre = stated_price_per_liter(unit_price)
+    if per_litre is not None:
+        return per_litre, "l"
     return None, ""
 
 

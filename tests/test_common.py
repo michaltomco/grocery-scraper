@@ -139,8 +139,12 @@ class NormalizationTests(unittest.TestCase):
         self.assertIsNone(stated_volume_liters("29,90 Kč / 1 kg"))
 
     def test_stated_volume_price_normalizes_to_per_litre(self) -> None:
-        self.assertEqual(stated_volume_liters_for(99.9, "21,72 Kč / 100 ml"), (999.0, "l"))
+        # The reference states the per-litre price; read it directly, so a larger
+        # pack's total price is not mistaken for the per-litre figure.
+        self.assertEqual(stated_volume_liters_for(99.9, "21,72 Kč / 100 ml"), (217.2, "l"))
         self.assertEqual(stated_volume_liters_for(8.9, "8,90 Kč / 1 l"), (8.9, "l"))
+        # An 8 l multipack: total 89.9 with "11,24 Kč / 1 l" -> 11.24 / l.
+        self.assertEqual(stated_volume_liters_for(89.9, "11,24 Kč / 1 l"), (11.24, "l"))
         # No volume reference falls back to (None, "") so callers use kg/ks.
         self.assertEqual(stated_volume_liters_for(14.9, "29,90 Kč / 1 kg"), (None, ""))
 
