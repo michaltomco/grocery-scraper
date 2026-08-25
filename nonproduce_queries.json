@@ -1,0 +1,497 @@
+[
+  [
+    "Alkohol",
+    "pivo_svetly_lezak_kralovsky_krusovice",
+    "Pivo světlý ležák Královský 12° Krušovice"
+  ],
+  [
+    "Alkohol",
+    "cider_frisco",
+    "Cider Frisco 0.33 l"
+  ],
+  [
+    "Alkohol",
+    "nealkoholicke_pivo_ochucene_birell",
+    "Nealkoholické pivo ochucené Birell"
+  ],
+  [
+    "Alkohol",
+    "bozkov_original_tuzemsky",
+    "Božkov Original Tuzemský 0.7 l"
+  ],
+  [
+    "Alkohol",
+    "nealkoholicke_pivo_ochucene_staropramen_cool",
+    "Nealkoholické pivo ochucené Staropramen Cool 0.5 l"
+  ],
+  [
+    "Alkohol",
+    "pivo_svetly_lezak_staropramen",
+    "Pivo světlý ležák 12° Staropramen 0.5 l"
+  ],
+  [
+    "Alkohol",
+    "pivo_svetly_lezak_zlaty_bazant",
+    "Pivo světlý ležák 12° Zlatý Bažant 0.5 l"
+  ],
+  [
+    "Alkohol",
+    "becherovka",
+    "Becherovka 0.7 l"
+  ],
+  [
+    "Alkohol",
+    "pivo_svetle_vycepni_branik",
+    "Pivo světlé výčepní 10° Braník 0.5 l"
+  ],
+  [
+    "Konzervy",
+    "okurka",
+    "Okurky Giana 670 g"
+  ],
+  [
+    "Konzervy",
+    "rajcata",
+    "Rajčata sekaná Gustona 400 g"
+  ],
+  [
+    "Konzervy",
+    "tunakovy_salat_exclusive_franz_josef_kaiser",
+    "Tuňákový salát Exclusive Franz Josef Kaiser 160 g"
+  ],
+  [
+    "Konzervy",
+    "zeli",
+    "Zelí červené kysané Albert 500 g"
+  ],
+  [
+    "Konzervy",
+    "fazole_giana",
+    "Fazole Giana 400 g"
+  ],
+  [
+    "Konzervy",
+    "pomazanka_hame",
+    "Pomazánka Hamé 75 g"
+  ],
+  [
+    "Konzervy",
+    "salat_insalatissime_rio_mare",
+    "Salát Insalatissime Rio Mare 160 g"
+  ],
+  [
+    "Konzervy",
+    "sproty_uzene_v_oleji_vyberove_nekton",
+    "Šproty uzené v oleji výběrové Nekton 160 g"
+  ],
+  [
+    "Konzervy",
+    "tunak_steak_exclusive_franz_josef_kaiser",
+    "Tuňák steak Exclusive Franz Josef Kaiser"
+  ],
+  [
+    "Lahůdky",
+    "oblozena_bageta_fresh_bistro",
+    "Obložená bageta Albert Fresh Bistro"
+  ],
+  [
+    "Lahůdky",
+    "rajcata",
+    "Sušená rajčata v oleji Exclusive Franz Josef Kaiser 180 g"
+  ],
+  [
+    "Lahůdky",
+    "salat_ledovy",
+    "Salát ledový Albert 1 ks"
+  ],
+  [
+    "Lahůdky",
+    "utopenci_viva",
+    "Utopenci Viva 670 g"
+  ],
+  [
+    "Lahůdky",
+    "dyne_hokkaido",
+    "Polévka krémová z dýně a mrkviček Albert Fresh Bistro 400 g"
+  ],
+  [
+    "Lahůdky",
+    "noky_panzani",
+    "Noky Panzani 500 g"
+  ],
+  [
+    "Lahůdky",
+    "olivy_exclusive_franz_josef_kaiser",
+    "Olivy Exclusive Franz Josef Kaiser 300 g"
+  ],
+  [
+    "Lahůdky",
+    "omacky_otma",
+    "Omáčky Otma 350 g"
+  ],
+  [
+    "Lahůdky",
+    "omeleta_bramborova_se_zeleninou_fresh_bistro",
+    "Omeleta bramborová se zeleninou Albert Fresh Bistro 250 g"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "salam_herkules",
+    "Salám Herkules Tesco 100 g"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "kureci_prsni_rizky",
+    "Kuřecí prsní řízky 1 kg"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "kureci_stehna",
+    "Kuřecí stehna Albert 1 kg"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "mlete_maso_mix",
+    "Mleté maso mix"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "sunka_amalka_nejvyssi_jakosti_krasno",
+    "Šunka Amálka nejvyšší jakosti Krásno 100 g"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "veprova_pecene_bez_kosti",
+    "Vepřová pečeně bez kosti 1 kg"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "veprova_plec_bez_kosti",
+    "Vepřová plec bez kosti 1 kg"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "debrecinka_kureci",
+    "Debrecínka kuřecí 100 g"
+  ],
+  [
+    "Maso, uzeniny a ryby",
+    "kureci_ctvrtky",
+    "Kuřecí čtvrtky 1 kg"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "lucina",
+    "Lučina"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_taveny_smetanito_zeletava",
+    "Sýr tavený Smetanito Želetava"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_a_krup_vesela_krava",
+    "Sýr a křup Veselá kráva"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_eidam",
+    "Sýr Eidam 45% Albert 250 g"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_hermelin_kral_syru",
+    "Sýr Hermelín Král sýrů 120 g"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_hermelin_sedlcansky",
+    "Sýr Hermelín Sedlčanský 100 g"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "syr_mozzarella_galbani",
+    "Sýr Mozzarella Galbani 125 g"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "actimel_danone",
+    "Actimel Danone 100 g"
+  ],
+  [
+    "Mléčné výrobky a vejce",
+    "bily_jogurt_reckeho_typu_athentikos_mlekarna_kunin",
+    "Bílý jogurt řeckého typu Athentikos Mlékárna Kunín"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "nanuk_misa",
+    "Nanuk Míša"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "pizza_mrazena_ristorante_dr_oetker",
+    "Pizza mražená Ristorante Dr. Oetker"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "zmrzlina_v_kelimku_haagen_dazs",
+    "Zmrzlina v kelímku Häagen-Dazs"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "nanuk_mroz_prima",
+    "Nanuk Mrož Prima"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "nanuk_calippo_algida",
+    "Nanuk Calippo Algida 105 ml"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "nanuk_magnum_algida",
+    "Nanuk Magnum Algida"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "nanuk_twister_algida",
+    "Nanuk Twister Algida"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "hranolky_vlnky_mrazene_nowaco",
+    "Hranolky vlnky mražené Nowaco 750 g"
+  ],
+  [
+    "Mražené a instantní potraviny",
+    "instantni_polevky_vitana",
+    "Instantní polévky Vitana"
+  ],
+  [
+    "Nealko nápoje",
+    "limonada_coca_cola",
+    "Limonáda Coca Cola"
+  ],
+  [
+    "Nealko nápoje",
+    "kofola",
+    "Kofola 2 l"
+  ],
+  [
+    "Nealko nápoje",
+    "limonada_fanta",
+    "Limonáda Fanta"
+  ],
+  [
+    "Nealko nápoje",
+    "limonada_pepsi",
+    "Limonáda Pepsi"
+  ],
+  [
+    "Nealko nápoje",
+    "instantni_kava_jacobs_velvet",
+    "Instantní káva Jacobs Velvet"
+  ],
+  [
+    "Nealko nápoje",
+    "instantni_kava_nescafe_crema",
+    "Instantní káva Nescafé Crema"
+  ],
+  [
+    "Nealko nápoje",
+    "instantni_kakao_granko_orion",
+    "Instantní kakao Granko Orion 400 g"
+  ],
+  [
+    "Nealko nápoje",
+    "kapsle_tassimo_jacobs",
+    "Kapsle Tassimo Jacobs 16 ks"
+  ],
+  [
+    "Nealko nápoje",
+    "ledovy_caj_lipton",
+    "Ledový čaj Lipton"
+  ],
+  [
+    "Pečivo",
+    "croissant_days",
+    "Croissant 7 Days"
+  ],
+  [
+    "Pečivo",
+    "bageta_cesnekova",
+    "Bageta česneková 165 g"
+  ],
+  [
+    "Pečivo",
+    "rohlik_mlynarsky_zitny",
+    "Rohlík Mlynářský žitný Albert 60 g"
+  ],
+  [
+    "Pečivo",
+    "croissant",
+    "Croissant 52 g"
+  ],
+  [
+    "Pečivo",
+    "dalamanek",
+    "Dalamánek 82 g"
+  ],
+  [
+    "Pečivo",
+    "snek_s_naplni",
+    "Šnek s náplní 80 g"
+  ],
+  [
+    "Pečivo",
+    "toustovy_chleb",
+    "Toustový chléb Albert 500 g"
+  ],
+  [
+    "Pečivo",
+    "bageta_francouzska",
+    "Bageta francouzská 110 g"
+  ],
+  [
+    "Pečivo",
+    "chleb_fit_den_penam",
+    "Chléb Fit den Penam 250 g"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "bebe_brumik_opavia",
+    "BeBe Brumík Opavia"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "bonbony_bon_pari_nestle",
+    "Bonbony Bon Pari Nestlé 90 g"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "cokolada_studentska_pecet_orion",
+    "Čokoláda Studentská pečeť Orion"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "oplatky_horalky_sedita",
+    "Oplatky Horalky Sedita"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "prazene_pistacie",
+    "Pražené pistácie Albert 500 g"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "bonboniera_merci",
+    "Bonboniéra Merci"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "bonbony_jojo",
+    "Bonbony JoJo"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "bonbony_zele_haribo",
+    "Bonbony želé Haribo 100 g"
+  ],
+  [
+    "Sladkosti a slané snacky",
+    "chipsy_lay_s",
+    "Chipsy Lay's"
+  ],
+  [
+    "Vaření a pečení",
+    "majoneza_hellmann_s",
+    "Majonéza Hellmann's"
+  ],
+  [
+    "Vaření a pečení",
+    "tatarska_omacka_hellmann_s",
+    "Tatarská omáčka Hellmann's"
+  ],
+  [
+    "Vaření a pečení",
+    "olivovy_olej_extra_panensky_exclusive_franz_josef_kaiser",
+    "Olivový olej extra panenský Exclusive Franz Josef Kaiser 0.5 l"
+  ],
+  [
+    "Vaření a pečení",
+    "testoviny_panzani",
+    "Těstoviny Panzani 500 g"
+  ],
+  [
+    "Vaření a pečení",
+    "bujon_maggi",
+    "Bujón Maggi"
+  ],
+  [
+    "Vaření a pečení",
+    "bujon_masox_vitana",
+    "Bujon Masox Vitana 10 ks"
+  ],
+  [
+    "Vaření a pečení",
+    "dresink_hellmann_s",
+    "Dresink Hellmann's 250 ml"
+  ],
+  [
+    "Vaření a pečení",
+    "kecup_gurman_otma",
+    "Kečup Gurmán Otma 520 g"
+  ],
+  [
+    "Vaření a pečení",
+    "kecup_heinz",
+    "Kečup Heinz"
+  ],
+  [
+    "Zdravá výživa",
+    "cerealie_nestle",
+    "Cereálie Nestlé"
+  ],
+  [
+    "Zdravá výživa",
+    "mandle_emma",
+    "Mandle Emma"
+  ],
+  [
+    "Zdravá výživa",
+    "musli_mysli_emco",
+    "Müsli Mysli Emco 750 g"
+  ],
+  [
+    "Zdravá výživa",
+    "kase_ovesna_emco",
+    "Kaše ovesná Emco 55 g"
+  ],
+  [
+    "Zdravá výživa",
+    "musli_bonavita",
+    "Müsli Bonavita 750 g"
+  ],
+  [
+    "Zdravá výživa",
+    "brusinky_klikvy_susene_emma",
+    "Brusinky klikvy sušené Emma"
+  ],
+  [
+    "Zdravá výživa",
+    "cerealie_skoricove_ctverecky_emma",
+    "Cereálie Skořicové čtverečky Emma 250 g"
+  ],
+  [
+    "Zdravá výživa",
+    "musli_tycinka_fit",
+    "Müsli tyčinka Fit 30 g"
+  ],
+  [
+    "Zdravá výživa",
+    "orechy_vlasske_emma",
+    "Ořechy vlašské Emma 200 g"
+  ]
+]

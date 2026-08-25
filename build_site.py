@@ -563,8 +563,26 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
         )
         source = nutrition_entry.get("source", "")
         source_product = nutrition_entry.get("source_product", "")
-        source_detail = f' — {esc(source_product)}' if source_product else ""
-        source_html = f'<p class="muted">Source: {esc(source)}{source_detail}</p>' if source else ""
+        source_url = nutrition_entry.get("source_url", "")
+        provenance = nutrition_entry.get("provenance", "")
+        if source:
+            # Exact match = verified branded NutriData record; category proxy =
+            # a labelled average for the food group (still verifiable on NutriData).
+            provenance_label = ""
+            if provenance == "exact_match":
+                provenance_label = " · exact entry"
+            elif provenance == "category_proxy":
+                provenance_label = " · category average"
+            if source_url:
+                source_detail = (
+                    f' — <a href="{esc(source_url)}" target="_blank" rel="noopener">'
+                    f'{esc(source_product)}</a>{provenance_label}'
+                )
+            else:
+                source_detail = f' — {esc(source_product)}{provenance_label}'
+            source_html = f'<p class="muted">Source: {esc(source)}{source_detail}</p>'
+        else:
+            source_html = ""
         previous_html = ""
         next_html = ""
         if product_index > 0:
@@ -724,14 +742,14 @@ def build() -> str:
         # create noisy image diffs without improving the deployed asset.
         rows = read_csv(HISTORY_CSV)
 
-    # Nutrition enrichment is currently designed and validated for fresh produce.
-    # Other grocery categories remain price-only until they have category-specific
-    # nutrition mappings rather than unsafe generic-product guesses.
+    # Nutrition enrichment covers fresh produce (USDA/Open Food Facts) and the
+    # hand-curated NutriData.cz records for other categories. Curated records are
+    # loaded inside get_many and take priority, so we request nutrition for every
+    # canonical product regardless of category.
     nutrition = get_many(
         {
             canonical_product_name(r.get("product_name", ""))
             for r in rows
-            if (r.get("category") or "Ovoce a zelenina") == "Ovoce a zelenina"
         }
     )
 

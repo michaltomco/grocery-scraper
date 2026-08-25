@@ -1,0 +1,542 @@
+{
+  "pivo_svetly_lezak_kralovsky_krusovice": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "cider_frisco": {
+    "status": "ok",
+    "source_name": "Frisco Cider Spritz *",
+    "guid": "2783457ccf904117b2c5ddd3d4da9739",
+    "provenance": "exact_match"
+  },
+  "nealkoholicke_pivo_ochucene_birell": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "bozkov_original_tuzemsky": {
+    "status": "no_nutridata_match"
+  },
+  "nealkoholicke_pivo_ochucene_staropramen_cool": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "pivo_svetly_lezak_staropramen": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "pivo_svetly_lezak_zlaty_bazant": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "becherovka": {
+    "status": "no_nutridata_match"
+  },
+  "pivo_svetle_vycepni_branik": {
+    "status": "ok",
+    "source_name": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "guid": "9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy"
+  },
+  "okurka": {
+    "status": "ok",
+    "source_name": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
+    "guid": "e713093dc9bd42f08dd5f36e3b8a3278",
+    "provenance": "category_proxy"
+  },
+  "rajcata": {
+    "status": "ok",
+    "source_name": "Rajčata, rajče, různé druhy, syrová, průměr",
+    "guid": "228638adb21c49b9b3d1be2232721bbb",
+    "provenance": "category_proxy"
+  },
+  "tunakovy_salat_exclusive_franz_josef_kaiser": {
+    "status": "ok",
+    "source_name": "Franz Josef Kaiser Exclusive Tuňákový salát fazolový mix *",
+    "guid": "575efed601ba44879f037f68ca10d303",
+    "provenance": "exact_match"
+  },
+  "zeli": {
+    "status": "ok",
+    "source_name": "Zelí bílé, syrové, skladované, průměr",
+    "guid": "c90a94849cb04ad19f1e491d6ca4d83a",
+    "provenance": "category_proxy"
+  },
+  "fazole_giana": {
+    "status": "ok",
+    "source_name": "Fazole červené, sterilované, Giana",
+    "guid": "71bc025d478543c29ed3e6037f68de40",
+    "provenance": "exact_match"
+  },
+  "pomazanka_hame": {
+    "status": "ok",
+    "source_name": "Pomazánka masovo-zeleninová Ďábelské tousty Hamé",
+    "guid": "3a4c0204d4ee466794858bde7208e9dd",
+    "provenance": "exact_match"
+  },
+  "salat_insalatissime_rio_mare": {
+    "status": "ok",
+    "source_name": "Tuňákový krém na salátku ve skle, chlebové pralinky (VŠOH)",
+    "guid": "949983de848249b1b31726d7242b2da7",
+    "provenance": "category_proxy"
+  },
+  "sproty_uzene_v_oleji_vyberove_nekton": {
+    "status": "ok",
+    "source_name": "Nekton Šproty uzené výběrové v rostlinném oleji *",
+    "guid": "11584d9c5b504995a3c640d67aaa483c",
+    "provenance": "exact_match"
+  },
+  "tunak_steak_exclusive_franz_josef_kaiser": {
+    "status": "ok",
+    "source_name": "Tuňák steak ve slunečnicovém oleji s citronem, Kaiser Franz Josef Exclusive *",
+    "guid": "8a76f014f7234e41b5356dfd4f54dc16",
+    "provenance": "exact_match"
+  },
+  "oblozena_bageta_fresh_bistro": {
+    "status": "ok",
+    "source_name": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "guid": "df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "category_proxy"
+  },
+  "salat_ledovy": {
+    "status": "excluded_proxy",
+    "proxy_name": "Salát zeleninový, míchaný, mix, bez dresinku, PRŮMĚR"
+  },
+  "utopenci_viva": {
+    "status": "ok",
+    "source_name": "Utopenci, Viva, uzenina ve sladkokyselém nálevu s cukrem *",
+    "guid": "e46c60085ab34b04beda80e461dde5ce",
+    "provenance": "exact_match"
+  },
+  "dyne_hokkaido": {
+    "status": "excluded_proxy",
+    "proxy_name": "Semena, dýně a tykev, jádra semen, pražená, nesolená, PRŮMĚR"
+  },
+  "noky_panzani": {
+    "status": "ok",
+    "source_name": "Noky bramborové (Gnocchi Fior di Pasta)",
+    "guid": "f35a8d619220426ea247aa0a2f198b73",
+    "provenance": "category_proxy"
+  },
+  "olivy_exclusive_franz_josef_kaiser": {
+    "status": "ok",
+    "source_name": "Zelené olivy plněné ančovičkovou pastou, Kaiser Franz Josef Exclusive *",
+    "guid": "0e3a68f3757943b79b2cac1ff7859aaa",
+    "provenance": "exact_match"
+  },
+  "omacky_otma": {
+    "status": "ok",
+    "source_name": "Omáčka svíčková, průměr",
+    "guid": "18244112cc624de8bb4ebf019e853367",
+    "provenance": "category_proxy"
+  },
+  "omeleta_bramborova_se_zeleninou_fresh_bistro": {
+    "status": "ok",
+    "source_name": "Omeleta vaječná",
+    "guid": "ebaf2435d05a498eb83a4c54eabed348",
+    "provenance": "category_proxy"
+  },
+  "salam_herkules": {
+    "status": "ok",
+    "source_name": "Salám uherský, průměr",
+    "guid": "30b2619d6d494f33a19b2896556fda15",
+    "provenance": "category_proxy"
+  },
+  "kureci_prsni_rizky": {
+    "status": "ok",
+    "source_name": "Kuřecí prsní řízky, syrové (bez kostí a kůže), průměr",
+    "guid": "decfb157016b422fa6708bef3d2bcd4a",
+    "provenance": "exact_match"
+  },
+  "kureci_stehna": {
+    "status": "ok",
+    "source_name": "Kuřecí prsa, maso bez kůže, pečené, gril, restované, PRŮMĚR",
+    "guid": "eedf5e5ead59482aafca1e1b480ee528",
+    "provenance": "category_proxy"
+  },
+  "mlete_maso_mix": {
+    "status": "ok",
+    "source_name": "Mleté maso (vepřové + hovězí) - syrové",
+    "guid": "dc937c10c8df468b8e8cf79a41f3b467",
+    "provenance": "category_proxy"
+  },
+  "sunka_amalka_nejvyssi_jakosti_krasno": {
+    "status": "ok",
+    "source_name": "MP Krásno Amálka šunka nejvyšší jakosti krájená *",
+    "guid": "7d80c06fdbf54db4b6f07fe4ac4d50f8",
+    "provenance": "exact_match"
+  },
+  "veprova_pecene_bez_kosti": {
+    "status": "ok",
+    "source_name": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "guid": "8eccf718a20a48bbbb105075551f153c",
+    "provenance": "category_proxy"
+  },
+  "veprova_plec_bez_kosti": {
+    "status": "ok",
+    "source_name": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "guid": "8eccf718a20a48bbbb105075551f153c",
+    "provenance": "category_proxy"
+  },
+  "debrecinka_kureci": {
+    "status": "ok",
+    "source_name": "Kuřecí debrecínka krájená, DZ Klatovy *",
+    "guid": "3b891ab6c28f489e8fc698995dbd6882",
+    "provenance": "exact_match"
+  },
+  "kureci_ctvrtky": {
+    "status": "ok",
+    "source_name": "Vodňanské kuře Uzené kuřecí čtvrtky *",
+    "guid": "322c0ecb0da449369be1c900f47554bb",
+    "provenance": "exact_match"
+  },
+  "lucina": {
+    "status": "ok",
+    "source_name": "Lučina - základní",
+    "guid": "871f66873d984a77b8a35581a0f0904c",
+    "provenance": "exact_match"
+  },
+  "syr_taveny_smetanito_zeletava": {
+    "status": "ok",
+    "source_name": "Tavený sýr se šunkou, Želetava Smetanito",
+    "guid": "2f8aed85ab3c44f090622f5c9859782a",
+    "provenance": "exact_match"
+  },
+  "syr_a_krup_vesela_krava": {
+    "status": "ok",
+    "source_name": "Sýr a Křup Lahodný sýr & tyčinky s pizza příchutí, Veselá Kráva *",
+    "guid": "d6b7e7f3b8854dbd8c49111e0a4f1a1f",
+    "provenance": "exact_match"
+  },
+  "syr_eidam": {
+    "status": "ok",
+    "source_name": "Sýr tvrdý, eidam, 30 % t.v.s., průměr",
+    "guid": "af87d7e5f87b401dab0d4d2546c3315b",
+    "provenance": "category_proxy"
+  },
+  "syr_hermelin_kral_syru": {
+    "status": "ok",
+    "source_name": "Král Sýrů Hermelín Maxi *",
+    "guid": "c52ec750bbc5453fa47a15b401dcfb8e",
+    "provenance": "exact_match"
+  },
+  "syr_hermelin_sedlcansky": {
+    "status": "ok",
+    "source_name": "Sedlčanský Hermelín na gril, sýr ",
+    "guid": "d0a625ae0b39457d88f714d5528e207b",
+    "provenance": "exact_match"
+  },
+  "syr_mozzarella_galbani": {
+    "status": "ok",
+    "source_name": "Mozzarella Light, Galbani, nezrající sýr pařený polotučný *",
+    "guid": "da46ffce3c8a4bb3adea156e3cd1b0a7",
+    "provenance": "exact_match"
+  },
+  "actimel_danone": {
+    "status": "ok",
+    "source_name": "Danone Actimel jahoda bez přidaného cukru *",
+    "guid": "1d892e5b6596411081f3a9dd9bf960a0",
+    "provenance": "exact_match"
+  },
+  "bily_jogurt_reckeho_typu_athentikos_mlekarna_kunin": {
+    "status": "ok",
+    "source_name": "Jogurt řecký netučný, s příchutí, Milko",
+    "guid": "f2f4ec4a42ad41968fd7e20b0d19db16",
+    "provenance": "category_proxy"
+  },
+  "nanuk_misa": {
+    "status": "ok",
+    "source_name": "Míša, zmrzlina, tvarohový krém s kakaovou polevou",
+    "guid": "1c7159374d3544e89f324f49c2c54993",
+    "provenance": "category_proxy"
+  },
+  "pizza_mrazena_ristorante_dr_oetker": {
+    "status": "excluded_proxy",
+    "proxy_name": "Pizza al formaggio, sýrová pizza, průměr (s různými druhy sýrů)"
+  },
+  "zmrzlina_v_kelimku_haagen_dazs": {
+    "status": "excluded_proxy",
+    "proxy_name": "Manhattan, zmrzlina se smetanovým krémem a ovocem, průměr"
+  },
+  "nanuk_mroz_prima": {
+    "status": "excluded_proxy",
+    "proxy_name": "Nestlé Nesquik Nanuky multipack *"
+  },
+  "nanuk_calippo_algida": {
+    "status": "excluded_proxy",
+    "proxy_name": "Nestlé Nesquik Nanuky multipack *"
+  },
+  "nanuk_magnum_algida": {
+    "status": "excluded_proxy",
+    "proxy_name": "Nestlé Nesquik Nanuky multipack *"
+  },
+  "nanuk_twister_algida": {
+    "status": "excluded_proxy",
+    "proxy_name": "Nestlé Nesquik Nanuky multipack *"
+  },
+  "hranolky_vlnky_mrazene_nowaco": {
+    "status": "ok",
+    "source_name": "Bramborové hranolky, (zmrazené), smažené v rostlinném oleji, průměr",
+    "guid": "54bbd2736bcc471ba29ad30e70055617",
+    "provenance": "category_proxy"
+  },
+  "instantni_polevky_vitana": {
+    "status": "ok",
+    "source_name": "Polévka, bujon hovězí hotový, kondenzovaný, vývar, průměr",
+    "guid": "ee8ced834a7a4b469647fc452ed3590e",
+    "provenance": "category_proxy"
+  },
+  "limonada_coca_cola": {
+    "status": "excluded_proxy",
+    "proxy_name": "Coca cola light, Zero, Pepsi light, průměr (+ sladidla, kofein)"
+  },
+  "kofola": {
+    "status": "ok",
+    "source_name": "Kofola Original, s kofeinem, průměr, slazeno cukrem",
+    "guid": "6c87c087db094ae899d2ddc4fa77dea7",
+    "provenance": "exact_match"
+  },
+  "limonada_fanta": {
+    "status": "ok",
+    "source_name": "Fanta Zero, sycená limonáda s pomerančovou příchutí",
+    "guid": "c3793584952f42ff9404d910133185f1",
+    "provenance": "exact_match"
+  },
+  "limonada_pepsi": {
+    "status": "ok",
+    "source_name": "Pepsi Cola, limonáda sycená s kolovou příchutí",
+    "guid": "18ea2be9164a41ef91e3f38b732c5d66",
+    "provenance": "exact_match"
+  },
+  "instantni_kava_jacobs_velvet": {
+    "status": "excluded_proxy",
+    "proxy_name": "Káva, espresso, průměr, bez cukru, hotový nápoj"
+  },
+  "instantni_kava_nescafe_crema": {
+    "status": "excluded_proxy",
+    "proxy_name": "Káva, espresso, průměr, bez cukru, hotový nápoj"
+  },
+  "instantni_kakao_granko_orion": {
+    "status": "excluded_proxy",
+    "proxy_name": "Kakao Granko - prášek (Orion)"
+  },
+  "kapsle_tassimo_jacobs": {
+    "status": "excluded_proxy",
+    "proxy_name": "Káva, espresso, průměr, bez cukru, hotový nápoj"
+  },
+  "ledovy_caj_lipton": {
+    "status": "ok",
+    "source_name": "Ledový čaj zelený, ochucený nápoj, Lipton",
+    "guid": "f489f870acaa4afeb934135658049a30",
+    "provenance": "exact_match"
+  },
+  "croissant_days": {
+    "status": "ok",
+    "source_name": "Croissant s kakaovou náplní, 7 Days *",
+    "guid": "711d7792716f4229be73258dc5e87259",
+    "provenance": "exact_match"
+  },
+  "bageta_cesnekova": {
+    "status": "ok",
+    "source_name": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "guid": "df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "category_proxy"
+  },
+  "rohlik_mlynarsky_zitny": {
+    "status": "ok",
+    "source_name": "Rohlík pšeničný bílý,  průměr",
+    "guid": "99dd959448bc436a88debf6fa38a2e70",
+    "provenance": "category_proxy"
+  },
+  "croissant": {
+    "status": "ok",
+    "source_name": "Croissant *",
+    "guid": "b676ee06e6bb495bbaeaa35ac51d7a7e",
+    "provenance": "exact_match"
+  },
+  "dalamanek": {
+    "status": "ok",
+    "source_name": "Dalamánek, s celozrnnou moukou",
+    "guid": "30450cc5fcff489ba3db9cb548558f99",
+    "provenance": "exact_match"
+  },
+  "snek_s_naplni": {
+    "status": "excluded_proxy",
+    "proxy_name": "Šnek Bob Jablečná pochoutka *"
+  },
+  "toustovy_chleb": {
+    "status": "excluded_proxy",
+    "proxy_name": "Chléb toustový BEZLEPKOVÝ,  toast, s nízkým obsahem proteinu a natria, PRŮMĚR"
+  },
+  "bageta_francouzska": {
+    "status": "ok",
+    "source_name": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "guid": "df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "exact_match"
+  },
+  "chleb_fit_den_penam": {
+    "status": "ok",
+    "source_name": "Chléb fit celozrnný, Penam Fit den *",
+    "guid": "9e384b45a9484b84b071c1602aef07d4",
+    "provenance": "exact_match"
+  },
+  "bebe_brumik_opavia": {
+    "status": "excluded_proxy",
+    "proxy_name": "Citrónové sušenky, citronový koláč, průměr"
+  },
+  "bonbony_bon_pari_nestle": {
+    "status": "excluded_proxy",
+    "proxy_name": "Bonbóny, Skittles, PRŮMĚR"
+  },
+  "cokolada_studentska_pecet_orion": {
+    "status": "ok",
+    "source_name": "Studentská pečeť, mléčná čokoláda s chutí kokosu, Orion *",
+    "guid": "6b92aac1e7ac4f42ae1b149962487cf3",
+    "provenance": "exact_match"
+  },
+  "oplatky_horalky_sedita": {
+    "status": "excluded_proxy",
+    "proxy_name": "Citrónové sušenky, citronový koláč, průměr"
+  },
+  "prazene_pistacie": {
+    "status": "ok",
+    "source_name": "Pistácie ve skořápce pražené solené, Tesco, PRŮMĚR",
+    "guid": "36d0ed3de5084a0ab6bcc964f03535b6",
+    "provenance": "category_proxy"
+  },
+  "bonboniera_merci": {
+    "status": "excluded_proxy",
+    "proxy_name": "Bonbóny, Skittles, PRŮMĚR"
+  },
+  "bonbony_jojo": {
+    "status": "ok",
+    "source_name": "Bonbony Vexta JOJO",
+    "guid": "8934268d8b8141d0a6461d9850cd8f8c",
+    "provenance": "exact_match"
+  },
+  "bonbony_zele_haribo": {
+    "status": "excluded_proxy",
+    "proxy_name": "Želé v čokoládě Enjoy pomeranč *"
+  },
+  "chipsy_lay_s": {
+    "status": "ok",
+    "source_name": "Chipsy Chio, smažené bramborové lupínky, kořeněné, průměr ",
+    "guid": "bd7f77878c65429a8a021d6a9408d7f7",
+    "provenance": "category_proxy"
+  },
+  "majoneza_hellmann_s": {
+    "status": "ok",
+    "source_name": "Majonéza delikátní, Hellmann's *",
+    "guid": "407f6867b13a4cfeae1fcb0727e0b2a5",
+    "provenance": "exact_match"
+  },
+  "tatarska_omacka_hellmann_s": {
+    "status": "ok",
+    "source_name": "Tatarská omáčka Hellmann´s Original, stř.tučná, 41% tuku, PRŮMĚR",
+    "guid": "d1da776b825e4e40aebf960d8c723b7f",
+    "provenance": "category_proxy"
+  },
+  "olivovy_olej_extra_panensky_exclusive_franz_josef_kaiser": {
+    "status": "ok",
+    "source_name": "Extra panenský olivový olej, Kaiser Franz Josef Exclusive *",
+    "guid": "37e91f31da7e4a4d826101d1f245c21d",
+    "provenance": "exact_match"
+  },
+  "testoviny_panzani": {
+    "status": "ok",
+    "source_name": "Těstoviny, Fusilli Panzani, bezvaječné, semolinové",
+    "guid": "b6e1a647a5994c929f32767eee9c0cd2",
+    "provenance": "exact_match"
+  },
+  "bujon_maggi": {
+    "status": "ok",
+    "source_name": "Hovězí bujón v kostce, MAGGI *",
+    "guid": "557e4e4051cc45df90a249cfce94c188",
+    "provenance": "exact_match"
+  },
+  "bujon_masox_vitana": {
+    "status": "ok",
+    "source_name": "Masox bujón,  uvařený, Vitana *",
+    "guid": "016de46128df49778437475d49ef0dbb",
+    "provenance": "exact_match"
+  },
+  "dresink_hellmann_s": {
+    "status": "excluded_proxy",
+    "proxy_name": "Salát zeleninový, míchaný, mix, bez dresinku, PRŮMĚR"
+  },
+  "kecup_gurman_otma": {
+    "status": "ok",
+    "source_name": "Otma Kečup Gurmán Ostrý *",
+    "guid": "c77789bd9913454c8e2c82db8f3c6ba5",
+    "provenance": "exact_match"
+  },
+  "kecup_heinz": {
+    "status": "ok",
+    "source_name": "Kečup ostrý, Heinz",
+    "guid": "503a00c175b54f5c8b94b13e28be60b1",
+    "provenance": "exact_match"
+  },
+  "cerealie_nestle": {
+    "status": "ok",
+    "source_name": "Lion Wildcrush Nestlé, snídaňové cereálie s náplní s karamelovo-čokoládovou chutí ",
+    "guid": "a12883d4ba924ea8aff0436a34448535",
+    "provenance": "exact_match"
+  },
+  "mandle_emma": {
+    "status": "ok",
+    "source_name": "Ořechy, mandle, sušené, ve slupce, průměr",
+    "guid": "d0a6aa8328d948b1ac6839cf09e1b1d4",
+    "provenance": "category_proxy"
+  },
+  "musli_mysli_emco": {
+    "status": "ok",
+    "source_name": "Tyčinka, muesli, mléčná, průměr, müsli",
+    "guid": "75ec0bea31974fa78e0885d3f97e539b",
+    "provenance": "category_proxy"
+  },
+  "kase_ovesna_emco": {
+    "status": "ok",
+    "source_name": "Super kaše jablka & meruňky, ovesná, Emco",
+    "guid": "8c1ab04fa97b4b37b0f2aa1e34815312",
+    "provenance": "exact_match"
+  },
+  "musli_bonavita": {
+    "status": "ok",
+    "source_name": "Bonavita Müsli crunchy 4 druhy ořechů celozrnné *",
+    "guid": "f26dd53b686f4e06bf4aaa9991772f04",
+    "provenance": "exact_match"
+  },
+  "brusinky_klikvy_susene_emma": {
+    "status": "ok",
+    "source_name": "Brusinky sušené, slazené, Alesto, Lidl",
+    "guid": "91bf4c1ee6514612942dbe4b723ccfe1",
+    "provenance": "category_proxy"
+  },
+  "cerealie_skoricove_ctverecky_emma": {
+    "status": "ok",
+    "source_name": "Cereálie, rýžová kaše (bez přidaného cukru), vařená",
+    "guid": "e07ce8a34f444385ad063b988587b31b",
+    "provenance": "category_proxy"
+  },
+  "musli_tycinka_fit": {
+    "status": "ok",
+    "source_name": "Müsli tyčinka Fit malinová, muesli",
+    "guid": "4598f42df802470a881fe0e52e3ea3c4",
+    "provenance": "exact_match"
+  },
+  "orechy_vlasske_emma": {
+    "status": "ok",
+    "source_name": "Ořechy, vlašské ořechy, jádra, průměr, balené",
+    "guid": "d27815cc645b44a0ac19662ccf18a948",
+    "provenance": "category_proxy"
+  }
+}

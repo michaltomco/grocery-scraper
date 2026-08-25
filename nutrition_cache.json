@@ -4277,128 +4277,43 @@
   },
   "okurka": {
     "status": "found",
-    "query": "cucumber",
-    "source": "USDA FoodData Central",
-    "source_product": "Cucumber, peeled, raw",
+    "query": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
+    "source": "NutriData.cz",
+    "source_product": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=e713093dc9bd42f08dd5f36e3b8a3278",
+    "provenance": "category_proxy",
     "values": {
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Calories": {
-        "value": 10.0,
-        "unit": "kcal"
-      },
-      "Omega-9 fat": {
-        "value": 0.01,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.01,
-        "unit": "g"
-      },
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Fiber": {
-        "value": 0.7,
-        "unit": "g"
-      },
-      "Vitamin A": {
-        "value": 4.0,
-        "unit": "ug"
-      },
-      "Vitamin B9": {
-        "value": 14.0,
-        "unit": "ug"
+      "Energy": {
+        "value": 87.0,
+        "unit": "kJ"
       },
       "Carbs": {
-        "value": 2.16,
+        "value": 4.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.35,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.43,
         "unit": "g"
       },
       "Sodium": {
-        "value": 2.0,
+        "value": 317.0,
         "unit": "mg"
-      },
-      "Vitamin E": {
-        "value": 0.03,
-        "unit": "mg"
-      },
-      "Fat": {
-        "value": 0.16,
-        "unit": "g"
-      },
-      "Vitamin B3": {
-        "value": 0.04,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.24,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 14.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 136.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.17,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.1,
-        "unit": "ug"
-      },
-      "Copper": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.07,
-        "unit": "mg"
-      },
-      "Iron": {
-        "value": 0.22,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 12.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 21.0,
-        "unit": "mg"
-      },
-      "Protein": {
-        "value": 0.59,
-        "unit": "g"
-      },
-      "Vitamin C": {
-        "value": 3.2,
-        "unit": "mg"
-      },
-      "Vitamin B1": {
-        "value": 0.03,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.03,
-        "unit": "mg"
-      },
-      "Vitamin K": {
-        "value": 7.2,
-        "unit": "ug"
       }
     },
-    "schema_version": 13
+    "schema_version": 13,
+    "nutridata_curated": true
   },
   "ostruziny": {
     "status": "found",
@@ -6552,128 +6467,43 @@
   },
   "rajcata": {
     "status": "found",
-    "query": "red tomatoes",
-    "source": "USDA FoodData Central",
-    "source_product": "Tomatoes, red, ripe, raw, year round average",
+    "query": "Rajčata, rajče, různé druhy, syrová, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Rajčata, rajče, různé druhy, syrová, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=228638adb21c49b9b3d1be2232721bbb",
+    "provenance": "category_proxy",
     "values": {
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin C": {
-        "value": 13.7,
-        "unit": "mg"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin B9": {
-        "value": 15.0,
-        "unit": "ug"
+      "Energy": {
+        "value": 75.0,
+        "unit": "kJ"
       },
       "Carbs": {
-        "value": 3.89,
+        "value": 3.92,
         "unit": "g"
-      },
-      "Calories": {
-        "value": 17.69,
-        "unit": "kcal"
-      },
-      "Omega-9 fat": {
-        "value": 0.03,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.08,
-        "unit": "g"
-      },
-      "Vitamin A": {
-        "value": 42.0,
-        "unit": "ug"
-      },
-      "Calcium": {
-        "value": 10.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 237.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.17,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
-      },
-      "Vitamin B3": {
-        "value": 0.59,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.09,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.08,
-        "unit": "mg"
       },
       "Fat": {
         "value": 0.2,
         "unit": "g"
       },
-      "Vitamin K": {
-        "value": 0.0,
-        "unit": "ug"
+      "Protein": {
+        "value": 0.88,
+        "unit": "g"
       },
       "Fiber": {
         "value": 1.2,
         "unit": "g"
       },
-      "Iron": {
-        "value": 0.27,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 11.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 24.0,
-        "unit": "mg"
+      "Sugars": {
+        "value": 2.6,
+        "unit": "g"
       },
       "Sodium": {
         "value": 5.0,
         "unit": "mg"
-      },
-      "Copper": {
-        "value": 0.06,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.11,
-        "unit": "mg"
-      },
-      "Protein": {
-        "value": 0.88,
-        "unit": "g"
-      },
-      "Vitamin B1": {
-        "value": 0.04,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.02,
-        "unit": "mg"
       }
     },
-    "schema_version": 13
+    "schema_version": 13,
+    "nutridata_curated": true
   },
   "hliva_ustricna": {
     "status": "found",
@@ -7012,5 +6842,2659 @@
       }
     },
     "schema_version": 13
+  },
+  "pivo_svetly_lezak_kralovsky_krusovice": {
+    "status": "error",
+    "query": "pivo svetly lezak kralovsky krusovice",
+    "values": {},
+    "schema_version": 13
+  },
+  "cider_frisco": {
+    "status": "found",
+    "query": "Frisco Cider Spritz *",
+    "source": "NutriData.cz",
+    "source_product": "Frisco Cider Spritz *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=2783457ccf904117b2c5ddd3d4da9739",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 209.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "nealkoholicke_pivo_ochucene_birell": {
+    "status": "found",
+    "query": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source": "NutriData.cz",
+    "source_product": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 179.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.02,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.23,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "nealkoholicke_pivo_ochucene_staropramen_cool": {
+    "status": "found",
+    "query": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source": "NutriData.cz",
+    "source_product": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 179.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.02,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.23,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "pivo_svetly_lezak_staropramen": {
+    "status": "found",
+    "query": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source": "NutriData.cz",
+    "source_product": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 179.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.02,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.23,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "pivo_svetly_lezak_zlaty_bazant": {
+    "status": "found",
+    "query": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source": "NutriData.cz",
+    "source_product": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 179.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.02,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.23,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "pivo_svetle_vycepni_branik": {
+    "status": "found",
+    "query": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source": "NutriData.cz",
+    "source_product": "Pivo, ležák světlý, průměr  ( Pilsner Urquell, Zlatý Bažant )",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9cd7b74885ce4be4b72be1d4bc44a77d",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 179.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.02,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.23,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "tunakovy_salat_exclusive_franz_josef_kaiser": {
+    "status": "found",
+    "query": "Franz Josef Kaiser Exclusive Tuňákový salát fazolový mix *",
+    "source": "NutriData.cz",
+    "source_product": "Franz Josef Kaiser Exclusive Tuňákový salát fazolový mix *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=575efed601ba44879f037f68ca10d303",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 882.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 7.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 14.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 12.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 480.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "zeli": {
+    "status": "found",
+    "query": "Zelí bílé, syrové, skladované, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Zelí bílé, syrové, skladované, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=c90a94849cb04ad19f1e491d6ca4d83a",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 100.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 5.37,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.18,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 1.21,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.3,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.2,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 18.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "fazole_giana": {
+    "status": "found",
+    "query": "Fazole červené, sterilované, Giana",
+    "source": "NutriData.cz",
+    "source_product": "Fazole červené, sterilované, Giana",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=71bc025d478543c29ed3e6037f68de40",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 222.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 5.3,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 4.4,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.8,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 417.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "pomazanka_hame": {
+    "status": "found",
+    "query": "Pomazánka masovo-zeleninová Ďábelské tousty Hamé",
+    "source": "NutriData.cz",
+    "source_product": "Pomazánka masovo-zeleninová Ďábelské tousty Hamé",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=3a4c0204d4ee466794858bde7208e9dd",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 894.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 4.3,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 15.9,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 13.6,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.7,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 400.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "salat_insalatissime_rio_mare": {
+    "status": "found",
+    "query": "Tuňákový krém na salátku ve skle, chlebové pralinky (VŠOH)",
+    "source": "NutriData.cz",
+    "source_product": "Tuňákový krém na salátku ve skle, chlebové pralinky (VŠOH)",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=949983de848249b1b31726d7242b2da7",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 620.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 8.91,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 8.56,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 9.18,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 1.73,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.04,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 203.39,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "sproty_uzene_v_oleji_vyberove_nekton": {
+    "status": "found",
+    "query": "Nekton Šproty uzené výběrové v rostlinném oleji *",
+    "source": "NutriData.cz",
+    "source_product": "Nekton Šproty uzené výběrové v rostlinném oleji *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=11584d9c5b504995a3c640d67aaa483c",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1158.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 23.4,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 16.8,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 800.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "tunak_steak_exclusive_franz_josef_kaiser": {
+    "status": "found",
+    "query": "Tuňák steak ve slunečnicovém oleji s citronem, Kaiser Franz Josef Exclusive *",
+    "source": "NutriData.cz",
+    "source_product": "Tuňák steak ve slunečnicovém oleji s citronem, Kaiser Franz Josef Exclusive *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=8a76f014f7234e41b5356dfd4f54dc16",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1094.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.7,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 541.7,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "oblozena_bageta_fresh_bistro": {
+    "status": "found",
+    "query": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1035.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 48.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 8.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 458.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "utopenci_viva": {
+    "status": "found",
+    "query": "Utopenci, Viva, uzenina ve sladkokyselém nálevu s cukrem *",
+    "source": "NutriData.cz",
+    "source_product": "Utopenci, Viva, uzenina ve sladkokyselém nálevu s cukrem *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=e46c60085ab34b04beda80e461dde5ce",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 714.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 4.5,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 15.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.1,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 833.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "noky_panzani": {
+    "status": "found",
+    "query": "Noky bramborové (Gnocchi Fior di Pasta)",
+    "source": "NutriData.cz",
+    "source_product": "Noky bramborové (Gnocchi Fior di Pasta)",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=f35a8d619220426ea247aa0a2f198b73",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 642.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 33.9,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 3.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.08,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 394.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "olivy_exclusive_franz_josef_kaiser": {
+    "status": "found",
+    "query": "Zelené olivy plněné ančovičkovou pastou, Kaiser Franz Josef Exclusive *",
+    "source": "NutriData.cz",
+    "source_product": "Zelené olivy plněné ančovičkovou pastou, Kaiser Franz Josef Exclusive *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=0e3a68f3757943b79b2cac1ff7859aaa",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 669.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 4.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 15.4,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 1.8,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1333.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "omacky_otma": {
+    "status": "found",
+    "query": "Omáčka svíčková, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Omáčka svíčková, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=18244112cc624de8bb4ebf019e853367",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 397.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 7.9,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 6.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 2.2,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.8,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.13,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 565.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "omeleta_bramborova_se_zeleninou_fresh_bistro": {
+    "status": "found",
+    "query": "Omeleta vaječná",
+    "source": "NutriData.cz",
+    "source_product": "Omeleta vaječná",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=ebaf2435d05a498eb83a4c54eabed348",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 644.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.64,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 11.66,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 10.57,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.7,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 155.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "salam_herkules": {
+    "status": "found",
+    "query": "Salám uherský, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Salám uherský, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=30b2619d6d494f33a19b2896556fda15",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1531.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 32.12,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 19.83,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.04,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.29,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1251.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kureci_prsni_rizky": {
+    "status": "found",
+    "query": "Kuřecí prsní řízky, syrové (bez kostí a kůže), průměr",
+    "source": "NutriData.cz",
+    "source_product": "Kuřecí prsní řízky, syrové (bez kostí a kůže), průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=decfb157016b422fa6708bef3d2bcd4a",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 435.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 2.73,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 19.75,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 323.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kureci_stehna": {
+    "status": "found",
+    "query": "Kuřecí prsa, maso bez kůže, pečené, gril, restované, PRŮMĚR",
+    "source": "NutriData.cz",
+    "source_product": "Kuřecí prsa, maso bez kůže, pečené, gril, restované, PRŮMĚR",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=eedf5e5ead59482aafca1e1b480ee528",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 356.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 1.7,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 18.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1242.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "mlete_maso_mix": {
+    "status": "found",
+    "query": "Mleté maso (vepřové + hovězí) - syrové",
+    "source": "NutriData.cz",
+    "source_product": "Mleté maso (vepřové + hovězí) - syrové",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=dc937c10c8df468b8e8cf79a41f3b467",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 965.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.18,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 17.49,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 18.54,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 52.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "sunka_amalka_nejvyssi_jakosti_krasno": {
+    "status": "found",
+    "query": "MP Krásno Amálka šunka nejvyšší jakosti krájená *",
+    "source": "NutriData.cz",
+    "source_product": "MP Krásno Amálka šunka nejvyšší jakosti krájená *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=7d80c06fdbf54db4b6f07fe4ac4d50f8",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 438.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 2.3,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 840.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "veprova_pecene_bez_kosti": {
+    "status": "found",
+    "query": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=8eccf718a20a48bbbb105075551f153c",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 920.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 9.3,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 31.95,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 61.9,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "veprova_plec_bez_kosti": {
+    "status": "found",
+    "query": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Vepřové maso, kotleta, vykostěné, libové a tuk, pečené, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=8eccf718a20a48bbbb105075551f153c",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 920.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 9.3,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 31.95,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 61.9,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "debrecinka_kureci": {
+    "status": "found",
+    "query": "Kuřecí debrecínka krájená, DZ Klatovy *",
+    "source": "NutriData.cz",
+    "source_product": "Kuřecí debrecínka krájená, DZ Klatovy *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=3b891ab6c28f489e8fc698995dbd6882",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 428.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 4.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 4.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 12.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 917.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kureci_ctvrtky": {
+    "status": "found",
+    "query": "Vodňanské kuře Uzené kuřecí čtvrtky *",
+    "source": "NutriData.cz",
+    "source_product": "Vodňanské kuře Uzené kuřecí čtvrtky *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=322c0ecb0da449369be1c900f47554bb",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 794.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 13.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 18.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 680.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "lucina": {
+    "status": "not_found",
+    "query": "lucina",
+    "values": {},
+    "schema_version": 13
+  },
+  "syr_taveny_smetanito_zeletava": {
+    "status": "found",
+    "query": "Tavený sýr se šunkou, Želetava Smetanito",
+    "source": "NutriData.cz",
+    "source_product": "Tavený sýr se šunkou, Želetava Smetanito",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=2f8aed85ab3c44f090622f5c9859782a",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 700.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 4.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 13.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 917.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "syr_a_krup_vesela_krava": {
+    "status": "found",
+    "query": "Sýr a Křup Lahodný sýr & tyčinky s pizza příchutí, Veselá Kráva *",
+    "source": "NutriData.cz",
+    "source_product": "Sýr a Křup Lahodný sýr & tyčinky s pizza příchutí, Veselá Kráva *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=d6b7e7f3b8854dbd8c49111e0a4f1a1f",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1196.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 25.5,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 16.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 10.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 5.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 667.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "syr_eidam": {
+    "status": "error",
+    "query": "syr eidam",
+    "values": {},
+    "schema_version": 13
+  },
+  "syr_hermelin_kral_syru": {
+    "status": "found",
+    "query": "Král Sýrů Hermelín Maxi *",
+    "source": "NutriData.cz",
+    "source_product": "Král Sýrů Hermelín Maxi *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=c52ec750bbc5453fa47a15b401dcfb8e",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1350.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 28.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 18.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 560.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "syr_hermelin_sedlcansky": {
+    "status": "found",
+    "query": "Sedlčanský Hermelín na gril, sýr ",
+    "source": "NutriData.cz",
+    "source_product": "Sedlčanský Hermelín na gril, sýr ",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=d0a625ae0b39457d88f714d5528e207b",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1294.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 26.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 19.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 708.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "syr_mozzarella_galbani": {
+    "status": "found",
+    "query": "Mozzarella Light, Galbani, nezrající sýr pařený polotučný *",
+    "source": "NutriData.cz",
+    "source_product": "Mozzarella Light, Galbani, nezrající sýr pařený polotučný *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=da46ffce3c8a4bb3adea156e3cd1b0a7",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 722.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 1.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 18.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 292.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "actimel_danone": {
+    "status": "found",
+    "query": "Danone Actimel jahoda bez přidaného cukru *",
+    "source": "NutriData.cz",
+    "source_product": "Danone Actimel jahoda bez přidaného cukru *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=1d892e5b6596411081f3a9dd9bf960a0",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 116.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.2,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 2.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 44.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bily_jogurt_reckeho_typu_athentikos_mlekarna_kunin": {
+    "status": "found",
+    "query": "Jogurt řecký netučný, s příchutí, Milko",
+    "source": "NutriData.cz",
+    "source_product": "Jogurt řecký netučný, s příchutí, Milko",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=f2f4ec4a42ad41968fd7e20b0d19db16",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 331.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 10.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.3,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 8.2,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 9.2,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 28.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "nanuk_misa": {
+    "status": "found",
+    "query": "Míša, zmrzlina, tvarohový krém s kakaovou polevou",
+    "source": "NutriData.cz",
+    "source_product": "Míša, zmrzlina, tvarohový krém s kakaovou polevou",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=1c7159374d3544e89f324f49c2c54993",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1100.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 24.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 16.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 7.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 17.35,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 57.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "hranolky_vlnky_mrazene_nowaco": {
+    "status": "found",
+    "query": "Bramborové hranolky, (zmrazené), smažené v rostlinném oleji, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Bramborové hranolky, (zmrazené), smažené v rostlinném oleji, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=54bbd2736bcc471ba29ad30e70055617",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1071.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 36.31,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 10.6,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 4.03,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 3.25,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.69,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 216.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "instantni_polevky_vitana": {
+    "status": "found",
+    "query": "Polévka, bujon hovězí hotový, kondenzovaný, vývar, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Polévka, bujon hovězí hotový, kondenzovaný, vývar, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=ee8ced834a7a4b469647fc452ed3590e",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 54.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.84,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 2.52,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 694.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kofola": {
+    "status": "error",
+    "query": "kofola",
+    "values": {},
+    "schema_version": 13
+  },
+  "limonada_fanta": {
+    "status": "found",
+    "query": "Fanta Zero, sycená limonáda s pomerančovou příchutí",
+    "source": "NutriData.cz",
+    "source_product": "Fanta Zero, sycená limonáda s pomerančovou příchutí",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=c3793584952f42ff9404d910133185f1",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 11.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "limonada_pepsi": {
+    "status": "found",
+    "query": "Pepsi Cola, limonáda sycená s kolovou příchutí",
+    "source": "NutriData.cz",
+    "source_product": "Pepsi Cola, limonáda sycená s kolovou příchutí",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=18ea2be9164a41ef91e3f38b732c5d66",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 182.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 11.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 4.2,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "ledovy_caj_lipton": {
+    "status": "found",
+    "query": "Ledový čaj zelený, ochucený nápoj, Lipton",
+    "source": "NutriData.cz",
+    "source_product": "Ledový čaj zelený, ochucený nápoj, Lipton",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=f489f870acaa4afeb934135658049a30",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 120.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 7.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 6.8,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 12.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "croissant_days": {
+    "status": "found",
+    "query": "Croissant s kakaovou náplní, 7 Days *",
+    "source": "NutriData.cz",
+    "source_product": "Croissant s kakaovou náplní, 7 Days *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=711d7792716f4229be73258dc5e87259",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1887.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 43.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 28.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 15.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 208.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bageta_cesnekova": {
+    "status": "found",
+    "query": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1035.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 48.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 8.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 458.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "rohlik_mlynarsky_zitny": {
+    "status": "found",
+    "query": "Rohlík pšeničný bílý,  průměr",
+    "source": "NutriData.cz",
+    "source_product": "Rohlík pšeničný bílý,  průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=99dd959448bc436a88debf6fa38a2e70",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1038.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 50.65,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.35,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 7.43,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 3.16,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.04,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 451.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "croissant": {
+    "status": "found",
+    "query": "Croissant *",
+    "source": "NutriData.cz",
+    "source_product": "Croissant *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=b676ee06e6bb495bbaeaa35ac51d7a7e",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1453.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 43.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 15.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 8.6,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 1.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 6.4,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 417.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "dalamanek": {
+    "status": "found",
+    "query": "Dalamánek, s celozrnnou moukou",
+    "source": "NutriData.cz",
+    "source_product": "Dalamánek, s celozrnnou moukou",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=30450cc5fcff489ba3db9cb548558f99",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1220.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 60.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 3.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.9,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 5.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 956.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bageta_francouzska": {
+    "status": "found",
+    "query": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Francouzská bageta s kváskem, kvásková, Tesco, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=df6c9ac48f3042658e724e8c2b8e0e45",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1035.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 48.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 8.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 2.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 458.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "chleb_fit_den_penam": {
+    "status": "found",
+    "query": "Chléb fit celozrnný, Penam Fit den *",
+    "source": "NutriData.cz",
+    "source_product": "Chléb fit celozrnný, Penam Fit den *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=9e384b45a9484b84b071c1602aef07d4",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 831.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 35.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 7.5,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 8.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 417.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "cokolada_studentska_pecet_orion": {
+    "status": "found",
+    "query": "Studentská pečeť, mléčná čokoláda s chutí kokosu, Orion *",
+    "source": "NutriData.cz",
+    "source_product": "Studentská pečeť, mléčná čokoláda s chutí kokosu, Orion *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=6b92aac1e7ac4f42ae1b149962487cf3",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 2151.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 56.4,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 28.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 3.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 45.9,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 62.5,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "prazene_pistacie": {
+    "status": "found",
+    "query": "Pistácie ve skořápce pražené solené, Tesco, PRŮMĚR",
+    "source": "NutriData.cz",
+    "source_product": "Pistácie ve skořápce pražené solené, Tesco, PRŮMĚR",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=36d0ed3de5084a0ab6bcc964f03535b6",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 2659.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 16.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 53.5,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 20.3,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 4.3,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 6.1,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 333.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bonbony_jojo": {
+    "status": "found",
+    "query": "Bonbony Vexta JOJO",
+    "source": "NutriData.cz",
+    "source_product": "Bonbony Vexta JOJO",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=8934268d8b8141d0a6461d9850cd8f8c",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1394.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 76.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 5.5,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 78.38,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.01,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "chipsy_lay_s": {
+    "status": "error",
+    "query": "chipsy lay s",
+    "values": {},
+    "schema_version": 13
+  },
+  "majoneza_hellmann_s": {
+    "status": "found",
+    "query": "Majonéza delikátní, Hellmann's *",
+    "source": "NutriData.cz",
+    "source_product": "Majonéza delikátní, Hellmann's *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=407f6867b13a4cfeae1fcb0727e0b2a5",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 2675.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 3.6,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 70.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 375.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "tatarska_omacka_hellmann_s": {
+    "status": "found",
+    "query": "Tatarská omáčka Hellmann´s Original, stř.tučná, 41% tuku, PRŮMĚR",
+    "source": "NutriData.cz",
+    "source_product": "Tatarská omáčka Hellmann´s Original, stř.tučná, 41% tuku, PRŮMĚR",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=d1da776b825e4e40aebf960d8c723b7f",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1700.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 8.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 41.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 690.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "olivovy_olej_extra_panensky_exclusive_franz_josef_kaiser": {
+    "status": "found",
+    "query": "Extra panenský olivový olej, Kaiser Franz Josef Exclusive *",
+    "source": "NutriData.cz",
+    "source_product": "Extra panenský olivový olej, Kaiser Franz Josef Exclusive *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=37e91f31da7e4a4d826101d1f245c21d",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 3389.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 92.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 0.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "testoviny_panzani": {
+    "status": "found",
+    "query": "Těstoviny, Fusilli Panzani, bezvaječné, semolinové",
+    "source": "NutriData.cz",
+    "source_product": "Těstoviny, Fusilli Panzani, bezvaječné, semolinové",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=b6e1a647a5994c929f32767eee9c0cd2",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1502.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 72.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 2.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 12.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 5.1,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.42,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 5.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bujon_maggi": {
+    "status": "found",
+    "query": "Hovězí bujón v kostce, MAGGI *",
+    "source": "NutriData.cz",
+    "source_product": "Hovězí bujón v kostce, MAGGI *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=557e4e4051cc45df90a249cfce94c188",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1208.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 21.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.6,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.5,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 4.6,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 19583.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "bujon_masox_vitana": {
+    "status": "found",
+    "query": "Masox bujón,  uvařený, Vitana *",
+    "source": "NutriData.cz",
+    "source_product": "Masox bujón,  uvařený, Vitana *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=016de46128df49778437475d49ef0dbb",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 14.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.2,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.03,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 375.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kecup_gurman_otma": {
+    "status": "found",
+    "query": "Otma Kečup Gurmán Ostrý *",
+    "source": "NutriData.cz",
+    "source_product": "Otma Kečup Gurmán Ostrý *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=c77789bd9913454c8e2c82db8f3c6ba5",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 567.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 29.1,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.6,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 1.5,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 26.2,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 720.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kecup_heinz": {
+    "status": "found",
+    "query": "Kečup ostrý, Heinz",
+    "source": "NutriData.cz",
+    "source_product": "Kečup ostrý, Heinz",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=503a00c175b54f5c8b94b13e28be60b1",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 449.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 23.3,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 3.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 22.8,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1292.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "cerealie_nestle": {
+    "status": "found",
+    "query": "Lion Wildcrush Nestlé, snídaňové cereálie s náplní s karamelovo-čokoládovou chutí ",
+    "source": "NutriData.cz",
+    "source_product": "Lion Wildcrush Nestlé, snídaňové cereálie s náplní s karamelovo-čokoládovou chutí ",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=a12883d4ba924ea8aff0436a34448535",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1765.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 66.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 13.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 5.2,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 24.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 350.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "mandle_emma": {
+    "status": "found",
+    "query": "Ořechy, mandle, sušené, ve slupce, průměr",
+    "source": "NutriData.cz",
+    "source_product": "Ořechy, mandle, sušené, ve slupce, průměr",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=d0a6aa8328d948b1ac6839cf09e1b1d4",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 2298.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 9.47,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 49.42,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 21.22,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 12.2,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 3.89,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "musli_mysli_emco": {
+    "status": "found",
+    "query": "Tyčinka, muesli, mléčná, průměr, müsli",
+    "source": "NutriData.cz",
+    "source_product": "Tyčinka, muesli, mléčná, průměr, müsli",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=75ec0bea31974fa78e0885d3f97e539b",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1727.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 72.05,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 10.98,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 6.47,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.4,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 45.97,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 319.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "kase_ovesna_emco": {
+    "status": "found",
+    "query": "Super kaše jablka & meruňky, ovesná, Emco",
+    "source": "NutriData.cz",
+    "source_product": "Super kaše jablka & meruňky, ovesná, Emco",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=8c1ab04fa97b4b37b0f2aa1e34815312",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1500.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 68.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 3.4,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 10.0,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 7.3,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 12.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 296.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "musli_bonavita": {
+    "status": "found",
+    "query": "Bonavita Müsli crunchy 4 druhy ořechů celozrnné *",
+    "source": "NutriData.cz",
+    "source_product": "Bonavita Müsli crunchy 4 druhy ořechů celozrnné *",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=f26dd53b686f4e06bf4aaa9991772f04",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 2004.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 62.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 20.0,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 9.5,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 6.0,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 16.0,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 28.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "brusinky_klikvy_susene_emma": {
+    "status": "found",
+    "query": "Brusinky sušené, slazené, Alesto, Lidl",
+    "source": "NutriData.cz",
+    "source_product": "Brusinky sušené, slazené, Alesto, Lidl",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=91bf4c1ee6514612942dbe4b723ccfe1",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 1430.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 78.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 1.2,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 5.9,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 70.5,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 13.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "cerealie_skoricove_ctverecky_emma": {
+    "status": "found",
+    "query": "Cereálie, rýžová kaše (bez přidaného cukru), vařená",
+    "source": "NutriData.cz",
+    "source_product": "Cereálie, rýžová kaše (bez přidaného cukru), vařená",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=e07ce8a34f444385ad063b988587b31b",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 217.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 11.4,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 0.9,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 0.1,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 0.02,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 1.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "musli_tycinka_fit": {
+    "status": "found",
+    "query": "Müsli tyčinka Fit malinová, muesli",
+    "source": "NutriData.cz",
+    "source_product": "Müsli tyčinka Fit malinová, muesli",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=4598f42df802470a881fe0e52e3ea3c4",
+    "provenance": "exact_match",
+    "values": {
+      "Energy": {
+        "value": 1550.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 66.0,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 8.9,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 5.7,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 7.6,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 28.3,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 12.5,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
+  },
+  "orechy_vlasske_emma": {
+    "status": "found",
+    "query": "Ořechy, vlašské ořechy, jádra, průměr, balené",
+    "source": "NutriData.cz",
+    "source_product": "Ořechy, vlašské ořechy, jádra, průměr, balené",
+    "source_url": "https://nutridata.cz/Eatable/View?guid=d27815cc645b44a0ac19662ccf18a948",
+    "provenance": "category_proxy",
+    "values": {
+      "Energy": {
+        "value": 2678.0,
+        "unit": "kJ"
+      },
+      "Carbs": {
+        "value": 7.01,
+        "unit": "g"
+      },
+      "Fat": {
+        "value": 65.21,
+        "unit": "g"
+      },
+      "Protein": {
+        "value": 15.23,
+        "unit": "g"
+      },
+      "Fiber": {
+        "value": 6.7,
+        "unit": "g"
+      },
+      "Sugars": {
+        "value": 2.61,
+        "unit": "g"
+      },
+      "Sodium": {
+        "value": 2.0,
+        "unit": "mg"
+      }
+    },
+    "schema_version": 13,
+    "nutridata_curated": true
   }
 }

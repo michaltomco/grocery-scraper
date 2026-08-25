@@ -218,6 +218,58 @@ def load_cache() -> dict:
         return {}
 
 
+# Curated NutriData.cz records for grocery categories other than fresh produce.
+# These were hand-verified against the authenticated NutriData food database and
+# stored with the exact source entry name + URL so the dashboard can show the
+# source for personal checking. They are never auto-ranked by nutrient count;
+# each mapping was chosen by a human reviewer (provenance: exact_match or
+# category_proxy).
+NUTRIDATA_PATH = ROOT / "nutridata_nonproduce_nutrition.json"
+
+
+def _load_nutridata() -> dict:
+    if not NUTRIDATA_PATH.exists():
+        return {}
+    try:
+        data = json.loads(NUTRIDATA_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    out = {}
+    for key, rec in data.items():
+        if rec.get("status") != "ok":
+            continue
+        nutrients = rec.get("nutrients", {})
+        values = {}
+        # Map NutriData per-100 g fields onto the dashboard's label vocabulary.
+        mapping = {
+            "energy_kj": ("kJ", "Energy"),
+            "carbohydrates_g": ("g", "Carbs"),
+            "fats_g": ("g", "Fat"),
+            "proteins_g": ("g", "Protein"),
+            "fiber_g": ("g", "Fiber"),
+            "sugar_g": ("g", "Sugars"),
+            "sodium_mg": ("mg", "Sodium"),
+        }
+        for src, (unit, label) in mapping.items():
+            v = nutrients.get(src)
+            if isinstance(v, (int, float)):
+                values[label] = {"value": round(float(v), 2), "unit": unit}
+        if not values:
+            continue
+        out[key] = {
+            "status": "found",
+            "query": rec.get("source_name", ""),
+            "source": "NutriData.cz",
+            "source_product": rec.get("source_name", ""),
+            "source_url": rec.get("source_url", ""),
+            "provenance": rec.get("provenance", ""),
+            "values": values,
+            "schema_version": CACHE_VERSION,
+            "nutridata_curated": True,
+        }
+    return out
+
+
 def save_cache(cache: dict) -> None:
     temporary = CACHE_PATH.with_suffix(".tmp")
     temporary.write_text(json.dumps(cache, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -412,6 +464,14 @@ def fetch_nutrition(product: str) -> dict:
 
 def get_many(products: set[str]) -> dict:
     cache = load_cache()
+    # Hand-curated NutriData.cz records for non-produce categories take priority
+    # over the generic USDA/Open Food Facts produce pipeline: they were verified
+    # by a human and labelled with the exact source entry for personal checking.
+    # Overwrite any older auto-fetched entry so the curated source always wins.
+    curated = _load_nutridata()
+    if curated:
+        for key, entry in curated.items():
+            cache[key] = entry
     changed = False
     for product in sorted(products):
         # Successful and definitive misses are cached. Transient request
@@ -419,6 +479,9 @@ def get_many(products: set[str]) -> dict:
         # FoodData Central Vitamin A, IU values as dietary Vitamin A; refresh
         # those entries so the direct Vitamin A, RAE value replaces them.
         entry = cache.get(product, {})
+        # Curated NutriData records are frozen: never re-fetch, never refresh.
+        if entry.get("nutridata_curated"):
+            continue
         vitamin_a = entry.get("values", {}).get("Vitamin A", {})
         legacy_vitamin_a_iu = str(vitamin_a.get("unit", "")).lower() in {"iu", "i.u."}
         source = str(entry.get("source", ""))
