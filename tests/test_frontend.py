@@ -297,6 +297,7 @@ class DashboardBrowserTests(unittest.TestCase):
         self.page.locator("#categoryFilter").select_option(label="All products")
         search = self.page.locator("#productSearch")
         search.fill("jablka")
+        self.page.wait_for_timeout(250)
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
