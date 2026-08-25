@@ -117,11 +117,10 @@ class DashboardBuilderTests(unittest.TestCase):
             product_page = build_site.PRODUCTS_DIR / "mleko_trvanlive.html"
             exact_html = exact_page.read_text(encoding="utf-8")
             product_html = product_page.read_text(encoding="utf-8")
-        # Main (index) and product pages recalculate to a per-litre price.
-        # The index formats the value with two decimals; the product page uses
-        # the raw value.
+        # Main (index) and product pages both recalculate to a per-litre price
+        # and format it with two decimals.
         self.assertIn("8.90 / l", html)
-        self.assertIn("8.9 / l", product_html)
+        self.assertIn("8.90 / l", product_html)
         # Exact page keeps the retailer's original offer value, no unit appended.
         self.assertIn("8.9", exact_html)
         self.assertNotIn("8.9 / l", exact_html)
