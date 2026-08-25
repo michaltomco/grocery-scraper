@@ -169,6 +169,7 @@ class DashboardBrowserTests(unittest.TestCase):
 
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.page.locator("#categoryFilter").select_option(label="All products")
         self.assertEqual(self.page.locator("#t tbody tr").count(), 2)
         apple_row = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         self.assertEqual(apple_row.locator('.ppcell[data-store="Albert"]').count(), 2)
@@ -303,6 +304,7 @@ class DashboardBrowserTests(unittest.TestCase):
 
     def test_nutrition_filter_shows_only_products_with_nutrition_data(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.page.locator("#categoryFilter").select_option(label="All products")
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
 
