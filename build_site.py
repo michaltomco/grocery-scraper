@@ -1453,9 +1453,17 @@ refreshRankingNutrients();
 function searchKey(value) {{
   return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase();
 }}
-function rowMatchesSearch(row) {{
+rows.forEach(row => {{
   const name = row.querySelector('.pname');
-  return !productSearch.value || searchKey(name ? name.textContent : '').includes(searchKey(productSearch.value));
+  row.dataset.searchName = searchKey(name ? name.textContent : '');
+}});
+function rowMatchesSearch(row) {{
+  return !productSearch.value || row.dataset.searchName.includes(searchKey(productSearch.value));
+}}
+function applyProductSearch() {{
+  const query = searchKey(productSearch.value);
+  rows.forEach(row => row.classList.toggle('search-hidden', !!query && !row.dataset.searchName.includes(query)));
+  if (!rankingCard.hidden) updateRanking();
 }}
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
@@ -1476,7 +1484,14 @@ document.getElementById('rankToggle').onclick = () => {{
 }};
 rankingNutrient.onchange = () => {{ updateRanking(); saveFilters(); }};
 categoryFilter.onchange = () => {{ applyFilters(); saveFilters(); }};
-productSearch.oninput = () => {{ applyFilters(); saveFilters(); }};
+let searchTimer;
+productSearch.oninput = () => {{
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {{
+    applyProductSearch();
+    saveFilters();
+  }}, 180);
+}};
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
