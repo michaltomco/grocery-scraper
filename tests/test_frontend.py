@@ -188,10 +188,11 @@ class DashboardBrowserTests(unittest.TestCase):
 
         tesco_chip = self.page.locator('.legend .chip[data-store="Tesco"]')
         tesco_chip.click()
-        self.assertIn("off", tesco_chip.get_attribute("class") or "")
+        self.assertNotIn("off", tesco_chip.get_attribute("class") or "")
+        self.assertIn("off", self.page.locator('.legend .chip[data-store="Albert"]').get_attribute("class") or "")
         self.assertEqual(
-            self.page.locator('.ppcell[data-store="Tesco"].muted').count(),
-            self.page.locator('.ppcell[data-store="Tesco"]').count(),
+            self.page.locator('.ppcell[data-store="Albert"].muted').count(),
+            self.page.locator('.ppcell[data-store="Albert"]').count(),
         )
 
         self.page.get_by_text("Rank by nutrient", exact=True).click()
@@ -224,8 +225,7 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertTrue(self.page.locator("#nutritionFilter").get_attribute("aria-pressed") == "true")
         self.assertIn("on", self.page.get_by_text("Hide irrelevant", exact=True).get_attribute("class") or "")
         self.assertIn("on", self.page.get_by_text("Rank by nutrient", exact=True).get_attribute("class") or "")
-        self.assertIn("off", self.page.locator('.legend .chip[data-store="Tesco"]').get_attribute("class") or "")
-        self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
+        self.assertEqual(self.page.evaluate("JSON.parse(localStorage.getItem('grocery-filters')).category"), "Pečivo")
         self.assert_browser_clean()
 
     def test_main_date_column_keeps_the_full_timeline_visible(self) -> None:
@@ -291,6 +291,20 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertLess(abs(theme["y"] - actions["y"]), 2)
         self.assertEqual(errors, [])
         mobile.close()
+
+    def test_product_search_filters_and_persists(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.page.locator("#categoryFilter").select_option(label="All products")
+        search = self.page.locator("#productSearch")
+        search.fill("jablka")
+        apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
+        bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
+        self.page.reload(wait_until="networkidle")
+        self.assertEqual(self.page.locator("#productSearch").input_value(), "jablka")
+        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
+        self.assert_browser_clean()
 
     def test_category_dropdown_filters_offer_lines(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")

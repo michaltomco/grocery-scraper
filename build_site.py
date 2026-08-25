@@ -32,6 +32,7 @@ from scrapers.common import (
     store_logo,
     store_color,
     store_initial,
+    explicit_volume_liters_for,
 )
 from nutrition import get_many, get_many_exact
 
@@ -179,12 +180,20 @@ def normalized(row: dict) -> tuple[float | None, str]:
     pc = number(row.get("price_per_piece", ""))
     if pc is not None:
         return pc, "ks"
+    # Explicit volume (milk, ice cream, dressings…) normalizes to a per-litre
+    # price so liquid goods compare on one basis instead of a meaningless
+    # per-piece price. Takes priority over the generic per-piece fallback.
+    vol, vol_unit = explicit_volume_liters_for(
+        number(row.get("price", "")), row.get("product_name", "")
+    )
+    if vol is not None:
+        return vol, vol_unit
     # Fallback: some scraped rows only carry a generic `price` (no per_kg/per_piece).
     # Infer the unit from the product name ("1 kg" -> kg, otherwise per piece).
     generic = number(row.get("price", ""))
     if generic is not None:
         name = (row.get("product_name") or row.get("canonical_product_name") or "")
-        unit = "kg" if re.search(r"\b\d+(?:[.,]\d+)?\s*kg\b", name, re.IGNORECASE) else "ks"
+        unit = "kg" if re.search(r"\b\d+(?:[,.]\d+)?\s*kg\b", name, re.IGNORECASE) else "ks"
         return generic, unit
     return None, ""
 
@@ -1269,6 +1278,8 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 .filter-controls {{ display:flex; align-items:center; gap:12px; margin:0 0 10px; }}
 .category-filter {{ display:flex; align-items:center; gap:8px; font-size:.85rem; }}
 .category-filter select {{ background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
+.search-filter {{ display:flex; align-items:center; gap:8px; font-size:.85rem; }}
+.search-filter input {{ width:220px; background:var(--toggle-bg); color:var(--fg); border:1px solid var(--track); border-radius:6px; padding:5px 8px; }}
 .timeline-head {{ display: flex; flex-direction: column; gap: 3px; }}
 .date-label {{ color: var(--muted); font-weight: 600; font-size: .85rem; }}
 .ranking-card {{ overflow-x:auto; }}
@@ -1328,7 +1339,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
     </div>
   </div>
 </div>
-<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
+<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><div class="search-filter"><label for="productSearch">Search</label><input id="productSearch" type="search" placeholder="Find products" autocomplete="off"></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
 <div class="card ranking-card" id="rankingCard" hidden>
   <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
   <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
@@ -1397,6 +1408,7 @@ const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 let nutritionOnly = false;
 const categoryFilter = document.getElementById('categoryFilter');
+const productSearch = document.getElementById('productSearch');
 const FILTERS_KEY = 'grocery-filters';
 let savedFilterState = null;
 try {{
@@ -1408,6 +1420,7 @@ function saveFilters() {{
     localStorage.setItem(FILTERS_KEY, JSON.stringify({{
       hiddenStores: [...hidden],
       category: categoryFilter.value,
+      search: productSearch.value,
       hideIrrelevant,
       nutritionOnly,
       rankingVisible: !rankingCard.hidden,
@@ -1436,10 +1449,17 @@ function refreshRankingNutrients() {{
 }}
 rankingCategory.onchange = () => {{ refreshRankingNutrients(); saveFilters(); }};
 refreshRankingNutrients();
+function searchKey(value) {{
+  return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase();
+}}
+function rowMatchesSearch(row) {{
+  const name = row.querySelector('.pname');
+  return !productSearch.value || searchKey(name ? name.textContent : '').includes(searchKey(productSearch.value));
+}}
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
   const label = rankingNutrient.value;
-  const ranked = rankingData.filter(item => (categoryFilter.value === 'all' || item.category === categoryFilter.value) && (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
+  const ranked = rankingData.filter(item => (!productSearch.value || searchKey(item.product).includes(searchKey(productSearch.value))) && (categoryFilter.value === 'all' || item.category === categoryFilter.value) && (!hideIrrelevant || !hidden.has(item.store)) && (!hideIrrelevant || (item.start <= rangeEnd && (item.end || item.start) >= rangeStart)))
     .map(item => ({{ ...item, amount: item.values[label] * item.factor, rdaCost: item.price * item.rdas[label] / (item.values[label] * item.factor), datedim: !(item.start <= rangeEnd && (item.end || item.start) >= rangeStart), storedim: hidden.has(item.store) }}))
     .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
     .sort((a, b) => a.rdaCost - b.rdaCost)
@@ -1455,6 +1475,7 @@ document.getElementById('rankToggle').onclick = () => {{
 }};
 rankingNutrient.onchange = () => {{ updateRanking(); saveFilters(); }};
 categoryFilter.onchange = () => {{ applyFilters(); saveFilters(); }};
+productSearch.oninput = () => {{ applyFilters(); saveFilters(); }};
 // Today = the build-day anchor (server's date.today()). Slider works in
 // integer day offsets from it. Compute via UTC date parts so the local
 // timezone can't roll the day backwards (new Date("...T00:00:00").toISOString()
@@ -1497,6 +1518,7 @@ function applyFilters() {{
     // Pair each rendered offer's price cell (.ppcell) and date cell (.dcell)
     // by data-line, not by store. A store can now have several overlapping
     // discounts for the same product inside the two-week window.
+    const searchHidden = !rowMatchesSearch(r);
     const lines = [];
     const ppByLine = {{}};
     r.querySelectorAll('.ppcell').forEach(c => {{ ppByLine[c.dataset.line] = c; }});
@@ -1522,7 +1544,7 @@ function applyFilters() {{
       const dim = !muted && !categoryHidden && hasDate && !overlap;
       if (L.pp) L.pp.classList.toggle('datedim', dim);
       L.dc.classList.toggle('datedim', dim);
-      const lineShown = !categoryHidden && (!hideIrrelevant || (!muted && overlap));
+      const lineShown = !searchHidden && !categoryHidden && (!hideIrrelevant || (!muted && overlap));
       if (lineShown) anyLineShown = true;
       const disp = lineShown ? '' : 'none';
       if (L.pp) L.pp.style.display = disp;
@@ -1545,9 +1567,11 @@ function applyFilters() {{
   }});
   updateRanking();
 }}
-// Toggle a store's visibility (used by both the legend chips and the store
-// icons in the Price column). Reflects state on the chip (.off) and on every
-// .ppcell belonging to that store (.muted look) via applyFilters().
+// Toggle a store's mute (used by the store icons in the Price column and the
+// ranking table). Reflects state on the chip (.off) and on every .ppcell
+// belonging to that store (.muted look) via applyFilters(). The top legend
+// chips no longer use this — they drive an exclusive "show only one shop"
+// filter through setSoloShop() instead.
 function setStoreHidden(s, hide) {{
   if (hide) {{ hidden.add(s); }} else {{ hidden.delete(s); }}
   const chip = chips.find(c => c.dataset.store === s);
@@ -1555,10 +1579,32 @@ function setStoreHidden(s, hide) {{
   applyFilters();
   saveFilters();
 }}
+// Top legend chips: click-to-solo. Clicking a shop shows ONLY that shop (all
+// others are muted); clicking the already-soloed shop again clears the filter
+// and shows every shop. The per-product store-row clicks below keep their
+// independent toggle-mute behaviour (setStoreHidden).
+function setSoloShop(s) {{
+  chips.forEach(c => {{
+    const st = c.dataset.store;
+    if (s) {{
+      if (st === s) hidden.delete(st); else hidden.add(st);
+    }} else {{
+      hidden.delete(st);
+    }}
+    c.classList.toggle('off', hidden.has(st));
+  }});
+  applyFilters();
+  saveFilters();
+}}
+// The currently exclusive (solo) shop, or null when more than one (or none) is visible.
+function soloShop() {{
+  const visible = chips.map(c => c.dataset.store).filter(st => !hidden.has(st));
+  return visible.length === 1 ? visible[0] : null;
+}}
 chips.forEach(chip => {{
   chip.onclick = () => {{
     const s = chip.dataset.store;
-    setStoreHidden(s, !hidden.has(s));
+    setSoloShop(soloShop() === s ? null : s);
   }};
 }});
 // Clicking a store icon in the Price column toggles that store's filter too.
@@ -1712,6 +1758,8 @@ applyTheme(saved);
 if (savedFilterState && typeof savedFilterState === 'object') {{
   if ([...categoryFilter.options].some(o => o.value === savedFilterState.category))
     categoryFilter.value = savedFilterState.category;
+  if (typeof savedFilterState.search === 'string')
+    productSearch.value = savedFilterState.search;
   if (Array.isArray(savedFilterState.hiddenStores)) {{
     savedFilterState.hiddenStores.forEach(s => hidden.add(s));
     chips.forEach(chip => chip.classList.toggle('off', hidden.has(chip.dataset.store)));

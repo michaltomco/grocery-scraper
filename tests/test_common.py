@@ -107,7 +107,25 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(explicit_package_weight_grams("Zelí bílé kysané Albert 500 g"), 500.0)
         corrected = normalize_offer_unit_price("2,98 Kč / 100 g", "Zelí bílé kysané Albert 500 g", 14.9)
         self.assertEqual(corrected["price_per_kg"], 29.8)
+        corrected = normalize_offer_unit_price("9,35 Kč / 100 g", "Bílý jogurt Activia Danone 120 g", 44.9)
+        self.assertEqual(corrected["price_per_kg"], 374.17)
+        self.assertEqual(explicit_volume_liters("Mléko 1 l"), 1.0)
+        self.assertEqual(explicit_volume_liters("Zmrzlina 100 ml"), 0.1)
+        self.assertEqual(explicit_volume_liters("Nápoj 1,5 l"), 1.5)
 
+    def test_explicit_volume_liters_ignores_non_trailing_and_weight(self) -> None:
+        # Embedded capacity, not the unit on sale.
+        self.assertIsNone(explicit_volume_liters("Nápoj 2 lMultiPack"))
+        # Weight-only names are not volumes.
+        self.assertIsNone(explicit_volume_liters("Mleté maso 0.5 kg"))
+
+    def test_volume_price_normalizes_to_per_litre(self) -> None:
+        self.assertEqual(explicit_volume_liters_for(8.9, "Mléko 1 l"), (8.9, "l"))
+        self.assertEqual(explicit_volume_liters_for(99.9, "Zmrzlina 100 ml"), (999.0, "l"))
+        # No trailing volume falls back to (None, "") so callers use kg/ks.
+        self.assertEqual(explicit_volume_liters_for(14.9, "Zelí bílé kysané 500 g"), (None, ""))
+
+    def test_trailing_package_weight_corrects_bad_source_unit_price(self) -> None:
         corrected = normalize_offer_unit_price("9,35 Kč / 100 g", "Bílý jogurt Activia Danone 120 g", 44.9)
         self.assertEqual(corrected["price_per_kg"], 374.17)
 

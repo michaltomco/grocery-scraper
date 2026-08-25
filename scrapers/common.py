@@ -362,15 +362,45 @@ def normalize_unit_price(unit_price: str) -> dict[str, float | str]:
     return normalized
 
 
-def explicit_package_weight_grams(product_name: str) -> float | None:
+def explicit_volume_liters(name: str) -> float | None:
+    """Return package volume (litres) when it is explicitly present in the name.
+
+    Used so liquid goods (milk, ice cream, dressings) normalize to a price
+    per litre instead of silently falling back to a meaningless per-piece
+    price. Only trailing-name quantities are trusted, mirroring
+    explicit_weight_grams — an embedded capacity like "2 lMultiPack" is ignored
+    because it does not describe the single unit on sale.
+    """
+    match = re.search(r"\b(\d+(?:[,.]\d+)?)\s*(l|ml)\s*$", name or "", re.IGNORECASE)
+    if not match:
+        return None
+    value = float(match.group(1).replace(",", "."))
+    if value <= 0:
+        return None
+    return round(value / 1000, 6) if match.group(2).lower() == "ml" else value
+
+
+def explicit_volume_liters_for(price: float, name: str) -> tuple[float | None, str]:
+    """Normalize a displayed price to a per-litre value from a name volume."""
+    liters = explicit_volume_liters(name)
+    if price is not None and liters:
+        return round(price / liters, 2), "l"
+    return None, ""
+
+
+def explicit_package_weight_grams(name: str) -> float | None:
     """Read a package weight only when it is the trailing name quantity."""
-    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(kg|g)\s*$", product_name or "", re.IGNORECASE)
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(kg|g)\s*$", name or "", re.IGNORECASE)
     if not match:
         return None
     value = parse_number(match.group(1))
     if value is None or value <= 0:
         return None
     return value * 1000 if match.group(2).lower() == "kg" else value
+
+
+def explicit_weight_grams(name: str) -> float | None:
+    return explicit_package_weight_grams(name)
 
 
 def normalize_offer_unit_price(unit_price: str, product_name: str, price: float | str) -> dict[str, float | str]:
