@@ -209,7 +209,7 @@ class DashboardBrowserTests(unittest.TestCase):
             ["Jablka Gala 1 kg", "Jablka Gala 1 kg", "Jablka Gala 1 kg"],
         )
 
-        self.page.locator("#t .dcell .day").first.click()
+        self.page.locator("#t .dcell .day:visible").first.click()
         self.assertGreater(self.page.locator("#t .day.sel").count(), 0)
         self.assert_browser_clean()
 
@@ -306,12 +306,15 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
         self.assert_browser_clean()
 
-    def test_all_categories_are_visible_without_category_filter(self) -> None:
+    def test_category_dropdown_filters_offer_lines(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        self.assertEqual(self.page.locator("#categoryFilter").count(), 0)
+        self.assertEqual(self.page.locator("#categoryFilter").count(), 1)
+        self.page.locator("#categoryFilter").select_option(label="Pečivo")
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "none")
+        self.page.locator("#categoryFilter").select_option(label="Ovoce a zelenina")
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assert_browser_clean()
 
@@ -329,7 +332,7 @@ class DashboardBrowserTests(unittest.TestCase):
         self.page.get_by_role("button", name="Nutrition only").click()
         self.assertNotIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
         self.assertNotIn("nutrition-only", self.page.locator("#t").get_attribute("class") or "")
-        self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assert_browser_clean()
 
     def test_product_detail_nutrition_mode_persists(self) -> None:

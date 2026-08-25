@@ -333,8 +333,9 @@ class DashboardBuilderTests(unittest.TestCase):
             ) as cache_image:
                 html = build_site.build()
 
-        self.assertNotIn('id="categoryFilter"', html)
-        self.assertIn('id="productSearch"', html)
+        self.assertIn('<select id="categoryFilter">', html)
+        self.assertIn('value="Ovoce a zelenina" selected', html)
+        self.assertNotIn('value="all">All products', html)
         self.assertIn('data-category="Pečivo"', html)
         cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg")
 
