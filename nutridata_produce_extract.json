@@ -1,0 +1,235 @@
+{
+  "source": "NutriData.cz authenticated search",
+  "basis": "per 100 g where NutriData record supplies a 100 g dose",
+  "records": [
+    {
+      "name": "Avokádo, syrové, všechny komerční odrůdy, jedlý podíl, průměr",
+      "nutrients": {
+        "energy_kj": 610,
+        "carbohydrates_g": 1.83,
+        "fats_g": 14.66,
+        "proteins_g": 2,
+        "fiber_g": 6.7,
+        "sugar_g": 0.66,
+        "sodium_mg": 7,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=2488d2acbb4a460798a51b9f9e598a25",
+      "canonical_product": "avokado"
+    },
+    {
+      "name": "Sladké brambory, batáty, syrové",
+      "nutrients": {
+        "energy_kj": 332,
+        "carbohydrates_g": 17.12,
+        "fats_g": 0.05,
+        "proteins_g": 1.57,
+        "fiber_g": 3,
+        "sugar_g": 4.18,
+        "sodium_mg": 55,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=1bb7c0a694994a57a9a7c3a08f7a9fba",
+      "canonical_product": "bataty"
+    },
+    {
+      "name": "Sladké brambory, batáty, pouze,  listy, syrové",
+      "nutrients": {
+        "energy_kj": 147,
+        "carbohydrates_g": 6.38,
+        "fats_g": 0.3,
+        "proteins_g": 4,
+        "fiber_g": 2,
+        "sugar_g": null,
+        "sodium_mg": 9,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "canonical_product": "bataty"
+    },
+    {
+      "name": "Borůvky, syrové, průměr",
+      "nutrients": {
+        "energy_kj": 217,
+        "carbohydrates_g": 11.9,
+        "fats_g": 0.33,
+        "proteins_g": 0.74,
+        "fiber_g": 2.59,
+        "sugar_g": 9.96,
+        "sodium_mg": 1,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=8649a35af3ad45dda1cf0f3ec0b6492e",
+      "canonical_product": "boruvky"
+    },
+    {
+      "name": "Borůvky, lesní plody, syrové (severní amerika, Aljaška)",
+      "nutrients": {
+        "energy_kj": 232,
+        "carbohydrates_g": 9.710001,
+        "fats_g": 0.76,
+        "proteins_g": 1.22,
+        "fiber_g": 2.6,
+        "sugar_g": 6.46,
+        "sodium_mg": 6,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "canonical_product": "boruvky"
+    },
+    {
+      "name": "Brambory nové, letní, průměr, syrové",
+      "nutrients": {
+        "energy_kj": 366,
+        "carbohydrates_g": 19.7,
+        "fats_g": 0.2,
+        "proteins_g": 2,
+        "fiber_g": 0.6,
+        "sugar_g": 19.1,
+        "sodium_mg": 28,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=26ae637e4b6d4edf98c0e16a813fc71d",
+      "canonical_product": "brambory"
+    },
+    {
+      "name": "Brambory, dužina, syrové",
+      "nutrients": {
+        "energy_kj": 322,
+        "carbohydrates_g": 17.72,
+        "fats_g": 0.09,
+        "proteins_g": 2.02,
+        "fiber_g": 1.505,
+        "sugar_g": 0.78,
+        "sodium_mg": 6,
+        "vitamin_c_mg": null,
+        "calcium_mg": null,
+        "magnesium_mg": null
+      },
+      "canonical_product": "brambory"
+    },
+    {
+      "name": "Brambory nové, letní, průměr, syrové",
+      "nutrients": {
+        "energy_kj": 366,
+        "carbohydrates_g": 19.7,
+        "fats_g": 0.2,
+        "proteins_g": 2,
+        "fiber_g": 0.6,
+        "sugar_g": 19.1,
+        "sodium_mg": 28
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=26ae637e4b6d4edf98c0e16a813fc71d",
+      "canonical_product": "brambory"
+    },
+    {
+      "name": "Brambory, dužina, syrové",
+      "nutrients": {
+        "energy_kj": 322,
+        "carbohydrates_g": 17.72,
+        "fats_g": 0.09,
+        "proteins_g": 2.02,
+        "fiber_g": 1.505,
+        "sugar_g": 0.78,
+        "sodium_mg": 6
+      },
+      "canonical_product": "brambory"
+    },
+    {
+      "name": "Brokolice, růžičky, syrové",
+      "nutrients": {
+        "energy_kj": 90,
+        "carbohydrates_g": 2.23999977,
+        "fats_g": 0.35,
+        "proteins_g": 2.98,
+        "fiber_g": 3,
+        "sugar_g": 1.7,
+        "sodium_mg": 27
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=26e379bca9bc469693a7bfc9a2d9aea0",
+      "canonical_product": "brokolice"
+    },
+    {
+      "name": "Brokolice, stonky, syrové",
+      "nutrients": {
+        "energy_kj": 117,
+        "carbohydrates_g": 5.24,
+        "fats_g": 0.35,
+        "proteins_g": 2.98,
+        "fiber_g": null,
+        "sugar_g": null,
+        "sodium_mg": 27
+      },
+      "canonical_product": "brokolice"
+    },
+    {
+      "name": "Brokolice, syrová",
+      "nutrients": {
+        "energy_kj": 119,
+        "carbohydrates_g": 4.24,
+        "fats_g": 0.37,
+        "proteins_g": 2.82,
+        "fiber_g": 2.4,
+        "sugar_g": 1.7,
+        "sodium_mg": 33
+      },
+      "canonical_product": "brokolice"
+    },
+    {
+      "name": "Brokolice, syrová, celá",
+      "nutrients": {
+        "energy_kj": 119,
+        "carbohydrates_g": 4.24,
+        "fats_g": 0.37,
+        "proteins_g": 2.82,
+        "fiber_g": 2.4,
+        "sugar_g": 1.7,
+        "sodium_mg": 33
+      },
+      "canonical_product": "brokolice"
+    },
+    {
+      "name": "Brokolice, listy, syrové",
+      "nutrients": {
+        "energy_kj": 117,
+        "carbohydrates_g": 5.24,
+        "fats_g": 0.35,
+        "proteins_g": 2.98,
+        "fiber_g": null,
+        "sugar_g": null,
+        "sodium_mg": 27
+      },
+      "canonical_product": "brokolice"
+    },
+    {
+      "name": "Broskve, broskev, syrové, jedlý podíl, průměr",
+      "nutrients": {
+        "energy_kj": 165,
+        "carbohydrates_g": 9.54,
+        "fats_g": 0.25,
+        "proteins_g": 0.91,
+        "fiber_g": 1.93,
+        "sugar_g": 8.39,
+        "sodium_mg": 0
+      },
+      "source_url": "https://nutridata.cz/Eatable/View?guid=831b0b33e8b249639356761b6ab64575",
+      "canonical_product": "broskve"
+    }
+  ],
+  "pending_manual_review": [
+    "banany",
+    "dyne_hokkaido",
+    "hrusky_zelene",
+    "jablka"
+  ]
+}
