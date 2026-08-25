@@ -548,7 +548,8 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
             return f'<div class="timeline" style="--store-color:{color}">' + "".join(weeks) + '</div>'
 
         discount_rows = "".join(
-            f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parsed_date_range(e.get("date_range", ""))[0])}" data-end="{esc(parsed_date_range(e.get("date_range", ""))[1])}"><td>{store_chip(e.get("store", ""))}</td>'
+            f'<tr data-store="{esc(e.get("store", ""))}" data-start="{esc(parsed_date_range(e.get("date_range", ""))[0])}" data-end="{esc(parsed_date_range(e.get("date_range", ""))[1])}">'
+            f'<td class="discount-produce">{esc(e.get("raw_name", product))}</td><td>{store_chip(e.get("store", ""))}</td>'
             f'<td class="discount-price">{esc(e.get("val") if e.get("val") is not None else "-")} / {esc(e.get("unit", ""))}</td>'
             f'<td>{detail_timeline(e.get("date_range", ""), e.get("store", ""))}</td></tr>'
             for e in sorted(
@@ -653,7 +654,7 @@ h1 {{ margin-bottom: 6px; }} h2 {{ margin-top: 0; font-size: 1rem; }}
 </style></head><body>
 <p><a class="back-button" href="../index.html">Back</a></p>
 <div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
-<div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>Current discounts</h2><table id="discountTable"><thead><tr><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
+<div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>Current discounts</h2><table id="discountTable"><thead><tr><th>Exact produce name</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
 <div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
 </body><script>
 const key = 'grocery-theme';

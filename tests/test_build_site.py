@@ -177,6 +177,44 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 1)
         self.assertIn("139.60 / kg", html)
 
+    def test_product_page_current_discounts_shows_exact_produce_name_first(self) -> None:
+        """Variants grouped under one canonical product remain identifiable."""
+        today = date.today()
+        entries = [
+            {
+                "store": "Albert",
+                "raw_name": "Rajčata cherry červená 250 g",
+                "val": 34.9,
+                "unit": "kg",
+                "date_range": f"{today.isoformat()} - {(today + timedelta(days=2)).isoformat()}",
+                "product_id": "cherry-red",
+                "image_url": "https://img.example.test/cherry-red.jpg",
+            },
+            {
+                "store": "Billa",
+                "raw_name": "Rajčata cherry žlutá 250 g",
+                "val": 39.9,
+                "unit": "kg",
+                "date_range": f"{today.isoformat()} - {(today + timedelta(days=2)).isoformat()}",
+                "product_id": "cherry-yellow",
+                "image_url": "https://img.example.test/cherry-yellow.jpg",
+            },
+        ]
+        with TemporaryDirectory() as directory:
+            products_dir = Path(directory) / "products"
+            with patch.object(build_site, "PRODUCTS_DIR", products_dir), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                build_site.write_product_pages({"rajcata_cherry": entries}, {})
+            html = (products_dir / "rajcata_cherry.html").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "<th>Exact produce name</th><th>Store</th><th>Price</th><th>Discount days</th>",
+            html,
+        )
+        self.assertIn('<td class="discount-produce">Rajčata cherry červená 250 g</td><td>', html)
+        self.assertIn('<td class="discount-produce">Rajčata cherry žlutá 250 g</td><td>', html)
+
     def test_build_category_dropdown_includes_all_products_first(self) -> None:
         with TemporaryDirectory() as directory:
             history = Path(directory) / "history.csv"

@@ -260,6 +260,14 @@ class DashboardBrowserTests(unittest.TestCase):
         href = self.page.locator('#t a.product-link[href="products/jablka.html"]').get_attribute("href")
         self.assertIsNotNone(href)
         self.page.goto(f"{self.base_url}/{href}", wait_until="networkidle")
+        self.assertEqual(
+            self.page.locator("#discountTable thead th").all_text_contents(),
+            ["Exact produce name", "Store", "Price", "Discount days"],
+        )
+        self.assertEqual(
+            self.page.locator("#discountTable tbody .discount-produce").all_text_contents(),
+            ["Jablka Gala 1 kg", "Jablka Gala 1 kg", "Jablka Gala 1 kg"],
+        )
 
         self.page.locator('#nutritionMode [data-mode="rda"]').click()
         self.assertEqual(
