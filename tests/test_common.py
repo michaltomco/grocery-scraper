@@ -20,6 +20,8 @@ from scrapers.common import (
     normalize_unit_price,
     normalize_offer_unit_price,
     explicit_package_weight_grams,
+    explicit_volume_liters,
+    explicit_volume_liters_for,
     parse_validity,
     read_csv,
     store_color,
@@ -109,6 +111,8 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(corrected["price_per_kg"], 29.8)
         corrected = normalize_offer_unit_price("9,35 Kč / 100 g", "Bílý jogurt Activia Danone 120 g", 44.9)
         self.assertEqual(corrected["price_per_kg"], 374.17)
+
+    def test_explicit_volume_liters_reads_trailing_l_and_ml(self) -> None:
         self.assertEqual(explicit_volume_liters("Mléko 1 l"), 1.0)
         self.assertEqual(explicit_volume_liters("Zmrzlina 100 ml"), 0.1)
         self.assertEqual(explicit_volume_liters("Nápoj 1,5 l"), 1.5)
@@ -124,10 +128,6 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(explicit_volume_liters_for(99.9, "Zmrzlina 100 ml"), (999.0, "l"))
         # No trailing volume falls back to (None, "") so callers use kg/ks.
         self.assertEqual(explicit_volume_liters_for(14.9, "Zelí bílé kysané 500 g"), (None, ""))
-
-    def test_trailing_package_weight_corrects_bad_source_unit_price(self) -> None:
-        corrected = normalize_offer_unit_price("9,35 Kč / 100 g", "Bílý jogurt Activia Danone 120 g", 44.9)
-        self.assertEqual(corrected["price_per_kg"], 374.17)
 
     def test_validity_parses_czech_numeric_range(self) -> None:
         with patch("scrapers.common.datetime") as mocked_datetime:
