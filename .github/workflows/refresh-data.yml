@@ -29,6 +29,8 @@ jobs:
           fi
 
       - uses: actions/checkout@v4
+        with:
+          lfs: true
         if: steps.time.outputs.run == 'true'
         with:
           persist-credentials: true
