@@ -48,7 +48,7 @@ class DashboardBuilderTests(unittest.TestCase):
         )
         self.assertIn('href="exact/actimel_danone_100_g__albert.html"', link)
 
-    def test_exact_page_normalizes_source_unit_price_to_kg(self) -> None:
+    def test_exact_page_keeps_retailer_stated_price_and_unit(self) -> None:
         row_data = history_row(
             product_name="Zelí bílé kysané Albert 500 g",
             canonical_product_name="zeli",
@@ -67,10 +67,10 @@ class DashboardBuilderTests(unittest.TestCase):
                 build_site.build()
             page = build_site.PRODUCTS_EXACT_DIR / "zelí_bílé_kysané_albert_500_g.html"
             html = page.read_text(encoding="utf-8")
-        self.assertIn("29.8 / kg", html)
-        self.assertNotIn("14.9 / 100 g", html)
+        self.assertIn("14.9 / 100 g", html)
+        self.assertNotIn("29.8 / kg", html)
 
-    def test_exact_page_derives_kg_price_from_real_package_price(self) -> None:
+    def test_exact_page_keeps_raw_price_when_source_unit_is_missing(self) -> None:
         row_data = history_row(
             product_name="Jogurt bílý 500 g",
             canonical_product_name="jogurt",
@@ -90,8 +90,8 @@ class DashboardBuilderTests(unittest.TestCase):
                 build_site.build()
             page = build_site.PRODUCTS_EXACT_DIR / f"{build_site.slugify(row_data['product_name'])}.html"
             html = page.read_text(encoding="utf-8")
-        self.assertIn("29.8 / kg", html)
-        self.assertNotIn("14.9 / ks", html)
+        self.assertIn("14.9 / ks", html)
+        self.assertNotIn("29.8 / kg", html)
 
     def test_build_keeps_malformed_date_rows_without_crashing(self) -> None:
         """A malformed Kupi validity string must not make the site unavailable."""

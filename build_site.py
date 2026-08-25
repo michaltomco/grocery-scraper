@@ -189,6 +189,14 @@ def normalized(row: dict) -> tuple[float | None, str]:
     return None, ""
 
 
+def stated_offer_unit(unit_price: str) -> str:
+    """Return the unit exactly represented by the retailer price string."""
+    match = re.search(r"/\s*(\d+(?:[.,]\d+)?\s*(?:kg|g|ks))\b", unit_price or "", re.IGNORECASE)
+    if match:
+        return " ".join(match.group(1).replace(",", ".").split())
+    return "ks"
+
+
 def normalized_offer_value(row: dict, price: float | str) -> tuple[float | None, str]:
     """Normalize a displayed offer price using its explicit package weight."""
     amount = number(str(price))
@@ -852,10 +860,6 @@ def build() -> str:
             _loyalty_price = number(_r.get("loyalty_price", ""))
             if is_true(_r.get("loyalty_required", "")) and _loyalty_price is not None:
                 _real_price = _loyalty_price
-            if _real_price is not None:
-                _normalized_value, _normalized_unit = normalized_offer_value(_r, _real_price)
-            else:
-                _normalized_value, _normalized_unit = normalized_offer_value(_r, _r.get("price", ""))
             exact_rows[_page_slug] = {
                 "raw_name": _name,
                 "pretty": display_name(canonical_product_name(_name), _name),
@@ -863,8 +867,8 @@ def build() -> str:
                 "product_id": _r.get("product_id", ""),
                 "image_url": _r.get("image_url", ""),
                 "store": _store,
-                "val": _normalized_value,
-                "unit": _normalized_unit,
+                "val": _real_price,
+                "unit": stated_offer_unit(_r.get("unit_price", "")),
                 "date_range": _r.get("date_range", ""),
                 "_ts": _ts,
             }
