@@ -417,10 +417,8 @@ def write_product_pages(products: dict[str, list[dict]], nutrition: dict) -> Non
         entries = products[product]
         first = entries[0] if entries else {}
         pretty = display_name(product, first.get("raw_name", product))
-        img_path = (
-            cache_image(first.get("product_id", product), first.get("image_url", ""))
-            if first.get("category", "Ovoce a zelenina") == "Ovoce a zelenina"
-            else ""
+        img_path = cache_image(
+            first.get("product_id", product), first.get("image_url", "")
         )
         image_html = (
             f'<img class="hero" src="../{esc(img_path)}" alt="{esc(pretty)}">'
@@ -910,10 +908,8 @@ def build() -> str:
                 )
         elif nutrition_entry.get("status") == "not_found":
             nutrition_html = '<span class="nutrition dim">Nutrition data unavailable</span>'
-        img_path = (
-            cache_image(first.get("product_id", product), first.get("image_url", ""))
-            if first.get("category", "Ovoce a zelenina") == "Ovoce a zelenina"
-            else ""
+        img_path = cache_image(
+            first.get("product_id", product), first.get("image_url", "")
         )
         img_tag = (
             f'<img class="thumb" src="{img_path}" width="40" height="40" alt="" aria-hidden="true">'

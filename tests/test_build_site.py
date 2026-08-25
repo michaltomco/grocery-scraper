@@ -189,6 +189,7 @@ class DashboardBuilderTests(unittest.TestCase):
                         product_name="Chléb",
                         canonical_product_name="chleb",
                         category="Pečivo",
+                        image_url="https://img.example.test/bread.jpg",
                     ),
                 ],
             )
@@ -196,12 +197,13 @@ class DashboardBuilderTests(unittest.TestCase):
                 build_site, "get_many", return_value={}
             ), patch.object(build_site, "write_product_pages"), patch.object(
                 build_site, "cache_image", return_value="img/veg.png"
-            ):
+            ) as cache_image:
                 html = build_site.build()
 
         self.assertIn('<select id="categoryFilter">', html)
         self.assertLess(html.index('value="all">All products'), html.index('value="Pečivo">Pečivo'))
         self.assertIn('data-category="Pečivo"', html)
+        cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg")
 
 
 class HistoricalTrendTests(unittest.TestCase):
