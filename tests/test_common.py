@@ -69,6 +69,9 @@ class NormalizationTests(unittest.TestCase):
             "avokado_ready_to_eat_bio",
         )
 
+    def test_avocado_marinade_is_not_canonicalized_as_fresh_avocado(self) -> None:
+        self.assertEqual(canonical_product_name("Marináda Avokádo 80 ml"), "marinada_avokado")
+
     def test_canonical_name_groups_cherry_and_vine_tomatoes(self) -> None:
         self.assertEqual(canonical_product_name("Rajčata cherry 250 g"), "rajcata_cherry")
         self.assertEqual(canonical_product_name("Rajčata keříková 250 g"), "rajcata_cherry")
