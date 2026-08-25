@@ -10663,13 +10663,87 @@
       "schema_version": 13
     },
     "exact:Cereálie Chocapic Nestlé 1000 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Chocapic",
+      "source_url": "https://www.ferpotravina.cz/cerealie/chocapic",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 391.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 9.6,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 73.6,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 28.9,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 4.4,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 1.7,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 7.1,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.47,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Cereálie Cini Minis Nestlé 1000 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Cini Minis",
+      "source_url": "https://www.ferpotravina.cz/cerealie/cini-minis-nestle-cesko-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 399.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 7.3,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 75.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 24.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 5.8,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.7,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 4.8,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.0,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Cereálie Cookie cream mix oho! 325 g": {
@@ -10678,8 +10752,45 @@
       "schema_version": 13
     },
     "exact:Cereálie Dobrá vláknina Bonavita 375 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Dobrá vláknina",
+      "source_url": "https://www.ferpotravina.cz/cerealie/dobra-vlaknina-bonavita-spol-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 355.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 9.9,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 57.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 4.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.6,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 25.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.06,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Cereálie Fitness granola Nestlé 300 g": {
@@ -12416,8 +12527,41 @@
       "schema_version": 13
     },
     "exact:Kešu Tesco 200 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Kešu oříšky",
+      "source_url": "https://www.ferpotravina.cz/kesu-orechy/kesu-orisky-tesco-stores-sr-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 589.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 25.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 7.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 47.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 8.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.01,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Kešu pražené Albert 500 g": {
@@ -14191,8 +14335,41 @@
       "schema_version": 13
     },
     "exact:Mrazem sušené maliny Emco 30 g": {
-      "status": "error",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Maliny celé sušené mrazem",
+      "source_url": "https://www.ferpotravina.cz/susene-ovoce-a-zelenina/maliny-cele-susene-mrazem-emco-spol-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 269.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 8.1,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 30.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 30.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.9,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.06,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.02,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Mrazem sušené mango Allnature 30 g": {
@@ -18271,8 +18448,41 @@
       "schema_version": 13
     },
     "exact:Sójový dezert Alpro 125 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Alpro sojový dezert",
+      "source_url": "https://www.ferpotravina.cz/sojove-dezerty/alpro-sojovy-dezert",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 86.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 3.2,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 13.7,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 10.8,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.8,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.3,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.14,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Sójový dětský dezert Alpro Kids 115 g": {
