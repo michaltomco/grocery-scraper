@@ -108,6 +108,28 @@ class DashboardBrowserTests(unittest.TestCase):
         cls.patches.enter_context(patch.object(build_site, "INDEX_HTML", site_dir / "index.html"))
         cls.patches.enter_context(patch.object(build_site, "get_many", return_value=nutrition))
         cls.patches.enter_context(patch.object(build_site, "cache_image", return_value="img/veg.png"))
+        cls.patches.enter_context(patch.object(build_site, "get_many_exact", return_value={
+            "exact:Jablka Gala 1 kg": {
+                "status": "found",
+                "source": "Open Food Facts",
+                "source_product": "Apple Gala",
+                "source_url": "https://example.test/off/123",
+                "provenance": "exact_match",
+                "values": {
+                    "Calories": {"value": 52, "unit": "kcal"},
+                    "Carbs": {"value": 14, "unit": "g"},
+                    "Fiber": {"value": 2.4, "unit": "g"},
+                    "Vitamin C": {"value": 4.6, "unit": "mg"},
+                },
+            },
+            "exact:Chléb": {
+                "status": "not_found",
+                "query": "Chléb",
+                "values": {},
+            },
+        }))
+        products_exact_dir = site_dir / "products" / "exact"
+        cls.patches.enter_context(patch.object(build_site, "PRODUCTS_EXACT_DIR", products_exact_dir))
         site_dir.mkdir(parents=True, exist_ok=True)
         (site_dir / "index.html").write_text(build_site.build(), encoding="utf-8")
 
@@ -300,6 +322,33 @@ class DashboardBrowserTests(unittest.TestCase):
             "inline",
         )
         self.assertEqual(self.page.evaluate("localStorage.getItem('grocery-nutrition-mode')"), "rda")
+        self.assert_browser_clean()
+
+    def test_exact_variant_page_shows_provenance_and_unavailable_state(self) -> None:
+        # Grouped page links each exact variant to its own page.
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        href = self.page.locator('#t a.product-link[href="products/jablka.html"]').get_attribute("href")
+        assert href is not None
+        self.page.goto(f"{self.base_url}/{href}", wait_until="networkidle")
+        self.assertIsNotNone(self.page.locator('a.exact-link[href="exact/jablka_gala_1_kg.html"]').first.get_attribute("href"))
+
+        # Exact variant page shows the exact manufacturer source link.
+        self.page.goto(f"{self.base_url}/products/exact/jablka_gala_1_kg.html", wait_until="networkidle")
+        self.assertEqual(
+            self.page.locator("p.muted").filter(has_text="Source:").all_inner_texts(),
+            ["Source: Open Food Facts — Apple Gala · exact entry"],
+        )
+        self.assertEqual(
+            self.page.locator('a[href="https://example.test/off/123"]').all_inner_texts(),
+            ["Apple Gala"],
+        )
+
+        # Unmatched SKU page shows the provenance-correct unavailable state (no fallback).
+        self.page.goto(f"{self.base_url}/products/exact/chléb.html", wait_until="networkidle")
+        self.assertIn(
+            "Nutrition data unavailable",
+            self.page.locator("p.muted").inner_text(),
+        )
         self.assert_browser_clean()
 
 

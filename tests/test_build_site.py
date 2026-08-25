@@ -212,8 +212,10 @@ class DashboardBuilderTests(unittest.TestCase):
             "<th>Name</th><th>Store</th><th>Price</th><th>Discount days</th>",
             html,
         )
-        self.assertIn('<td class="discount-produce">Rajčata cherry červená 250 g</td><td>', html)
-        self.assertIn('<td class="discount-produce">Rajčata cherry žlutá 250 g</td><td>', html)
+        self.assertIn('<a class="exact-link" href="exact/rajčata_cherry_červená_250_g.html"', html)
+        self.assertIn('>Rajčata cherry červená 250 g</a></td>', html)
+        self.assertIn('<a class="exact-link" href="exact/rajčata_cherry_žlutá_250_g.html"', html)
+        self.assertIn('>Rajčata cherry žlutá 250 g</a></td>', html)
 
     def test_build_category_dropdown_includes_all_products_first(self) -> None:
         with TemporaryDirectory() as directory:

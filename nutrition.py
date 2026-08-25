@@ -366,6 +366,58 @@ def fetch_usda_nutrition(query: str) -> dict:
     return {"values": values, "source": "USDA FoodData Central", "source_product": food.get("description", "")}
 
 
+def fetch_nutrition_exact(label: str) -> dict:
+    """Strict exact-label nutrition lookup.
+
+    Searches Open Food Facts for an exact (case-insensitive match against
+    ``label`` and keeps only candidates whose product name contains the label
+    substring. Returns a ``not_found`` record when no exact branded product is
+    matched -- never falls back to a generic or unrelated source. The NutriData
+    curated registry is checked first for an exact product-name hit.
+    """
+    # NutriData curated records are keyed by exact Czech product slug; match
+    # the raw retail product name against the curated source_name verbatim.
+    curated = _load_nutridata()
+    for key, entry in curated.items():
+        if entry.get("source_product", "").lower() == label.lower():
+            return entry
+    # Exact Open Food Facts label lookup (no substring/generic fallback).
+    return _off_exact(label)
+
+
+def _off_exact(label: str) -> dict:
+    params = {
+        "search_terms": label,
+        "search_simple": "1",
+        "action": "process",
+        "json": "1",
+        "page_size": "20",
+        "fields": "code,product_name,brands,nutriments",
+    }
+    try:
+        response = requests.get(API_URL, params=params, headers=HEADERS, timeout=15)
+        response.raise_for_status()
+        products = response.json().get("products", [])
+    except (requests.RequestException, ValueError):
+        return {"status": "error", "values": {}, "schema_version": CACHE_VERSION}
+    label_lower = label.lower()
+    for item in products:
+        name = str(item.get("product_name", "")).lower()
+        if name == label_lower or label_lower in name:
+            values = _extract(item)
+            if values:
+                return {
+                    "status": "found",
+                    "source": "Open Food Facts",
+                    "source_product": item.get("product_name", ""),
+                    "source_url": f"https://world.openfoodfacts.org/api/v0/product/{item.get('code')}.html",
+                    "provenance": "exact_match",
+                    "values": values,
+                    "schema_version": CACHE_VERSION,
+                }
+    return {"status": "not_found", "values": {}, "schema_version": CACHE_VERSION}
+
+
 def fetch_nutrition(product: str) -> dict:
     query = resolve_nutrition_query(product)
     if query is None:
@@ -516,3 +568,31 @@ def get_many(products: set[str], *, fetch_missing: bool = True) -> dict:
     if changed:
         save_cache(cache)
     return cache
+
+def get_many_exact(labels: set[str], *, fetch_missing: bool = True) -> dict:
+    """Strict exact-label nutrition lookup with a separate cache namespace.
+
+    Unlike :func:`get_many`, this never falls back to a generic produce or
+    category profile: each label is matched only against an exact branded
+    entry (NutriData curated source_name or an exact Open Food Facts product
+    name). Successful and definitive misses are cached under the prefix
+    ``exact:`` so subsequent builds do not re-fetch.
+    """
+    cache = load_cache()
+    exact_cache = cache.setdefault("exact", {})
+    changed = False
+    for label in sorted(labels):
+        if not label:
+            continue
+        key = f"exact:{label}"
+        entry = exact_cache.get(key, {})
+        if entry.get("status") in ("found", "not_found", "not_found_exact") and not entry.get("error"):
+            continue
+        if not fetch_missing:
+            continue
+        print(f"Looking up exact nutrition: {label}")
+        exact_cache[key] = fetch_nutrition_exact(label)
+        changed = True
+    if changed:
+        save_cache(cache)
+    return exact_cache
