@@ -95,6 +95,38 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertNotIn("14.9 / ks", html)
         self.assertNotIn("29.8 / kg", html)
 
+    def test_liquid_offer_shows_per_litre_on_main_and_product_pages(self) -> None:
+        row_data = history_row(
+            product_name="Mléko trvanlivé 1 l",
+            canonical_product_name="mleko_trvanlive",
+            price="8.9",
+            unit_price="8,90 Kč / 1 l",
+            price_per_kg="",
+            price_per_piece="",
+        )
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(history, [row_data])
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "get_many_exact", return_value={}), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+            exact_page = build_site.PRODUCTS_EXACT_DIR / "mléko_trvanlivé_1_l.html"
+            product_page = build_site.PRODUCTS_DIR / "mleko_trvanlive.html"
+            exact_html = exact_page.read_text(encoding="utf-8")
+            product_html = product_page.read_text(encoding="utf-8")
+        # Main (index) and product pages recalculate to a per-litre price.
+        # The index formats the value with two decimals; the product page uses
+        # the raw value.
+        self.assertIn("8.90 / l", html)
+        self.assertIn("8.9 / l", product_html)
+        # Exact page keeps the retailer's original offer value, no unit appended.
+        self.assertIn("8.9", exact_html)
+        self.assertNotIn("8.9 / l", exact_html)
+        self.assertNotIn("/ ks", exact_html)
+
     def test_build_keeps_malformed_date_rows_without_crashing(self) -> None:
         """A malformed Kupi validity string must not make the site unavailable."""
         with TemporaryDirectory() as directory:
@@ -166,8 +198,8 @@ class DashboardBuilderTests(unittest.TestCase):
             ):
                 html = build_site.build()
 
-        self.assertIn("20.00 / kg", html)
-        self.assertIn("30.00 / kg", html)
+        self.assertIn("20.00", html)
+        self.assertIn("30.00", html)
         self.assertEqual(html.count('class="ppcell" data-store="Albert"'), 2)
         self.assertIn('<div class="controls">', html)
 

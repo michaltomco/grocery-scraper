@@ -991,7 +991,7 @@ def build() -> str:
             if v is not None:
                 pp_cells.append(
                     f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
-                    f'{logo}<span class="pprice">{v:.2f}</span></div>'
+                    f'<span class="pprice">{v:.2f} / {e["unit"]}</span>{logo}</div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
             # upstream value remains visible as a price row rather than crashing
@@ -1215,13 +1215,14 @@ td.prod .pname {{ display: inline-block; vertical-align: middle; max-width: calc
 td.prod .nutrition {{ display: block; margin-top: 5px; font-size: .7rem; line-height: 1.35;
   font-weight: 400; color: var(--muted); white-space: normal; }}
 td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
-.ppcell {{ display: flex; flex-direction: row-reverse; justify-content: flex-start;
-  align-items: center; gap: 6px; padding: 1px 0; cursor: pointer; }}
+.ppcell {{ display: flex; flex-direction: row; justify-content: flex-start;
+  align-items: center; gap: 6px; padding: 2px 0; min-height: 22px; box-sizing: border-box; cursor: pointer; }}
 .ppcell:hover {{ filter: brightness(1.15); }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
-.ppcell .pprice {{ display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex: 0 0 auto; border-radius: 4px; background: var(--track); font-variant-numeric: tabular-nums; font-weight: 700; color: var(--logo-ink); font-size: 9px; line-height: 1; }}
+.ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
+  font-size: .95rem; line-height: 1; }}
 .drange {{ vertical-align: middle; width: auto; }}
-.dcell {{ padding: 2px 0 2px 6px; }}
+.dcell {{ display: flex; align-items: center; padding: 2px 0 2px 6px; min-height: 22px; box-sizing: border-box; }}
 .timeline {{ display: flex; gap: 8px; align-items: center; width: max-content; }}
 .timeline .wk {{ display: flex; gap: 3px; }}
 .day {{ width: 18px; height: 18px; border-radius: 4px; background: var(--track); opacity: .28; cursor: pointer;
