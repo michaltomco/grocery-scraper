@@ -266,11 +266,13 @@ class DashboardBrowserTests(unittest.TestCase):
 
         self.page.get_by_role("button", name="Nutrition only").click()
         self.assertIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.assertIn("nutrition-only", self.page.locator("#t").get_attribute("class") or "")
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
 
         self.page.get_by_role("button", name="Nutrition only").click()
         self.assertNotIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.assertNotIn("nutrition-only", self.page.locator("#t").get_attribute("class") or "")
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assert_browser_clean()
 

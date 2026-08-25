@@ -1230,6 +1230,9 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
 tr.rowout td.prod {{ opacity: .35; transition: opacity .15s; }}
 tr.rowout td.prod .thumb {{ opacity: .35; }}
 tr.rowout .ppcell {{ opacity: .35; }}
+/* Nutrition-only is deliberately a pure CSS filter. It avoids re-running the
+   expensive per-store/date update over every offer row on each button click. */
+#t.nutrition-only tbody tr[data-has-nutrition="false"] {{ display: none !important; }}
 /* When a product is fully filtered out (every store line muted or out of the
    selected date range) under normal filtering, fade its name to match the
    .datedim/.muted level so the whole row dims uniformly. */
@@ -1642,7 +1645,7 @@ nutritionFilterBtn.onclick = () => {{
   nutritionOnly = !nutritionOnly;
   nutritionFilterBtn.classList.toggle('on', nutritionOnly);
   nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
-  applyFilters();
+  t.classList.toggle('nutrition-only', nutritionOnly);
 }};
 
 // Light / Dark / System theme switcher (persisted in localStorage).
