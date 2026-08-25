@@ -74,6 +74,13 @@ class NormalizationTests(unittest.TestCase):
     def test_avocado_marinade_is_not_canonicalized_as_fresh_avocado(self) -> None:
         self.assertEqual(canonical_product_name("Marináda Avokádo 80 ml"), "marinada_avokado")
 
+    def test_avocado_sauce_plural_is_not_canonicalized_as_fresh_avocado(self) -> None:
+        # "Omáčky Avokádo" uses Avokádo as a brand/flavour of a prepared sauce,
+        # not the fresh fruit — the plural "omáčky" must also separate (a word
+        # check on "omacka" previously missed it and merged it into the fruit).
+        self.assertEqual(canonical_product_name("Omáčky Avokádo 270 g"), "omacky_avokado")
+        self.assertEqual(canonical_product_name("Omáčka Avokádo 270 g"), "omacka_avokado")
+
     def test_canonical_name_groups_cherry_and_vine_tomatoes(self) -> None:
         self.assertEqual(canonical_product_name("Rajčata cherry 250 g"), "rajcata_cherry")
         self.assertEqual(canonical_product_name("Rajčata keříková 250 g"), "rajcata_cherry")

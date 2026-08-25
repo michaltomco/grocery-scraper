@@ -287,11 +287,21 @@ def canonical_product_name(product_name: str) -> str:
             return "paprika"
 
     if unique_canonical_words == ["avokado"]:
-        # "Avokádo" can be an ingredient in a prepared food (e.g. marináda),
-        # not a fresh produce offer. Preserve that prepared product as its own
-        # canonical name rather than merging it into the avocado nutrition/price row.
-        if any(word in {"marinada", "omacka", "dresink", "dip"} for word in text.split()):
-            return "_".join(word for word in text.split() if word not in STORE_WORDS and not word.isdigit())
+        # "Avokádo" can be a flavour or brand of a prepared food (e.g. marináda,
+        # omáčka) rather than the fresh fruit. When it is, keep the prepared
+        # product as its own canonical name so it never merges into the avocado
+        # nutrition/price row. Match on word stems so singular/plural and minor
+        # spelling variants (omáčka/omáčky, marináda/marinády) all separate.
+        if any(
+            word.startswith(stem)
+            for word in text.split()
+            for stem in ("marinad", "omack", "dresink", "dip")
+        ):
+            return "_".join(
+                word
+                for word in text.split()
+                if word not in STORE_WORDS and not word.isdigit()
+            )
         # Scan the processed (accent-stripped, normalized) text directly for
         # subcategory signals — these words are not in DESCRIPTOR_WORDS and
         # would otherwise be lost.  Substring matching handles variants like
