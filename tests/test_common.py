@@ -86,6 +86,10 @@ class NormalizationTests(unittest.TestCase):
             "kompot_jahody_giana",
         )
 
+    def test_canonical_name_keeps_red_fermented_cabbage_separate(self) -> None:
+        self.assertEqual(canonical_product_name("Zelí bílé kysané Albert 500 g"), "zeli")
+        self.assertEqual(canonical_product_name("Zelí červené kysané Albert 500 g"), "zeli_cervene")
+
     def test_unit_price_normalizes_grams_and_pieces(self) -> None:
         self.assertEqual(normalize_unit_price("12,50 Kč / 100 g")["price_per_kg"], 125.0)
         self.assertEqual(normalize_unit_price("39,80 Kč / 2 ks")["price_per_piece"], 19.9)

@@ -33,6 +33,28 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def test_exact_page_normalizes_source_unit_price_to_kg(self) -> None:
+        row_data = history_row(
+            product_name="Zelí bílé kysané Albert 500 g",
+            canonical_product_name="zeli",
+            price="14.9",
+            unit_price="2,98 Kč / 100 g",
+            price_per_kg="29.8",
+        )
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(history, [row_data])
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "get_many_exact", return_value={}), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                build_site.build()
+            page = build_site.PRODUCTS_EXACT_DIR / "zelí_bílé_kysané_albert_500_g.html"
+            html = page.read_text(encoding="utf-8")
+        self.assertIn("29.8 / kg", html)
+        self.assertNotIn("14.9 / 100 g", html)
+
     def test_build_keeps_malformed_date_rows_without_crashing(self) -> None:
         """A malformed Kupi validity string must not make the site unavailable."""
         with TemporaryDirectory() as directory:

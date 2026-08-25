@@ -270,6 +270,15 @@ def canonical_product_name(product_name: str) -> str:
     if unique_canonical_words == ["meloun"] and "vodni" in descriptors:
         return "meloun_vodni"
 
+    if unique_canonical_words == ["zeli"]:
+        # White and red fermented cabbage are distinct products. Keeping the
+        # colour in the canonical key prevents their prices and exact-SKU links
+        # from being mixed on the shared product page.
+        if "cervene" in descriptors:
+            return "zeli_cervene"
+        if "bile" in descriptors or "bily" in descriptors:
+            return "zeli"
+
     if unique_canonical_words == ["paprika"]:
         if "cervena" in descriptors:
             return "paprika_cervena"

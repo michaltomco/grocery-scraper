@@ -822,6 +822,7 @@ def build() -> str:
         existing = exact_rows.get(_slug)
         _ts = parse_ts(_r.get("scraped_at", ""))
         if existing is None or _ts > existing.get("_ts", ""):
+            _normalized_value, _normalized_unit = normalized(_r)
             exact_rows[_slug] = {
                 "raw_name": _name,
                 "pretty": display_name(canonical_product_name(_name), _name),
@@ -829,8 +830,8 @@ def build() -> str:
                 "product_id": _r.get("product_id", ""),
                 "image_url": _r.get("image_url", ""),
                 "store": _r.get("store", ""),
-                "val": _r.get("price", "") and number(_r.get("price", "")),
-                "unit": (_r.get("unit_price", "").split(" / ")[-1] if " / " in _r.get("unit_price", "") else ""),
+                "val": _normalized_value,
+                "unit": _normalized_unit,
                 "date_range": _r.get("date_range", ""),
                 "_ts": _ts,
             }
