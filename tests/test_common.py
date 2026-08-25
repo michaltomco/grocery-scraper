@@ -18,6 +18,8 @@ from scrapers.common import (
     is_active_offer,
     merge_csvs,
     normalize_unit_price,
+    normalize_offer_unit_price,
+    explicit_package_weight_grams,
     parse_validity,
     read_csv,
     store_color,
@@ -93,6 +95,14 @@ class NormalizationTests(unittest.TestCase):
     def test_unit_price_normalizes_grams_and_pieces(self) -> None:
         self.assertEqual(normalize_unit_price("12,50 Kč / 100 g")["price_per_kg"], 125.0)
         self.assertEqual(normalize_unit_price("39,80 Kč / 2 ks")["price_per_piece"], 19.9)
+
+    def test_trailing_package_weight_corrects_bad_source_unit_price(self) -> None:
+        self.assertEqual(explicit_package_weight_grams("Zelí bílé kysané Albert 500 g"), 500.0)
+        corrected = normalize_offer_unit_price("2,98 Kč / 100 g", "Zelí bílé kysané Albert 500 g", 14.9)
+        self.assertEqual(corrected["price_per_kg"], 29.8)
+
+        corrected = normalize_offer_unit_price("9,35 Kč / 100 g", "Bílý jogurt Activia Danone 120 g", 44.9)
+        self.assertEqual(corrected["price_per_kg"], 374.17)
 
     def test_validity_parses_czech_numeric_range(self) -> None:
         with patch("scrapers.common.datetime") as mocked_datetime:

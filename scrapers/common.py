@@ -352,6 +352,32 @@ def normalize_unit_price(unit_price: str) -> dict[str, float | str]:
     return normalized
 
 
+def explicit_package_weight_grams(product_name: str) -> float | None:
+    """Read a package weight only when it is the trailing name quantity."""
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(kg|g)\s*$", product_name or "", re.IGNORECASE)
+    if not match:
+        return None
+    value = parse_number(match.group(1))
+    if value is None or value <= 0:
+        return None
+    return value * 1000 if match.group(2).lower() == "kg" else value
+
+
+def normalize_offer_unit_price(unit_price: str, product_name: str, price: float | str) -> dict[str, float | str]:
+    """Prefer an explicit trailing package weight over a bad source unit price."""
+    normalized = normalize_unit_price(unit_price)
+    package_grams = explicit_package_weight_grams(product_name)
+    package_price = parse_number(str(price)) if price not in (None, "") else None
+    if package_grams is None or package_price is None:
+        return normalized
+    expected = round(package_price * 1000 / package_grams, 2)
+    source = normalized.get("price_per_kg")
+    if source in ("", None) or abs(float(source) - expected) > 0.2:
+        normalized["price_per_kg"] = expected
+        normalized["price_per_piece"] = ""
+    return normalized
+
+
 def clean_text(text: str) -> str:
     return " ".join(text.replace("\xa0", " ").split())
 
@@ -550,7 +576,7 @@ def extract_kupi_discount(
         if row.select_one(".price_per_unit")
         else ""
     ) or amount
-    normalized_price = normalize_unit_price(unit_price)
+    normalized_price = normalize_offer_unit_price(unit_price, product_name, price)
     validity = clean_text(
         row.select_one(".discounts_validity").get_text(" ", strip=True)
         if row.select_one(".discounts_validity")
