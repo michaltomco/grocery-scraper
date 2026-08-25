@@ -984,7 +984,7 @@ def build() -> str:
             if v is not None:
                 pp_cells.append(
                     f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
-                    f'{logo}<span class="pprice">{v:.2f} / {e["unit"]}</span></div>'
+                    f'{logo}<span class="pprice">{v:.2f}</span></div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
             # upstream value remains visible as a price row rather than crashing
@@ -1212,8 +1212,7 @@ td.pricelist {{ white-space: nowrap; vertical-align: middle; width: 1%; }}
   align-items: center; gap: 6px; padding: 1px 0; cursor: pointer; }}
 .ppcell:hover {{ filter: brightness(1.15); }}
 .ppcell .logo {{ width: 18px; height: 18px; flex: 0 0 auto; }}
-.ppcell .pprice {{ font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap;
-  font-size: .95rem; }}
+.ppcell .pprice {{ display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex: 0 0 auto; border-radius: 4px; background: var(--track); font-variant-numeric: tabular-nums; font-weight: 700; color: var(--logo-ink); font-size: 9px; line-height: 1; }}
 .drange {{ vertical-align: middle; width: auto; }}
 .dcell {{ padding: 2px 0 2px 6px; }}
 .timeline {{ display: flex; gap: 8px; align-items: center; width: max-content; }}
