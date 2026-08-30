@@ -13439,8 +13439,41 @@
       "schema_version": 13
     },
     "exact:Kuličky Marlenka 235 g": {
-      "status": "not_found",
-      "values": {},
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Marlenka Medové kuličky",
+      "source_url": "https://www.ferpotravina.cz/cukrovinky/marlenka-medove-kulicky-marlenka-international-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 409.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 6.2,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 49.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 38.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 21.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 13.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.33,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     },
     "exact:Kuličky do polévky Poex 50 g": {
@@ -22367,6 +22400,248 @@
     "exact:Žvýkačky Refreshers Orbit 17.9 g": {
       "status": "not_found",
       "values": {},
+      "schema_version": 13
+    },
+    "exact:Anglická slanina Pikok 500 g": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Anglická slanina Pikok",
+      "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-pikok-le-co-ing-jiri-lenc-s-r-o",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 337.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.8,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 2.9,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 29.9,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 8.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.1,
+          "unit": "g"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Anglická slanina Tesco 100 g": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Anglická slanina",
+      "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-tesco-stores-cr-a",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 327.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 14.8,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 0.6,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 29.9,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 8.6,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.3,
+          "unit": "g"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Becherovka 0.5 l": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Becherovka original",
+      "source_url": "https://www.ferpotravina.cz/likery/becherovka-original",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 0.0,
+          "unit": "kcal"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Bohemia Sekt nealkoholický 0.75 l": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Bohemia Sekt nealkoholické",
+      "source_url": "https://www.ferpotravina.cz/napoje/bohemia-sekt-nealkoholicke",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 27.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 6.0,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 6.0,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 0.5,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 0.01,
+          "unit": "g"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Sýr tavený Lipánek Madeta 140 g": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Lipánek tavený sýr",
+      "source_url": "https://www.ferpotravina.cz/taveny-syr/lipanek-taveny-syr-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 313.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 10.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.8,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.6,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 30.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 20.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 2.0,
+          "unit": "g"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Sýr tavený toast Milbona 300 g": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Toast plátkový tavený sýr",
+      "source_url": "https://www.ferpotravina.cz/taveny-syr/toast-platkovy-taveny-syr-bonifaz-kohler-gmbh",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 229.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 15.3,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 5.9,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 5.9,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 16.1,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 11.0,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 3.3,
+          "unit": "g"
+        }
+      },
+      "schema_version": 13
+    },
+    "exact:Sýry Lipánek Madeta 100 g": {
+      "status": "found",
+      "source": "Ferpotravina.cz",
+      "source_product": "Lipánek jemný sýr",
+      "source_url": "https://www.ferpotravina.cz/syr/lipanek-jemny-syr-madeta-a-s",
+      "provenance": "exact_match",
+      "values": {
+        "Calories": {
+          "value": 264.0,
+          "unit": "kcal"
+        },
+        "Protein": {
+          "value": 29.0,
+          "unit": "g"
+        },
+        "Carbs": {
+          "value": 1.2,
+          "unit": "g"
+        },
+        "Sugar": {
+          "value": 1.2,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 16.0,
+          "unit": "g"
+        },
+        "Saturated Fat": {
+          "value": 10.5,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 1.5,
+          "unit": "g"
+        }
+      },
       "schema_version": 13
     }
   }
