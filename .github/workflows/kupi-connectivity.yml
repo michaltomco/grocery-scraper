@@ -1,0 +1,39 @@
+name: Diagnose Kupi connectivity
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+      - name: Compare public-page HTTP transports
+        run: |
+          uv run --no-project --with requests --with curl-cffi --with beautifulsoup4 python -u - <<'PY'
+          from bs4 import BeautifulSoup
+          import requests
+          from curl_cffi import requests as chrome
+          from scrapers.common import KUPI_HEADERS
+          url = 'https://www.kupi.cz/slevy/ovoce-a-zelenina/albert'
+          successes = []
+          for label, client, kwargs in [('requests', requests, {}), ('chrome', chrome, {'impersonate': 'chrome'})]:
+              try:
+                  response = client.get(url, headers=KUPI_HEADERS, timeout=25, **kwargs)
+                  soup = BeautifulSoup(response.text, 'html.parser')
+                  count = len(soup.select('.discount_row[data-product][data-discount]'))
+                  print(f'{label}: HTTP {response.status_code}; offers={count}; title={soup.title.get_text() if soup.title else "none"}', flush=True)
+                  if response.status_code == 200 and count:
+                      successes.append(label)
+                  else:
+                      print(response.text[:500], flush=True)
+              except Exception as error:
+                  print(f'{label}: {type(error).__name__}: {error}', flush=True)
+          if not successes:
+              raise SystemExit('No transport returned a genuine live discount page')
+          PY
