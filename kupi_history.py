@@ -12,6 +12,7 @@ import re
 import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import requests
 
@@ -104,7 +105,9 @@ def history_products() -> list[dict]:
     latest: dict[str, dict] = {}
     for row in read_csv(HISTORY_CSV):
         product_id = row.get("product_id", "")
-        if not product_id:
+        if not product_id or urlsplit(row.get("url", "")).hostname not in {
+            "kupi.cz", "www.kupi.cz"
+        }:
             continue
         previous = latest.get(product_id)
         if previous is None or row.get("scraped_at", "") > previous.get("scraped_at", ""):

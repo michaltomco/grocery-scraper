@@ -1,0 +1,605 @@
+{
+  "current": {
+    "leafletCategories": [
+      {
+        "key": "ALBERT_MARKET",
+        "name": "Tržnice u Alberta",
+        "pictureId": "trznice.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/trznice.jpg"
+      },
+      {
+        "key": "ALBERT_BAKERY",
+        "name": "Albertovo pekařství",
+        "pictureId": "pekarstvi.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/pekarstvi.jpg"
+      },
+      {
+        "key": "SAUSAGES",
+        "name": "Uzeniny a lahůdky",
+        "pictureId": "lahudky.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/lahudky.jpg"
+      },
+      {
+        "key": "MEAT_AND_FISH",
+        "name": "Maso a ryby",
+        "pictureId": "maso.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/maso.jpg"
+      },
+      {
+        "key": "DAIRY",
+        "name": "Mléčné a chlazené",
+        "pictureId": "mlecne.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/mlecne.jpg"
+      },
+      {
+        "key": "DURABLES",
+        "name": "Trvanlivé",
+        "pictureId": "trvanlive.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/trvanlive.jpg"
+      },
+      {
+        "key": "DRINKS",
+        "name": "Nápoje",
+        "pictureId": "napoje.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/napoje.jpg"
+      },
+      {
+        "key": "DRUGSTORE",
+        "name": "Drogerie",
+        "pictureId": "drogerie.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/drogerie.jpg"
+      },
+      {
+        "key": "OTHERS",
+        "name": "Ostatní",
+        "pictureId": "ostatni.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/ostatni.jpg"
+      }
+    ],
+    "publishDate": "2026-09-30",
+    "validFrom": "2026-09-30",
+    "validTo": "2026-10-06",
+    "items": [
+      {
+        "uuid": "d1a67345-8014-4bd5-9690-9616af77de6c",
+        "promoId": "15872",
+        "goldId": "20440701",
+        "longName": "Mandarinky",
+        "shortName": "MANDARINKY VOLNÉ",
+        "description": "",
+        "leafletCategory": "ALBERT_MARKET",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "WEIGHT",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "akce",
+          "displayColor": "red",
+          "original": 69.9,
+          "discount": 39.9,
+          "discountPercentage": 42,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": {
+            "value": 500,
+            "unit": {
+              "name": "g",
+              "description": "g"
+            }
+          }
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "1kg"
+        ],
+        "pricedVolume": "1 kg",
+        "affiliateProducts": [],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/20440701",
+        "imageBlurHash": "LRQSxAtQKUi~xTjXa#j[5eV[VVou",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "b8fc3aba-eaab-4511-a31b-a4dc7e3930e2",
+        "promoId": "15872",
+        "goldId": "25381528",
+        "longName": "Albert Hrozny tmavé bezsemenné",
+        "shortName": "HROZNY TMAVÉ 500G",
+        "description": "",
+        "leafletCategory": "ALBERT_MARKET",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "akce",
+          "displayColor": "red",
+          "original": 59.9,
+          "discount": 29.9,
+          "discountPercentage": 50,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "0.5 kg",
+          "100g = 5,98 Kč"
+        ],
+        "pricedVolume": "0.5 kg",
+        "affiliateProducts": [],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/25381528",
+        "imageBlurHash": "LRN,xnt7?voztQxuofRP?^Rj4nof",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "855bdb0c-2433-4265-b108-ffa9c65aefd7",
+        "promoId": "15872",
+        "goldId": "20449148",
+        "longName": "Albertova tržnice brokolice",
+        "shortName": "ALB BROKOLICE KS",
+        "description": "",
+        "leafletCategory": "ALBERT_MARKET",
+        "flags": [
+          "leaflet",
+          "first_site"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "neporazitelne",
+          "displayColor": "red",
+          "original": 44.9,
+          "discount": 24.9,
+          "discountPercentage": 44,
+          "customerDiscount": 19.9,
+          "customerDiscountPercentage": 55,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "1 kus",
+          "Cena s aplikací: 19.90 Kč",
+          " ",
+          "Cena bez aplikace: 24.90 Kč"
+        ],
+        "pricedVolume": "1 kus",
+        "affiliateProducts": [],
+        "promoForMember": true,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/20449148",
+        "imageBlurHash": "LcM*BHs=_4out7WBa#ofxdaxIUa#",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "e19d5fae-0003-47ee-8e19-eea360570ae6",
+        "promoId": "15872",
+        "goldId": "28140498",
+        "longName": "Mlynářský bochník",
+        "shortName": "MLYNÁŘ.BOCHNÍK 500G",
+        "description": "",
+        "leafletCategory": "ALBERT_BAKERY",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "neporazitelne",
+          "displayColor": "black",
+          "original": null,
+          "discount": 49.9,
+          "discountPercentage": null,
+          "customerDiscount": 41.9,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "0.5 kg",
+          "Cena s aplikací: 41.90 Kč",
+          "100g = 8,38 Kč",
+          " ",
+          "Cena bez aplikace: 49.90 Kč",
+          "100g = 9,98 Kč"
+        ],
+        "pricedVolume": "0.5 kg",
+        "affiliateProducts": [
+          {
+            "name": "Mlynářská brioška 400g",
+            "goldId": "27722800",
+            "promoPrice": 33.9,
+            "regularPrice": null,
+            "pricedVolume": "400 g",
+            "discountPercentage": null,
+            "displayColor": "black",
+            "omnibusPrice": null,
+            "type": "neporazitelne"
+          }
+        ],
+        "promoForMember": true,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/28140498",
+        "imageBlurHash": "LLO:Y2tRysoy%fflV[oeL3WAIAaf",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "aeb4c1c9-780f-4df3-99b7-c7a80996463e",
+        "promoId": "15872",
+        "goldId": "26807089",
+        "longName": "Královské párky",
+        "shortName": "KRÁLOVSKÉ PÁRKY",
+        "description": "",
+        "leafletCategory": "SAUSAGES",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "WEIGHT",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "akce",
+          "displayColor": "black",
+          "original": 26.9,
+          "discount": 21.9,
+          "discountPercentage": 18,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": {
+            "value": 0,
+            "unit": {
+              "name": "g",
+              "description": "g"
+            }
+          }
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "Cena za 100 g"
+        ],
+        "pricedVolume": "100 g",
+        "affiliateProducts": [
+          {
+            "name": "Striptýzky",
+            "goldId": "22572776",
+            "promoPrice": 10.5,
+            "regularPrice": 11.9,
+            "pricedVolume": "100 g",
+            "discountPercentage": 11,
+            "displayColor": "black",
+            "omnibusPrice": null,
+            "type": "akce"
+          }
+        ],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/26807089",
+        "imageBlurHash": "LRPsCkxuYQW=%2aeS2ofG^NGL~s:",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "6a971232-76f2-4bc5-b0d9-481f9544ac52",
+        "promoId": "15872",
+        "goldId": "27908174",
+        "longName": "Albert vejce z podestýlky velikost L",
+        "shortName": "VEJCE Z PODEST. L10",
+        "description": "",
+        "leafletCategory": "DAIRY",
+        "flags": [
+          "leaflet",
+          "albert_new_quality"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "akce",
+          "displayColor": "red",
+          "original": 64.9,
+          "discount": 39.9,
+          "discountPercentage": 38,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "10 kusů",
+          "1 Kus = 3,99 Kč"
+        ],
+        "pricedVolume": "10 kusů",
+        "affiliateProducts": [],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/27908174",
+        "imageBlurHash": "LDP%9Q%LKRnn%2fkfkju2xM|HqtP",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "b034a472-54a9-4249-8ff3-65e2377d8361",
+        "promoId": "15872",
+        "goldId": "25268195",
+        "longName": "Jägermeister 35%",
+        "shortName": "JÄGERMEISTER 35% 1L",
+        "description": "",
+        "leafletCategory": "DRINKS",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": null,
+          "displayColor": "black",
+          "original": 739.0,
+          "discount": 399.0,
+          "discountPercentage": null,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": 399.0
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "1l",
+          "35%"
+        ],
+        "pricedVolume": "1 l",
+        "affiliateProducts": [],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/25268195",
+        "imageBlurHash": "LQOzSrof_4s;%MayRjj[9aj[D%ay",
+        "biocide": false,
+        "isInLeaflet": true
+      },
+      {
+        "uuid": "fd0cb086-dc78-4887-9e3c-9fdd27922e4d",
+        "promoId": "15872",
+        "goldId": "28163688",
+        "longName": "Lenor prací prášek Color Amethyst Flower Dream",
+        "shortName": "LENOR PP COLOR 45D",
+        "description": "",
+        "leafletCategory": "DRUGSTORE",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "PIECE",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "akce",
+          "displayColor": "red",
+          "original": 399.0,
+          "discount": 279.0,
+          "discountPercentage": 30,
+          "customerDiscount": null,
+          "customerDiscountPercentage": null,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": null
+        },
+        "heroImage": "",
+        "validFrom": "2026-09-30",
+        "validTo": "2026-10-06",
+        "additionalDescription": [
+          "45 dávek",
+          "1 Dávka = 6,20 Kč",
+          "vybrané druhy"
+        ],
+        "pricedVolume": "45 dávek",
+        "affiliateProducts": [
+          {
+            "name": "Lenor gel aprilfrisch 50d",
+            "goldId": "28162971",
+            "promoPrice": 279,
+            "regularPrice": 399,
+            "pricedVolume": "50 dávek",
+            "discountPercentage": 30,
+            "displayColor": "red",
+            "omnibusPrice": null,
+            "type": "akce"
+          }
+        ],
+        "promoForMember": false,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/28163688",
+        "imageBlurHash": "LbNmpOa}_Mt7-njsM}fkNXj[IVWC",
+        "biocide": false,
+        "isInLeaflet": true
+      }
+    ]
+  },
+  "next": {
+    "leafletCategories": [
+      {
+        "key": "ALBERT_MARKET",
+        "name": "Tržnice u Alberta",
+        "pictureId": "trznice.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/trznice.jpg"
+      },
+      {
+        "key": "ALBERT_BAKERY",
+        "name": "Albertovo pekařství",
+        "pictureId": "pekarstvi.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/pekarstvi.jpg"
+      },
+      {
+        "key": "SAUSAGES",
+        "name": "Uzeniny a lahůdky",
+        "pictureId": "lahudky.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/lahudky.jpg"
+      },
+      {
+        "key": "MEAT_AND_FISH",
+        "name": "Maso a ryby",
+        "pictureId": "maso.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/maso.jpg"
+      },
+      {
+        "key": "DAIRY",
+        "name": "Mléčné a chlazené",
+        "pictureId": "mlecne.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/mlecne.jpg"
+      },
+      {
+        "key": "DURABLES",
+        "name": "Trvanlivé",
+        "pictureId": "trvanlive.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/trvanlive.jpg"
+      },
+      {
+        "key": "DRINKS",
+        "name": "Nápoje",
+        "pictureId": "napoje.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/napoje.jpg"
+      },
+      {
+        "key": "DRUGSTORE",
+        "name": "Drogerie",
+        "pictureId": "drogerie.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/drogerie.jpg"
+      },
+      {
+        "key": "OTHERS",
+        "name": "Ostatní",
+        "pictureId": "ostatni.jpg",
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-categories/ostatni.jpg"
+      }
+    ],
+    "publishDate": "2026-10-07",
+    "validFrom": "2026-10-07",
+    "validTo": "2026-10-13",
+    "items": [
+      {
+        "uuid": "d1a67345-8014-4bd5-9690-9616af77de6c",
+        "promoId": "15873",
+        "goldId": "20440701",
+        "longName": "Mandarinky",
+        "shortName": "MANDARINKY VOLNÉ",
+        "description": "",
+        "leafletCategory": "ALBERT_MARKET",
+        "flags": [
+          "leaflet"
+        ],
+        "itemType": "WEIGHT",
+        "itemUnitQuantity": null,
+        "price": {
+          "type": "neporazitelne",
+          "displayColor": "red",
+          "original": 69.9,
+          "discount": 29.9,
+          "discountPercentage": 57,
+          "customerDiscount": 26.9,
+          "customerDiscountPercentage": 61,
+          "omnibusPrice": null
+        },
+        "loyaltyPoints": {
+          "points": 0,
+          "iowPoints": 0,
+          "npBioPoints": 0,
+          "unitQuantity": {
+            "value": 500,
+            "unit": {
+              "name": "g",
+              "description": "g"
+            }
+          }
+        },
+        "heroImage": "",
+        "validFrom": "2026-10-07",
+        "validTo": "2026-10-13",
+        "additionalDescription": [
+          "1 kg",
+          "Cena s aplikací: 26.90 Kč",
+          " ",
+          "Cena bez aplikace: 29.90 Kč"
+        ],
+        "pricedVolume": "1 kg",
+        "affiliateProducts": [],
+        "promoForMember": true,
+        "promoForHealth": false,
+        "maxAllowedQuantity": null,
+        "imageUrl": "https://albertloyaltycz-albert-service-app-prod.delhaize.eu/public/minio/images-products/20440701",
+        "imageBlurHash": "LRQSxAtQKUi~xTjXa#j[5eV[VVou",
+        "biocide": false,
+        "isInLeaflet": true
+      }
+    ]
+  }
+}

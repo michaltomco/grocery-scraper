@@ -1,7 +1,58 @@
 # grocery-scraper
 
-Lidl produce offers come directly from Lidl.cz. The other retailer scrapers
-currently use Kupi.cz.
+Albert offers come from the public Můj Albert app API, and Lidl produce offers
+come directly from Lidl.cz. Billa and Tesco currently use Kupi.cz.
+
+## Albert app scraper
+
+Run only Albert from the repository root:
+
+```bash
+uv run --no-dev python -m scrapers.albert
+```
+
+The scraper uses the app's public, unauthenticated JSON endpoints. No phone,
+browser, account or access token is needed. It collects the current and next
+leaflets, including related product variants, for the selected physical stores.
+The preferred store is **583: Praha 5, Zlatý Anděl (supermarket),
+Plzeňská 344/1**. By default, only this store is collected.
+
+Find and select other stores, or create a preview without updating history:
+
+```bash
+uv run --no-dev python -m scrapers.albert --list-stores
+uv run --no-dev python -m scrapers.albert --store-id 583 --output /tmp/albert-preview.csv --no-history
+```
+
+Repeat `--store-id` to select multiple stores. `ALBERT_STORE_IDS=583` also
+sets the stores for both this command and `run.py`; explicit CLI IDs take
+precedence. A normal run writes `albert.csv` and appends to `history.csv` only
+after every selected store succeeds. Empty responses, invalid store IDs or
+invalid offers raise an error before replacing the existing snapshot.
+
+Food categories retain the app's Czech labels; drogerie and ostatní are excluded.
+Ordinary and Můj Albert member prices become separate rows with their own unit
+prices. Personalized coupons and loyalty-point rewards are not cash discounts
+and are not collected. Related variants use their own prices and quantities,
+with their parent offer's validity dates; member prices are not inferred for
+variants. Missing product images stay empty unless the API supplies that
+product's image elsewhere in the same response.
+
+The shared CSV schema is unchanged. Product IDs include the selected store ID
+(`albert-829-20440701`), so history keeps branch-specific offers distinct. The
+`url` column links to the store's source API response, not a product detail page.
+`old_price` uses the API's `original` regular price when supplied; it is not
+estimated from a discount percentage. The separate `omnibusPrice` reference
+is not represented by this CSV schema. Kupi graph backfills use only Kupi-source
+rows, since retailer product IDs are not Kupi IDs.
+
+The endpoints were found in Můj Albert Android 7.3.1 and verified live on
+2026-10-06: `/public/store/v2` and `/public/content/leaflet/v3?storeId=829` on
+`albertloyaltycz-albert-service-app-prod.delhaize.eu`. The archive's signing
+certificate fingerprint matches Albert's public Android app association.
+The APK is not part of this repository and is not required at runtime. This is
+an undocumented app API, so changes to the endpoint or JSON format may require
+maintenance.
 
 ## Direct Lidl scraper
 
@@ -40,8 +91,7 @@ directory:
 Individual scrapers remain available:
 
 ```bash
-/home/mito/Projects/grocery-scraper/.venv/bin/python \
-  /home/mito/Projects/grocery-scraper/scrapers/albert.py
+uv run --no-dev python -m scrapers.albert
 ```
 
 Each scraper refreshes its store snapshot (`albert.csv`, `lidl.csv`, or

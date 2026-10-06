@@ -1,8 +1,9 @@
 """Tests for Kupi's product-history graph parser."""
 
 import unittest
+from unittest.mock import patch
 
-from kupi_history import parse_kupi_graph_html
+from kupi_history import history_products, parse_kupi_graph_html
 
 
 GRAPH_HTML = '''
@@ -19,6 +20,15 @@ var graph_data = {
 
 
 class KupiHistoryParserTests(unittest.TestCase):
+    def test_native_retailer_ids_are_not_sent_to_kupi_graph(self) -> None:
+        rows = [
+            {"product_id": "123", "url": "https://www.kupi.cz/sleva/jablka"},
+            {"product_id": "albert-829-123", "url": "https://example.delhaize.eu/public/content/leaflet/v3?storeId=829"},
+            {"product_id": "123", "url": "https://www.lidl.cz/p/jablka/p123", "scraped_at": "2099-01-01"},
+        ]
+        with patch("kupi_history.read_csv", return_value=rows):
+            self.assertEqual(history_products(), [rows[0]])
+
     def test_parses_all_daily_price_series_in_prague_dates(self) -> None:
         rows = parse_kupi_graph_html(
             GRAPH_HTML,
