@@ -51,7 +51,7 @@ jobs:
         if: steps.time.outputs.run == 'true'
         run: uv sync --locked
 
-      - name: Scrape Kupi and refresh nutrition cache
+      - name: Scrape Lidl.cz and Kupi, then build dashboard
         if: steps.time.outputs.run == 'true'
         env:
           USDA_API_KEY: ${{ secrets.USDA_API_KEY }}

@@ -22,6 +22,10 @@ Linger must be enabled for unattended operation after logout and at boot. The ho
 
 This is a public repository. Never route pull-request or fork code to this runner. The refresh workflow accepts only main-branch schedule/manual events, with an explicit main-ref job guard. Keep tests and deploy jobs GitHub-hosted. Only trusted administrators should be able to modify main and workflows: runner jobs execute as the local `arch` user and can access that user's files. The runner label is routing, not a security boundary.
 
+## Daily sources
+
+`run.py` uses `scrapers.lidl.main()` as the default Lidl source. It fetches the public Lidl.cz produce page directly and writes `lidl.csv` plus history; it does not fall back to Kupi for Lidl. This direct source currently covers only `Ovoce a zelenina`, not the other Lidl food categories previously available through Kupi. Albert, Billa, and Tesco continue using Kupi across the configured food categories. Both scheduled and manual refreshes use the same entry point.
+
 ## Refresh and publication
 
 The hourly schedule checks for the 06:00 Europe/Prague window, including daylight saving time. Manual dispatch bypasses the time check. Python output is unbuffered and the refresh job has a 45-minute timeout.
