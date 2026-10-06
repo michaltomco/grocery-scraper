@@ -29,10 +29,9 @@ jobs:
           fi
 
       - uses: actions/checkout@v4
-        with:
-          lfs: true
         if: steps.time.outputs.run == 'true'
         with:
+          lfs: true
           persist-credentials: true
 
       - uses: astral-sh/setup-uv@v7
