@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: grocery-data-refresh
@@ -54,6 +55,7 @@ jobs:
           uv run python build_site.py
 
       - name: Commit refreshed data
+        id: commit
         if: steps.time.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
@@ -64,4 +66,11 @@ jobs:
           else
             git commit -m "chore: daily scrape $(TZ=Europe/Prague date +%F) [github-actions]"
             git push origin main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Trigger website deployment
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/actions/workflows/pages.yml/dispatches" -f ref=main
