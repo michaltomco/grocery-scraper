@@ -1,5 +1,6 @@
 import csv
 import re
+import time
 import unicodedata
 from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta
@@ -708,9 +709,20 @@ def extract_kupi_discount(
 
 
 def fetch_kupi_html(url: str) -> str:
-    response = requests.get(url, headers=KUPI_HEADERS, timeout=20)
-    response.raise_for_status()
-    return response.text
+    for attempt in range(3):
+        try:
+            response = requests.get(url, headers=KUPI_HEADERS, timeout=20)
+        except (requests.Timeout, requests.ConnectionError) as error:
+            if attempt == 2:
+                raise
+            delay = 2 ** (attempt + 1)
+            print(f"Transient fetch error for {url}: {error}; retrying in {delay}s", flush=True)
+            time.sleep(delay)
+            continue
+        # Do not retry access blocks or treat challenge pages as price data.
+        response.raise_for_status()
+        return response.text
+    raise RuntimeError("Kupi request attempts exhausted")
 
 
 def extract_kupi_products(
