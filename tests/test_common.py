@@ -6,6 +6,8 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
+import requests
+
 from scrapers.common import (
     FIELDNAMES,
     KUPI_FOOD_CATEGORIES,
@@ -172,6 +174,50 @@ class StoreBrandTests(unittest.TestCase):
                 self.assertIn(f"fill=\"{color}\"", store_logo(store))
 
 
+class FailedFetchTests(unittest.TestCase):
+    def test_page_two_failure_preserves_snapshot_and_prevents_history_write(self) -> None:
+        with TemporaryDirectory() as directory:
+            snapshot = Path(directory) / "albert.csv"
+            config = KupiStoreConfig(
+                store="Albert", url="https://example.test/albert", csv_path=snapshot,
+                store_location="Prague", loyalty_program="Můj Albert",
+            )
+            write_csv(snapshot, [row()])
+            original = snapshot.read_bytes()
+            with patch("scrapers.common.category_configs", return_value=[config]), patch(
+                "scrapers.common.fetch_kupi_html",
+                side_effect=["page one", requests.HTTPError("403 on page two")],
+            ) as fetch, patch("scrapers.common.extract_kupi_products", return_value=[row()]), patch(
+                "scrapers.common.write_csv"
+            ) as write, patch("scrapers.common.append_history") as append:
+                with self.assertRaisesRegex(RuntimeError, "Albert.*403 on page two"):
+                    run_kupi_food_scraper(config)
+                self.assertEqual(fetch.call_args_list[1].args[0], config.url + "?page=2")
+                write.assert_not_called()
+                append.assert_not_called()
+            self.assertEqual(snapshot.read_bytes(), original)
+
+    def test_blocked_category_preserves_snapshot_and_prevents_history_write(self) -> None:
+        with TemporaryDirectory() as directory:
+            snapshot = Path(directory) / "albert.csv"
+            config = KupiStoreConfig(
+                store="Albert", url="https://example.test/albert", csv_path=snapshot,
+                store_location="Prague", loyalty_program="Můj Albert",
+            )
+            write_csv(snapshot, [row()])
+            original = snapshot.read_bytes()
+            categories = category_configs(config)[:2]
+            with patch("scrapers.common.category_configs", return_value=categories), patch(
+                "scrapers.common.fetch_kupi_products",
+                side_effect=[[row()], requests.HTTPError("403 Forbidden")],
+            ), patch("scrapers.common.write_csv") as write, patch("scrapers.common.append_history") as append:
+                with self.assertRaisesRegex(RuntimeError, "Albert.*403"):
+                    run_kupi_food_scraper(config)
+                write.assert_not_called()
+                append.assert_not_called()
+            self.assertEqual(snapshot.read_bytes(), original)
+
+
 class HistoryAndMergeTests(unittest.TestCase):
     def test_food_category_runner_combines_category_snapshots(self) -> None:
         with TemporaryDirectory() as directory:
@@ -196,6 +242,20 @@ class HistoryAndMergeTests(unittest.TestCase):
             self.assertEqual({item["category"] for item in rows}, {"Ovoce a zelenina", "Pečivo"})
             append.assert_called_once()
             self.assertEqual(len(append.call_args.args[1]), 2)
+
+    def test_empty_successful_category_does_not_reject_populated_store(self) -> None:
+        with TemporaryDirectory() as directory:
+            snapshot = Path(directory) / "albert.csv"
+            config = KupiStoreConfig(
+                store="Albert", url="https://example.test/albert", csv_path=snapshot,
+                store_location="Prague", loyalty_program="Můj Albert",
+            )
+            with patch("scrapers.common.category_configs", return_value=category_configs(config)[:2]), patch(
+                "scrapers.common.fetch_kupi_products", side_effect=[[], [row()]],
+            ), patch("scrapers.common.append_history") as append:
+                run_kupi_food_scraper(config)
+                append.assert_called_once()
+            self.assertEqual(len(read_csv(snapshot)), 1)
 
     def test_empty_fetch_preserves_existing_snapshot(self) -> None:
         with TemporaryDirectory() as directory:

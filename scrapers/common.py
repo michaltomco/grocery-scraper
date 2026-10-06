@@ -758,13 +758,9 @@ def fetch_kupi_products(config: KupiStoreConfig) -> list[dict]:
     seen_discount_ids: set = set()
     for page in range(1, 16):
         url = config.url if page == 1 else _with_page_param(config.url, page)
-        try:
-            html = fetch_kupi_html(url)
-        except requests.RequestException as error:
-            if page == 1:
-                raise  # caller's handler reports the failure and aborts
-            print(f"  stopped at page {page}: {error}")
-            break
+        # A failed later page is not an end-of-pagination signal: propagate it
+        # so callers cannot publish a truncated store snapshot.
+        html = fetch_kupi_html(url)
 
         page_rows = extract_kupi_products(html, config, seen_discount_ids)
         if not page_rows:
@@ -820,10 +816,9 @@ def run_kupi_food_scraper(config: KupiStoreConfig) -> None:
         try:
             category_products = fetch_kupi_products(category_config)
         except requests.RequestException as error:
-            print(
+            raise RuntimeError(
                 f"Could not fetch {category_config.category} for {config.store} from Kupi.cz: {error}"
-            )
-            continue
+            ) from error
         print(f"{category_config.category}: found {len(category_products)} products")
         products.extend(category_products)
 

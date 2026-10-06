@@ -17,7 +17,12 @@ concurrency:
 
 jobs:
   refresh:
-    runs-on: ubuntu-latest
+    # Only trusted main-branch schedule/manual jobs run on this dedicated host.
+    runs-on: [self-hosted, linux, x64, grocery-scraper]
+    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 45
+    env:
+      PYTHONUNBUFFERED: '1'
     steps:
       - id: time
         name: Check Prague scrape time
