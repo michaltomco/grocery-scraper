@@ -1,0 +1,198 @@
+[
+  {
+    "title": "Banány",
+    "fullTitle": "Banány",
+    "productId": 10049379,
+    "price": {
+      "price": 19.9,
+      "hasVat": false,
+      "hasStar": false,
+      "discount": {
+        "showFrom": false,
+        "showUpTo": false,
+        "deletedPrice": 39.9,
+        "showDiscount": true,
+        "showPercentage": true,
+        "bargainHintText": "Megaúlovek",
+        "discountHasStar": false,
+        "hideBargainHint": false,
+        "absoluteDiscount": 20,
+        "bargainHintEnabled": false,
+        "percentageDiscount": 50,
+        "fromRecommendedPrice": false
+      },
+      "oldPrice": 39.9,
+      "basePrice": {
+        "text": "1 kg",
+        "prefix": false
+      },
+      "priceTheme": "white_red",
+      "currencyCode": "CZK",
+      "currencySymbol": "Kč",
+      "displayedCurrency": "Kč",
+      "variantsHaveDifferentPrices": false
+    },
+    "storeStartDate": 1791151200,
+    "storeEndDate": 1791410399,
+    "canonicalUrl": "/p/banany/p10049379",
+    "image": "https://imgproxy-retcat.assets.schwarz/M549I_eds-E_5t5qLnDPe7JU6lavLdx_-0Uhvw8CcTs/sm:0/exar:1:ce/w:427/h:320/cz/M6Ly9wcm9kLWNhd/GFsb2ctbWVkaWEvY3ovMS80QzM5OUNGQTU1MUMwQ0E0Mzc4Qjg3N0R/GRjI4Qzg0OUM5MDQ2REUzRjRDMzZENjUwMjY3NERENzYyQjY1MjdDLnBuZw.png",
+    "disclaimers": [
+      {
+        "id": "code_10049379_5c4de98c",
+        "type": "CODE",
+        "value": "Basic"
+      },
+      {
+        "id": "code_10049379_43836e8e",
+        "type": "CODE",
+        "value": "StrikePrice_LowestPrice30days"
+      }
+    ]
+  },
+  {
+    "title": "Zelí bílé",
+    "fullTitle": "Zelí bílé",
+    "productId": 10056631,
+    "price": {
+      "price": 8.9,
+      "hasVat": false,
+      "hasStar": false,
+      "discount": {
+        "showFrom": false,
+        "showUpTo": false,
+        "discountText": "Super cena",
+        "showDiscount": false,
+        "showPercentage": false,
+        "discountHasStar": false,
+        "fromRecommendedPrice": false
+      },
+      "oldPrice": 0,
+      "basePrice": {
+        "text": "1 kg",
+        "prefix": false
+      },
+      "priceTheme": "white_red",
+      "currencyCode": "CZK",
+      "currencySymbol": "Kč",
+      "displayedCurrency": "Kč",
+      "variantsHaveDifferentPrices": false
+    },
+    "storeStartDate": 1791151200,
+    "storeEndDate": 1791410399,
+    "canonicalUrl": "/p/zeli-bile/p10056631",
+    "image": "https://imgproxy-retcat.assets.schwarz/9KY46ecbOkNNVYkx39Z699E_aiv5I5wh3TPnCQ7tn-I/sm:0/exar:1:ce/w:427/h:320/cz/M6Ly9wcm9kLWNhd/GFsb2ctbWVkaWEvaW50LzE2ODA5NjczNEQ1NDM1QUZGMUY4MDU0RD/I5NUNCRkZBM0EwOEJFRkREQTg0REVENzIzMkM3QTA0MUFBQTQyRDkucG5n.png",
+    "disclaimers": [
+      {
+        "id": "code_10056631_f0e88609",
+        "type": "CODE",
+        "value": "Basic"
+      },
+      {
+        "id": "code_10056631_5de7e0d3",
+        "type": "CODE",
+        "value": "StrikePrice_LowestPrice30days"
+      }
+    ]
+  },
+  {
+    "title": "Rukola",
+    "fullTitle": "Rukola",
+    "productId": 10054622,
+    "price": {
+      "price": 19.9,
+      "hasVat": false,
+      "hasStar": false,
+      "discount": {
+        "showFrom": false,
+        "showUpTo": false,
+        "deletedPrice": 29.9,
+        "showDiscount": true,
+        "showPercentage": true,
+        "bargainHintText": "Megaúlovek",
+        "discountHasStar": false,
+        "hideBargainHint": false,
+        "absoluteDiscount": 10,
+        "bargainHintEnabled": false,
+        "percentageDiscount": 33,
+        "fromRecommendedPrice": false
+      },
+      "oldPrice": 29.9,
+      "basePrice": {
+        "text": "125 g - balení, 100 g = 15,92 Kč",
+        "prefix": false
+      },
+      "priceTheme": "white_red",
+      "currencyCode": "CZK",
+      "currencySymbol": "Kč",
+      "displayedCurrency": "Kč",
+      "variantsHaveDifferentPrices": false
+    },
+    "storeStartDate": 1791151200,
+    "storeEndDate": 1791410399,
+    "canonicalUrl": "/p/rukola/p10054622",
+    "image": "https://imgproxy-retcat.assets.schwarz/1NloDoSbi-2iKCvhUscrqwv7CK5k-0ui9sAubp5Cgfc/sm:0/exar:1:ce/w:427/h:320/cz/M6Ly9wcm9kLWNhd/GFsb2ctbWVkaWEvaW50L0UwQzNGMkFFNDg0RDNCQjRFNjgyMTVEND/IzMTNENEIwNzZFMTc4NjRDMEQxODU0QTQ5OTAzMUM0MjQ3NjM3QUUucG5n.png",
+    "disclaimers": [
+      {
+        "id": "code_10054622_3653d1d5",
+        "type": "CODE",
+        "value": "Basic"
+      },
+      {
+        "id": "code_10054622_9a13d7c0",
+        "type": "CODE",
+        "value": "StrikePrice_LowestPrice30days"
+      }
+    ]
+  },
+  {
+    "title": "Bazalka",
+    "fullTitle": "Bazalka",
+    "productId": 10055805,
+    "price": {
+      "price": 34.9,
+      "hasVat": false,
+      "hasStar": false,
+      "discount": {
+        "showFrom": false,
+        "showUpTo": false,
+        "deletedPrice": 49.9,
+        "discountText": "-30%",
+        "showDiscount": true,
+        "showPercentage": true,
+        "bargainHintText": "Megaúlovek",
+        "discountHasStar": false,
+        "hideBargainHint": false,
+        "absoluteDiscount": 15,
+        "bargainHintEnabled": false,
+        "percentageDiscount": 30,
+        "fromRecommendedPrice": false
+      },
+      "oldPrice": 49.9,
+      "basePrice": {
+        "text": "kus",
+        "prefix": false
+      },
+      "priceTheme": "white_red",
+      "currencyCode": "CZK",
+      "currencySymbol": "Kč",
+      "displayedCurrency": "Kč",
+      "variantsHaveDifferentPrices": false
+    },
+    "storeStartDate": 1791151200,
+    "storeEndDate": 1791410399,
+    "canonicalUrl": "/p/bazalka/p10055805",
+    "image": "https://imgproxy-retcat.assets.schwarz/mGt9qJhDhOpod-2EKlUkvdMHzDR2D4gn-9h0grKz_-A/sm:0/exar:1:ce/w:427/h:320/cz/M6Ly9wcm9kLWNhd/GFsb2ctbWVkaWEvY3ovMS81NjhGMkZBNzcyMzJGNzI5QzE1MTRERTJ/EMjUwQjE4NEIxM0E0N0MxNkQ3QjdEM0UyNzk1QjU3RDhBNzk5NEY5LnBuZw.png",
+    "disclaimers": [
+      {
+        "id": "code_10055805_02931e91",
+        "type": "CODE",
+        "value": "Basic"
+      },
+      {
+        "id": "code_10055805_e96c995d",
+        "type": "CODE",
+        "value": "StrikePrice_LowestPrice30days"
+      }
+    ]
+  }
+]

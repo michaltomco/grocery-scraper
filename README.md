@@ -1,6 +1,31 @@
 # grocery-scraper
 
-Scrapes Albert, Lidl, and Tesco fruit and vegetable discounts from Kupi.cz.
+Lidl produce offers come directly from Lidl.cz. The other retailer scrapers
+currently use Kupi.cz.
+
+## Direct Lidl scraper
+
+Run only Lidl from the repository root:
+
+```bash
+uv run --no-dev python -m scrapers.lidl
+```
+
+This refreshes `lidl.csv` and appends to `history.csv`; `run.py` also uses this
+direct scraper. To try it without changing the regular snapshot or history:
+
+```bash
+uv run --no-dev python -m scrapers.lidl --output /tmp/lidl-preview.csv --no-history
+```
+
+The first direct version covers the public fruit-and-vegetable category only,
+replacing Lidl's previous all-food-category Kupi collection. It reads embedded
+product-card JSON in one HTTP request, without a browser or login. It keeps the
+shared CSV schema, including product URLs, images, validity dates and normalized
+unit prices. It does not collect Lidl Plus coupons. Unsupported conditional
+prices, invalid cards and empty pages fail before replacing the snapshot.
+`old_price` is the displayed crossed-out reference price, which may represent
+the lowest price in the preceding 30 days rather than a regular price.
 
 ## Running
 
