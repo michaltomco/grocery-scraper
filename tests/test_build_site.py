@@ -5,6 +5,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from urllib.error import HTTPError
 from unittest.mock import patch
 
 import build_site
@@ -33,6 +34,20 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def test_failed_images_are_not_retried_for_each_view(self) -> None:
+        with TemporaryDirectory() as directory, patch.object(
+            build_site, "IMG_DIR", Path(directory)
+        ), patch.object(build_site, "FAILED_IMAGES", set()), patch.object(
+            build_site, "fallback_image", return_value="img/veg.png"
+        ), patch.object(build_site.urllib.request, "urlopen", side_effect=HTTPError(
+            "https://img.example.test/blocked.jpg", 403, "Forbidden", {}, None
+        )) as fetch:
+            for _ in range(3):
+                self.assertEqual(build_site.cache_image("tesco-online-1", "https://img.example.test/blocked.jpg"), "img/veg.png")
+            self.assertEqual(fetch.call_count, 1)
+            build_site.cache_image("tesco-online-1", "https://img.example.test/replacement.jpg")
+            self.assertEqual(fetch.call_count, 2)
+
     def test_online_tesco_does_not_mix_legacy_physical_store_prices(self) -> None:
         legacy = history_row(store="Tesco", product_id="kupi-1", price="9.9", price_per_kg="9.9")
         online = history_row(store="Tesco", product_id="tesco-online-1", price="29.9", price_per_kg="29.9")

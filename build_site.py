@@ -15,6 +15,7 @@ import re
 import shutil
 import urllib.request
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -51,6 +52,7 @@ KUPI_PRICE_HISTORY_CSV = ROOT / "kupi_price_history.csv"
 # product's own white background. Returns a web path relative to the site root.
 THUMB = 220  # px, size of the normalized square canvas
 FALLBACK_IMAGE = IMG_DIR / "veg.png"
+FAILED_IMAGES: set[tuple[str, str]] = set()
 
 
 def fallback_image() -> str:
@@ -79,6 +81,9 @@ def normalize_image_file(path: Path) -> bool:
 
 
 def cache_image(product_id: str, image_url: str) -> str:
+    key = (product_id, image_url)
+    if key in FAILED_IMAGES:
+        return fallback_image()
     if not image_url or any(marker in image_url.lower() for marker in ("no-image", "no_image", "/no_img/", "placeholder")):
         return fallback_image()
     IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -106,6 +111,8 @@ def cache_image(product_id: str, image_url: str) -> str:
             canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
             canvas.save(dest, "JPEG", quality=90)
     except Exception:
+        # Retry on the next build, not for every table/product-page rendering.
+        FAILED_IMAGES.add(key)
         return fallback_image()
     finally:
         if raw.exists():
@@ -733,6 +740,13 @@ def build() -> str:
     if tesco_online:
         rows = [r for r in rows if r.get("store") != "Tesco" or
                 r.get("product_id", "").startswith("tesco-online-")]
+        # Newly introduced Tesco IDs have no cached thumbnails. Bound the
+        # concurrency and populate both success and failure caches before the
+        # sequential rendering passes reuse those images.
+        images = {r["product_id"]: r.get("image_url", "") for r in rows
+                  if r.get("product_id", "").startswith("tesco-online-")}
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            list(pool.map(lambda item: cache_image(*item), images.items()))
 
     # Nutrition enrichment covers fresh produce (USDA/Open Food Facts) and the
     # hand-curated NutriData.cz records for other categories. Curated records are
