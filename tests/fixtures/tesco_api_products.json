@@ -1,0 +1,177 @@
+[
+  {
+    "id": "213564945",
+    "title": "Mandarinky",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 6.99,
+      "unitPrice": 49.9,
+      "unitOfMeasure": "kg"
+    },
+    "isForSale": true,
+    "productType": "LooseProduce",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/87bc2ed5-f0a9-4402-a419-7499a86bf22e/614c69d7-dfef-41d8-ae51-7e0cd1173884_1878219497.jpeg?h=225&w=225",
+    "promotions": []
+  },
+  {
+    "id": "212693080",
+    "title": "Květák",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 59.9,
+      "unitPrice": 59.9,
+      "unitOfMeasure": "kus"
+    },
+    "isForSale": true,
+    "productType": "SingleProduct",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/5151f4c4-b813-4c15-a6b5-ec1885f3c93c/d0adad25-ec94-44d1-a3aa-30f3dc1af29e_503147786.jpeg?h=225&w=225",
+    "promotions": [
+      {
+        "promotionId": "103709508",
+        "startDate": "2026-10-06T22:00:00Z",
+        "endDate": "2026-10-13T22:00:00Z",
+        "offerText": "24,90 Kč Více než o polovinu nižší cena s Clubcard",
+        "promotionAttributes": [
+          "CLUBCARD_PRICING"
+        ],
+        "qualities": [
+          "membership:CZClubcard",
+          "price_cut",
+          "discount"
+        ],
+        "price": {
+          "beforeDiscount": null,
+          "afterDiscount": 59.9
+        },
+        "unitSellingInfo": "24,90 Kč/kus"
+      }
+    ]
+  },
+  {
+    "id": "213131697",
+    "title": "Kakichurma",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 12.9,
+      "unitPrice": 12.9,
+      "unitOfMeasure": "kus"
+    },
+    "isForSale": true,
+    "productType": "SingleProduct",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/8e913a49-0c57-48cb-a0c2-a4d0057091e1/1828207e-2a87-4327-9c4b-e42979b01ac4_846998887.jpeg?h=225&w=225",
+    "promotions": [
+      {
+        "promotionId": "20265f79-327b-4aea-abdd-73b3ab221df1",
+        "startDate": "2026-10-06T22:00:00Z",
+        "endDate": "2026-10-13T22:00:00Z",
+        "offerText": "-35%, předtím 19,90 Kč",
+        "promotionAttributes": [],
+        "qualities": [
+          "price_cut",
+          "discount"
+        ],
+        "price": {
+          "beforeDiscount": 19.9,
+          "afterDiscount": 12.9
+        },
+        "unitSellingInfo": "12,90 Kč/kus"
+      }
+    ]
+  },
+  {
+    "id": "130321396",
+    "title": "Dýně Hokkaido",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 149.7,
+      "unitPrice": 49.9,
+      "unitOfMeasure": "kg"
+    },
+    "isForSale": true,
+    "productType": "LooseProduce",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/a54f716b-082e-42b8-b796-784336a7e5c9/67775a7a-6f9a-4a23-afd0-d9f8725ade75_2114856276.jpeg?h=225&w=225",
+    "promotions": [
+      {
+        "promotionId": "103710417",
+        "startDate": "2026-10-06T22:00:00Z",
+        "endDate": "2026-10-13T22:00:00Z",
+        "offerText": "Více než o polovinu nižší cena 19,90 Kč/kg s Clubcard",
+        "promotionAttributes": [
+          "CLUBCARD_PRICING"
+        ],
+        "qualities": [
+          "membership:CZClubcard",
+          "price_cut",
+          "discount"
+        ],
+        "price": {
+          "beforeDiscount": null,
+          "afterDiscount": 49.9
+        },
+        "unitSellingInfo": "19,90 Kč/kg"
+      }
+    ]
+  },
+  {
+    "id": "105303250",
+    "title": "Tesco 100% pomerančová šťáva s dužninou 200ml",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 22.9,
+      "unitPrice": 114.5,
+      "unitOfMeasure": "l"
+    },
+    "isForSale": true,
+    "productType": "SingleProduct",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/7db997a3-2cbc-4a2e-ba3c-df2bf527c653/0987b6f1-9434-4e19-96df-89a1e1efe1dd_916854713.jpeg?h=225&w=225",
+    "promotions": [
+      {
+        "promotionId": "103098234",
+        "startDate": "2026-09-13T22:00:00Z",
+        "endDate": "2026-11-01T23:00:00Z",
+        "offerText": "MENU BAGETY",
+        "promotionAttributes": [
+          "CLUBCARD_PRICING"
+        ],
+        "qualities": [
+          "membership:CZClubcard",
+          "multibuy",
+          "discount"
+        ],
+        "price": null,
+        "unitSellingInfo": null
+      }
+    ]
+  },
+  {
+    "id": "128006841",
+    "title": "Tesco Rajčata cherry 250g",
+    "superDepartmentName": "Ovoce a zelenina",
+    "price": {
+      "actual": 24.9,
+      "unitPrice": 99.6,
+      "unitOfMeasure": "kg"
+    },
+    "isForSale": true,
+    "productType": "SingleProduct",
+    "defaultImageUrl": "https://digitalcontent.api.tesco.com/v2/media/ghs/9e967dea-ce18-4756-80c2-3744d800893b/770d12f0-2caf-4b32-86e3-cd4ffa92ac36_1284869143.jpeg?h=225&w=225",
+    "promotions": [
+      {
+        "promotionId": "fd5fbc89-8767-4a9b-8c6a-ab20d9c0c46e",
+        "startDate": "2026-10-06T22:00:00Z",
+        "endDate": "2026-10-13T22:00:00Z",
+        "offerText": "-37%, předtím 39,90 Kč",
+        "promotionAttributes": [],
+        "qualities": [
+          "price_cut",
+          "discount"
+        ],
+        "price": {
+          "beforeDiscount": 39.9,
+          "afterDiscount": 24.9
+        },
+        "unitSellingInfo": "99,60 Kč/kg"
+      }
+    ]
+  }
+]

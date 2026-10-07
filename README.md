@@ -3,6 +3,29 @@
 Albert offers come from the public Můj Albert app API, and Lidl produce offers
 come directly from Lidl.cz. Billa and Tesco currently use Kupi.cz.
 
+## Direct Tesco Online scraper
+
+`uv run --no-dev python -m scrapers.tesco --output /tmp/tesco-preview.csv --no-history`
+
+The daily refresh uses Tesco's public catalogue API, without a user login. It
+walks all pages of eight food departments and extracts explicit single-item
+promotions from the full catalogue. The API's `offers=true` filter omits some
+current discounts, so it is deliberately unused. Nonfood and conditional
+multibuy/meal deals are excluded. Clubcard prices come from explicit promotion
+text and their own unit reference, since `afterDiscount` can contain the ordinary
+price. Loose products use kilogram prices rather than estimated piece totals.
+
+These are online reference-store prices, not prices for a selected physical
+branch. The website labels this distinction and excludes legacy Kupi Tesco
+rows from its current view once direct data exists; history remains on disk.
+Other retailers' scopes are unchanged. Clubcard `old_price` is the current
+ordinary price; nonmember promotions use explicit `beforeDiscount` when supplied.
+
+`scrapers/tesco_client.json` contains the client identifier openly published in
+Tesco's website configuration, not an account token. If Tesco rotates it,
+`TESCO_PUBLIC_API_KEY` overrides the value. GraphQL errors, changed taxonomy,
+repeated/truncated pages and missing price references abort before CSV writes.
+
 ## Billa source status
 
 The daily refresh uses Kupi for Billa. The PDF prototype is retained in

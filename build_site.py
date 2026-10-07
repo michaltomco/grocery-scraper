@@ -726,6 +726,14 @@ def build() -> str:
         # create noisy image diffs without improving the deployed asset.
         rows = read_csv(HISTORY_CSV)
 
+    # Online reference-store prices must not be mixed with older physical-store
+    # Kupi offers after the direct Tesco source starts supplying snapshots.
+    tesco_online = any(r.get("store") == "Tesco" and
+                       r.get("product_id", "").startswith("tesco-online-") for r in rows)
+    if tesco_online:
+        rows = [r for r in rows if r.get("store") != "Tesco" or
+                r.get("product_id", "").startswith("tesco-online-")]
+
     # Nutrition enrichment covers fresh produce (USDA/Open Food Facts) and the
     # hand-curated NutriData.cz records for other categories. Curated records are
     # loaded inside get_many and take priority, so we request nutrition for every
@@ -1363,6 +1371,7 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
 </div>
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
+{'<p class="meta">Tesco prices are online reference-store offers. Clubcard prices require membership.</p>' if tesco_online else ''}
 <div class="legend">
   <span class="chip" data-store="Lidl">{store_logo("Lidl")} Lidl</span>
   <span class="chip" data-store="Tesco">{store_logo("Tesco")} Tesco</span>

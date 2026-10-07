@@ -33,6 +33,22 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def test_online_tesco_does_not_mix_legacy_physical_store_prices(self) -> None:
+        legacy = history_row(store="Tesco", product_id="kupi-1", price="9.9", price_per_kg="9.9")
+        online = history_row(store="Tesco", product_id="tesco-online-1", price="29.9", price_per_kg="29.9")
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / "history.csv"
+            write_csv(history, [legacy, online])
+            with patch.object(build_site, "HISTORY_CSV", history), patch.object(
+                build_site, "get_many", return_value={}
+            ), patch.object(build_site, "get_many_exact", return_value={}), patch.object(
+                build_site, "cache_image", return_value="img/veg.png"
+            ):
+                html = build_site.build()
+            self.assertIn("online reference-store offers", html)
+            self.assertIn("29.90", html)
+            self.assertNotRegex(html, r"(?<!\d)9\.90(?!\d)")
+
     def test_exact_links_are_store_specific_and_loyalty_prices_use_weight(self) -> None:
         self.assertEqual(
             build_site.exact_page_slug("Actimel Danone 100 g", "Albert"),
