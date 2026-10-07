@@ -8,6 +8,7 @@ dependencies = [
     "beautifulsoup4>=4.15.0",
     "requests>=2.34.2",
     "Pillow>=12.3.0",
+    "pymupdf>=1.28.2",
 ]
 
 [dependency-groups]

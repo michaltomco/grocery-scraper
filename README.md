@@ -3,6 +3,14 @@
 Albert offers come from the public Můj Albert app API, and Lidl produce offers
 come directly from Lidl.cz. Billa and Tesco currently use Kupi.cz.
 
+## Billa source status
+
+The daily refresh uses Kupi for Billa. The PDF prototype is retained in
+`scrapers/billa_pdf.py` and cannot publish snapshots: its fixed leaflet URL is
+expired, and its current layout parser does not reliably extract product names,
+units, membership requirements or validity. PyMuPDF is declared and locked for
+future work on that prototype.
+
 ## Albert app scraper
 
 Run only Albert from the repository root:
