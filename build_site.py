@@ -68,12 +68,12 @@ def normalize_image_file(path: Path) -> bool:
     try:
         from PIL import Image
         with Image.open(path) as im:
-            if im.size == (THUMB, THUMB):
+            if im.size == (THUMB, THUMB) and im.mode == "RGB":
                 return True
-            im = im.convert("RGB")
+            im = im.convert("RGBA")
             im.thumbnail((THUMB, THUMB), Image.LANCZOS)
             canvas = Image.new("RGB", (THUMB, THUMB), (255, 255, 255))
-            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
+            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2), im.getchannel("A"))
             canvas.save(path, "JPEG", quality=90)
         return True
     except Exception:
@@ -105,10 +105,10 @@ def cache_image(product_id: str, image_url: str) -> str:
             src = raw
         from PIL import Image
         with Image.open(src) as im:
-            im = im.convert("RGB")
+            im = im.convert("RGBA")
             im.thumbnail((THUMB, THUMB), Image.LANCZOS)
             canvas = Image.new("RGB", (THUMB, THUMB), (255, 255, 255))
-            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2))
+            canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2), im.getchannel("A"))
             canvas.save(dest, "JPEG", quality=90)
     except Exception:
         # Retry on the next build, not for every table/product-page rendering.
