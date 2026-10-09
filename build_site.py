@@ -468,7 +468,7 @@ def sparkline(series: list[tuple[datetime, float]]) -> str:
 # exact variant pages share the identical styling/behaviour (no drift).
 PRODUCT_PAGE_CSS = '\n:root { --bg:#1a1b26; --fg:#c0caf5; --muted:#565f89; --surface:#24283b; --border:#292e42; --accent:#7aa2f7; --track:#3b4261; --axis-track:#3b4261; --logo-ink:#0f172a; }\n:root[data-theme="light"] { --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --track:#9ca0b0; --axis-track:#a3a8b8; --logo-ink:#0f172a; }\n@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg:#eff1f5; --fg:#4c4f69; --muted:#4c4f69; --surface:#e6e9ef; --border:#ccd0da; --accent:#1e66f5; --track:#9ca0b0; --axis-track:#a3a8b8; } }\nbody { font-family: -apple-system, system-ui, sans-serif; max-width: 900px; margin: 0 auto;\n  padding: 24px; background: var(--bg); color: var(--fg); }\na { color: var(--accent); } .muted { color: var(--muted); }\n.hero { width: 180px; height: 180px; object-fit: contain; background: var(--surface); border-radius: 12px; }\n.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }\n.nutrition-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }\n.nutrition-group { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }\n.nutrition-group h2 { color: var(--accent); }\n.product-summary { display:grid; grid-template-columns:minmax(180px, 1fr) minmax(360px, 2fr); gap:16px; align-items:start; }\n.product-visual { min-width:0; }\n.product-summary > .card { margin-top:0; }\n.store-chip { display:inline-flex; align-items:center; gap:6px; font-weight:600; cursor:pointer; }\n.discount-price { font-weight:700; cursor:pointer; }\n.discount-row-off td { opacity:.3; }\n.muted td { opacity:.3; color:var(--muted); }\n.datedim td { opacity:1; color:var(--muted); }\n.muted .store-chip { opacity:1; color:var(--muted); }\n.datedim .store-chip, .datedim .discount-price { opacity:.28; color:var(--muted); }\n.muted .store-mark, .datedim .store-mark { opacity:.35; }\n.datedim .day.active { opacity:.28; }\n.store-chip.off { opacity:.35; }\n.muted .store-chip.off { opacity:1; }\n/* Product pages: never fade the store chips or date squares when a store is filtered or a date window is outside the picker range — keep them fully visible. Scoped to #discountTable so the index dashboard keeps its comparison fading. */\n#discountTable .muted td, #discountTable .datedim td { opacity:1; }\n#discountTable .muted .store-chip, #discountTable .datedim .store-chip, #discountTable .store-chip.off { opacity:1; color:var(--fg); }\n#discountTable .muted .store-mark, #discountTable .datedim .store-mark { opacity:1; }\n#discountTable .datedim .day.active { opacity:1; }\n#discountTable .datedim .discount-price { opacity:1; }\n.store-mark { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:5px; background:var(--store-color); color:#0f172a; font-weight:700; font-size:.8rem; }\n.nutrition-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; }\n.nutrition-mode { display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }\n.nutrition-mode button { border:0; padding:5px 9px; background:transparent; color:var(--fg); cursor:pointer; }\n.nutrition-mode button + button { border-left:1px solid var(--border); }\n.nutrition-mode button.active { background:var(--accent); color:var(--bg); font-weight:600; }\n.produce-nav { display:flex; gap:8px; position:relative; top:6px; }\n.title-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }\n.nav-button { display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:999px; padding:3px 8px; font-size:14px; line-height:1.2; font-weight:700; text-decoration:none; color:var(--fg); background:var(--surface); }\n.nav-button:hover { border-color:var(--accent); color:var(--accent); }\n.back-button { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:6px 12px; text-decoration:none; color:var(--fg); background:var(--surface); }\n.back-button:hover { border-color:var(--accent); color:var(--accent); }\n.mode-rda, .mode-axis { display:none; }\n.mode-axis { width:135px; align-items:center; justify-content:flex-end; gap:5px; }\n.axis { display:inline-block; vertical-align:middle; width:100px; height:10px; margin-right:5px; background:var(--axis-track); border:0; border-radius:4px; overflow:hidden; }\n.axis-fill { display:block; min-width:3px; height:100%; background:var(--accent); border-radius:3px; }\n.axis-label { font-size:.8em; font-weight:600; color:var(--fg); }\n.timeline { display:flex; gap:8px; align-items:center; width:max-content; }\n.timeline .wk { display:flex; gap:3px; }\n.day { width:18px; height:18px; border-radius:4px; background:var(--track); opacity:.28;\n  display:flex; align-items:center; justify-content:center; font-size:8px; line-height:1;\n  font-weight:700; color:var(--logo-ink); cursor:pointer; user-select:none; }\n.day.active { background:var(--store-color, var(--accent)); opacity:1; color:#0f172a; border:0; }\n.day.sel { outline:2px solid var(--fg); outline-offset:1px; }\n.topbar { display:flex; justify-content:space-between; align-items:center; gap:16px; }\n.theme { display:flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; }\n.theme button { border:0; padding:6px 10px; background:transparent; color:var(--fg); cursor:pointer; }\n.theme button + button { border-left:1px solid var(--border); }\n.theme button.active { background:var(--accent); color:var(--bg); font-weight:600; }\n@media (max-width: 700px) { .nutrition-grid, .product-summary { grid-template-columns: 1fr; } }\n@media (max-width: 700px) {\n  body { padding:12px; }\n  .topbar { flex-wrap:wrap; align-items:flex-start; gap:10px; }\n  .topbar h1 { flex:1 1 100%; font-size:1.25rem; }\n  .theme, .toggles { flex-wrap:wrap; }\n  .toggles { margin-left:0; }\n  .legend { flex-wrap:wrap; gap:6px; }\n  .card { overflow-x:auto; }\n  #t, #rankingTable { min-width:760px; }\n  .ranking-heading { flex-wrap:wrap; }\n  .ranking-heading > div { display:flex; flex-wrap:wrap; gap:6px; width:100%; }\n  .ranking-heading select { flex:1 1 140px; min-width:0; }\n}\ntable { border-collapse: collapse; width: 100%; } th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }\n.nutrition-group th { text-align:left; width:50%; }\n.nutrition-group td { text-align:right; white-space:nowrap; }\nh1 { margin-bottom: 6px; } h2 { margin-top: 0; font-size: 1rem; }\n'
 PRODUCT_PAGE_HEAD_JS = "<script>try { const t=localStorage.getItem('grocery-theme'); if (t==='light' || t==='dark') { document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme=t; document.documentElement.style.backgroundColor=t==='dark'?'#1a1b26':'#eff1f5'; } } catch (e) {}</script>"
-PRODUCT_PAGE_FILTER_JS = '<script>\nconst key = \'grocery-theme\';\nfunction applyTheme(mode) {\n  if (mode === \'light\' || mode === \'dark\') document.documentElement.setAttribute(\'data-theme\', mode);\n  else document.documentElement.removeAttribute(\'data-theme\');\n}\napplyTheme(localStorage.getItem(key) || \'system\');\nconst nutritionMode = document.getElementById(\'nutritionMode\');\nnutritionMode.querySelectorAll(\'button\').forEach(button => button.onclick = () => {\n  const mode = button.dataset.mode;\n  document.querySelectorAll(\'.mode-raw, .mode-rda, .mode-axis\').forEach(item => item.style.display = \'none\');\n  document.querySelectorAll(\'.mode-\' + mode).forEach(item => item.style.display = mode === \'axis\' ? \'flex\' : \'inline\');\n  nutritionMode.querySelectorAll(\'button\').forEach(item => item.classList.toggle(\'active\', item === button));\n  localStorage.setItem(\'grocery-nutrition-mode\', mode);\n});\nnutritionMode.querySelector(\'[data-mode="\' + (localStorage.getItem(\'grocery-nutrition-mode\') || \'axis\') + \'"]\').click();\nconst hidden = new Set();\nconst todayParts = "{date.today().isoformat()}".split("-").map(Number);\nfunction offsetToIso(off) {\n  const d = new Date(Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2] + off));\n  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,\'0\')}-${String(d.getUTCDate()).padStart(2,\'0\')}`;\n}\nlet rangeStart = offsetToIso(0), rangeEnd = offsetToIso(13);\nfunction applyFilters() {\n  document.querySelectorAll(\'#discountTable .day\').forEach(day => day.classList.toggle(\'sel\', day.dataset.date === rangeStart || day.dataset.date === rangeEnd));\n  document.querySelectorAll(\'#discountTable tr[data-store]\').forEach(row => {\n    const storeMuted = hidden.has(row.dataset.store);\n    const outside = row.dataset.start && row.dataset.end && (row.dataset.end < rangeStart || row.dataset.start > rangeEnd);\n    row.classList.toggle(\'muted\', storeMuted);\n    row.classList.toggle(\'datedim\', !storeMuted && outside);\n  });\n}\nfunction setStoreHidden(store, hide) {\n  if (hide) hidden.add(store); else hidden.delete(store);\n  document.querySelectorAll(\'.store-chip\').forEach(chip => chip.classList.toggle(\'off\', hidden.has(chip.closest(\'tr\').dataset.store)));\n  applyFilters();\n}\ndocument.querySelectorAll(\'.store-chip\').forEach(chip => chip.onclick = () => setStoreHidden(chip.closest(\'tr\').dataset.store, !hidden.has(chip.closest(\'tr\').dataset.store)));\ndocument.querySelectorAll(\'.discount-price\').forEach(price => price.onclick = () => {\n  const store = price.closest(\'tr\').dataset.store;\n  setStoreHidden(store, !hidden.has(store));\n});\n// Date squares are display-only on detail pages: no drag-to-paint range\n// selection (that lives on the main dashboard, like the exact pages).\napplyFilters();\n</script>'
+PRODUCT_PAGE_NUTRITION_JS = '<script>\nconst key = \'grocery-theme\';\nfunction applyTheme(mode) {\n  if (mode === \'light\' || mode === \'dark\') document.documentElement.setAttribute(\'data-theme\', mode);\n  else document.documentElement.removeAttribute(\'data-theme\');\n}\ntry { applyTheme(localStorage.getItem(key) || \'system\'); } catch (e) { applyTheme(\'system\'); }\nconst nutritionMode = document.getElementById(\'nutritionMode\');\nconst hasNutrition = !!document.querySelector(\'.nutrition-grid .mode-raw\');\nnutritionMode.hidden = !hasNutrition;\ndocument.getElementById(\'dailyIntakeHelp\').hidden = !hasNutrition;\nnutritionMode.querySelectorAll(\'button\').forEach(button => button.onclick = () => {\n  const mode = button.dataset.mode;\n  document.querySelectorAll(\'.mode-raw, .mode-rda, .mode-axis\').forEach(item => item.style.display = \'none\');\n  document.querySelectorAll(\'.mode-\' + mode).forEach(item => item.style.display = mode === \'axis\' ? \'flex\' : \'inline\');\n  nutritionMode.querySelectorAll(\'button\').forEach(item => { item.classList.toggle(\'active\', item === button); item.setAttribute(\'aria-pressed\', String(item === button)); });\n  try { localStorage.setItem(\'grocery-nutrition-mode\', mode); } catch (e) {}\n});\nlet savedMode = \'axis\';\ntry { const stored = localStorage.getItem(\'grocery-nutrition-mode\'); if ([\'axis\', \'rda\', \'raw\'].includes(stored)) savedMode = stored; } catch (e) {}\nnutritionMode.querySelector(\'[data-mode="\' + savedMode + \'"]\').click();\n</script>'
 
 def slugify(text):
     """Stable slug for an exact product label, used in exact/ URLs."""
@@ -644,18 +644,23 @@ def render_product_page(pretty, image_html, nutrition_sections, source_html,
         "document.documentElement.style.colorScheme=t; "
         "document.documentElement.style.backgroundColor=t==='dark'?'#1a1b26':'#eff1f5'; } } catch (e) {}"
     )
-    filter_js = PRODUCT_PAGE_FILTER_JS if table_title == "Current discounts" else ""
+    nutrition_js = PRODUCT_PAGE_NUTRITION_JS
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(pretty)} · Grocery Prices</title>
 <script>{head_js_inline}</script>
-<style>{PRODUCT_PAGE_CSS}</style></head><body>
+<style>{PRODUCT_PAGE_CSS}
+[hidden] {{ display:none !important; }}
+.nutrition-mode {{ flex-wrap:wrap; }}
+.nutrition-mode button {{ min-height:44px; }}
+.store-chip, .discount-price {{ cursor:default; }}
+:focus-visible {{ outline:3px solid var(--accent); outline-offset:3px; }}</style></head><body>
 <p><a class="back-button" href="{esc(back_href)}">Back</a></p>
 <div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
 <div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>{esc(table_title)}</h2><table id="discountTable"><thead><tr><th>{esc(table_head)}</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
-<div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
-</body>{PRODUCT_PAGE_HEAD_JS}{filter_js}</html>"""
+<div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button type="button" data-mode="axis" aria-pressed="true">Bars</button><button type="button" data-mode="rda" aria-pressed="false">% daily intake</button><button type="button" data-mode="raw" aria-pressed="false">Amounts</button></div></div><p id="dailyIntakeHelp" class="muted">Percentages compare 100 g with recommended daily intake (RDA) for adults. These are reference values, not personal dietary advice; needs vary. Bars show relative amounts; Amounts show measured units.</p><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
+</body>{PRODUCT_PAGE_HEAD_JS}{nutrition_js}</html>"""
 
 
 def write_product_pages(products, nutrition, exact_page_slugs=None):
@@ -1378,38 +1383,77 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   .ranking-heading > div {{ display:flex; flex-wrap:wrap; gap:6px; width:100%; }}
   .ranking-heading select {{ flex:1 1 140px; min-width:0; }}
 }}
+
+/* Native controls share comfortable targets and a visible keyboard focus. */
+button, select, input {{ font:inherit; color:var(--fg); background:var(--surface); border:1px solid var(--border); border-radius:8px; }}
+button, select, input[type="search"], input[type="date"] {{ min-height:44px; padding:8px 12px; }}
+button {{ cursor:pointer; }}
+button[aria-pressed="true"] {{ border-color:var(--accent); background:var(--surface); box-shadow:inset 0 -3px var(--accent); }}
+:focus-visible {{ outline:3px solid var(--accent); outline-offset:3px; }}
+[hidden] {{ display:none !important; }}
+.topbar {{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; align-items:center; }}
+.controls {{ display:block; margin:12px 0; }}
+#secondaryFilters {{ display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin:8px 0; }}
+.nonmatching, .theme, .nutrition-filter {{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-height:44px; }}
+.nutrition-filter input {{ width:20px; height:20px; }}
+.legend {{ flex-wrap:wrap; }}
+.legend .chip {{ min-height:44px; padding:8px 12px; color:var(--fg); }}
+.date-controls {{ margin:14px 0; }}
+.date-presets {{ display:flex; flex-wrap:wrap; gap:8px; }}
+#customRange {{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }}
+#rankToggle {{ margin:0 0 10px; }}
+#filterSummary {{ font-size:.88rem; line-height:1.6; overflow-wrap:anywhere; }}
+#resetFilters {{ margin-bottom:12px; }}
+.ranking-card {{ overflow-x:auto; }}
+.ranking-heading {{ flex-wrap:wrap; gap:8px; }}
+#t .ppcell, .ranking-store {{ cursor:default; }}
+@media(max-width:600px) {{
+  .page {{ min-width:0; width:auto; }}
+  .filter-controls {{ display:flex; flex-direction:column; align-items:stretch; gap:12px; width:100%; }}
+  .category-filter, .search-filter {{ display:flex; flex-direction:column; align-items:stretch; width:100%; min-width:0; max-width:100%; }}
+  .category-filter select, .search-filter input {{ width:100%; min-width:0; max-width:100%; box-sizing:border-box; }}
+  .controls {{ width:100%; }}
+  #secondaryFilters {{ flex-direction:column; align-items:stretch; }}
+  .legend {{ gap:8px; }}
+  .theme select {{ flex:1; }}
+  #customRange {{ flex-direction:column; align-items:stretch; }}
+  .ranking-heading > div {{ display:flex; flex-wrap:wrap; max-width:100%; gap:8px; }}
+}}
 </style></head>
 <body>
 <div class="page">
 <div class="topbar">
   <h1>🪸 Grocery Prices</h1>
-  <div class="controls">
-    <div class="theme" id="themeSwitch">
-      <button data-theme="light">Light</button>
-      <button data-theme="dark">Dark</button>
-      <button data-theme="system">System</button>
-    </div>
-    <div class="toggles">
-      <span class="toggle" id="hideToggle" title="Hide rows whose discounts fall outside the selected date range">Hide irrelevant</span>
-      <span class="toggle" id="rankToggle">Rank by nutrient</span>
-    </div>
-  </div>
+<div class="theme" id="themeSwitch"><label for="appearance">Appearance</label><select id="appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
 </div>
-<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><div class="search-filter"><label for="productSearch">Search</label><input id="productSearch" type="search" placeholder="Find products" autocomplete="off"></div><button class="toggle" id="nutritionFilter" type="button" aria-pressed="false">Nutrition only</button></div>
-<div class="card ranking-card" id="rankingCard" hidden>
-  <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
-  <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
-  <table id="rankingTable"><thead><tr><th>Product</th><th>Price per 100% RDA</th><th>Discount days</th><th>Price</th></tr></thead><tbody></tbody></table>
-</div>
+<div class="filter-controls"><div class="category-filter"><label for="categoryFilter">Category</label><select id="categoryFilter">{category_options}</select></div><div class="search-filter"><label for="productSearch">Search</label><input id="productSearch" type="search" placeholder="Find products" autocomplete="off"></div></div>
+<div class="controls">
+<button type="button" id="filtersToggle" aria-expanded="true" aria-controls="secondaryFilters">Filters <span id="activeFilterCount">(0)</span> <span class="disclosure" aria-hidden="true">▾</span></button>
+<div id="secondaryFilters">
+<div role="group" aria-label="Nonmatching offers" class="nonmatching">Nonmatching offers <button type="button" id="dimToggle" aria-pressed="true">Dim</button><button type="button" id="hideToggle" aria-pressed="false">Hide</button></div>
+<label class="nutrition-filter"><input id="nutritionFilter" type="checkbox"> With nutrition data</label>
+
+</div></div>
 <div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
  {n_stores} stores</div>
 {'<p class="meta">Tesco prices are online reference-store offers. Clubcard prices require membership.</p>' if tesco_online else ''}
-<div class="legend">
-  <span class="chip" data-store="Lidl">{store_logo("Lidl")} Lidl</span>
-  <span class="chip" data-store="Tesco">{store_logo("Tesco")} Tesco</span>
-  <span class="chip" data-store="Albert">{store_logo("Albert")} Albert</span>
-  <span class="chip" data-store="Billa">{store_logo("Billa")} Billa</span>
+<p class="meta">Stores</p><div class="legend" role="group" aria-label="Stores">
+  <button type="button" class="chip" aria-label="Lidl" aria-pressed="true" data-store="Lidl"><span class="inclusion" aria-hidden="true">✓</span>{store_logo("Lidl")} Lidl</button>
+  <button type="button" class="chip" aria-label="Tesco" aria-pressed="true" data-store="Tesco"><span class="inclusion" aria-hidden="true">✓</span>{store_logo("Tesco")} Tesco</button>
+  <button type="button" class="chip" aria-label="Albert" aria-pressed="true" data-store="Albert"><span class="inclusion" aria-hidden="true">✓</span>{store_logo("Albert")} Albert</button>
+  <button type="button" class="chip" aria-label="Billa" aria-pressed="true" data-store="Billa"><span class="inclusion" aria-hidden="true">✓</span>{store_logo("Billa")} Billa</button>
 </div>
+<section class="date-controls" aria-label="Discount dates"><p class="meta">Dates</p>
+  <div class="date-presets" role="group" aria-label="Date window"><button type="button" data-range="today" aria-pressed="false">Today</button><button type="button" data-range="week" aria-pressed="false">Next 7 days</button><button type="button" data-range="full" aria-pressed="true">Full window</button><button type="button" id="chooseRange" aria-expanded="false" aria-controls="customRange">Choose range</button></div>
+  <div id="customRange" hidden><label for="rangeStart">Start date</label><input type="date" id="rangeStart"><label for="rangeEnd">End date</label><input type="date" id="rangeEnd"></div>
+</section>
+<button type="button" class="toggle" id="rankToggle" aria-expanded="false" aria-controls="rankingCard" aria-label="Best nutrient value"><span class="disclosure" aria-hidden="true">▸</span> Best nutrient value</button>
+<div class="card ranking-card" id="rankingCard" hidden>
+  <div class="ranking-heading"><h2>Best nutrient value</h2><div><select id="rankingCategory"></select> <select id="rankingNutrient"></select></div></div>
+  <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% recommended daily intake (RDA). Per-piece offers are included only when their package weight is explicit.</p>
+  <table id="rankingTable"><thead><tr><th>Product</th><th>Price per 100% RDA</th><th>Discount days</th><th>Price</th></tr></thead><tbody></tbody></table>
+</div>
+<p id="filterSummary" role="status" aria-live="polite"></p><button type="button" id="resetFilters">Reset filters</button>
 <div class="table-scroll"><table id="t">
 <thead><tr>
 <th data-k="prod">Product</th>
@@ -1517,11 +1561,6 @@ rows.forEach(row => {{
 function rowMatchesSearch(row) {{
   return !productSearch.value || row.dataset.searchName.includes(searchKey(productSearch.value));
 }}
-function applyProductSearch() {{
-  const query = searchKey(productSearch.value);
-  rows.forEach(row => row.classList.toggle('search-hidden', !!query && !row.dataset.searchName.includes(query)));
-  if (!rankingCard.hidden) updateRanking();
-}}
 function updateRanking() {{
   if (!rankingCard || rankingCard.hidden || !rankingNutrient.value) return;
   const label = rankingNutrient.value;
@@ -1531,11 +1570,13 @@ function updateRanking() {{
     .sort((a, b) => a.rdaCost - b.rdaCost)
     .slice(0, 10);
   rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img src="${{item.image}}" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{rankingDateLabels[i]}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
-  rankingTableBody.querySelectorAll('.ranking-store').forEach(store => store.onclick = () => setStoreHidden(store.dataset.store, !hidden.has(store.dataset.store)));
+
 }}
 document.getElementById('rankToggle').onclick = () => {{
   rankingCard.hidden = !rankingCard.hidden;
   document.getElementById('rankToggle').classList.toggle('on', !rankingCard.hidden);
+  document.getElementById('rankToggle').setAttribute('aria-expanded', String(!rankingCard.hidden));
+  document.querySelector('#rankToggle .disclosure').textContent = rankingCard.hidden ? '▸' : '▾';
   updateRanking();
   saveFilters();
 }};
@@ -1545,7 +1586,7 @@ let searchTimer;
 productSearch.oninput = () => {{
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {{
-    applyProductSearch();
+    applyFilters();
     saveFilters();
   }}, 180);
 }};
@@ -1587,6 +1628,7 @@ function applyFilters() {{
     d.classList.toggle('sel', on);
   }});
 
+  let matchingProducts = 0;
   rows.forEach(r => {{
     // Pair each rendered offer's price cell (.ppcell) and date cell (.dcell)
     // by data-line, not by store. A store can now have several overlapping
@@ -1636,67 +1678,38 @@ function applyFilters() {{
     r.classList.toggle('rowout', fullyOut);
     const matchesNutrition = !nutritionOnly || r.dataset.hasNutrition === 'true';
     const show = anyLineShown && matchesNutrition;
+    if (shown > 0 && !searchHidden && matchesNutrition) matchingProducts++;
     r.style.display = show ? '' : 'none';
   }});
   updateRanking();
+  const includedStores = chips.filter(c => !hidden.has(c.dataset.store)).map(c => c.dataset.store);
+  const filterCount = Number(categoryFilter.value !== 'Ovoce a zelenina') + Number(!!productSearch.value) + Number(hidden.size > 0) + Number(rangeStart !== offsetToIso(0) || rangeEnd !== offsetToIso({picker_span})) + Number(nutritionOnly) + Number(hideIrrelevant);
+  document.getElementById('activeFilterCount').textContent = `(${{filterCount}})`;
+  document.getElementById('filterSummary').textContent = `${{matchingProducts}} matching product${{matchingProducts === 1 ? '' : 's'}} · Stores: ${{includedStores.join(', ') || 'none'}} · ${{rangeStart}} – ${{rangeEnd}}`;
 }}
-// Toggle a store's mute (used by the store icons in the Price column and the
-// ranking table). Reflects state on the chip (.off) and on every .ppcell
-// belonging to that store (.muted look) via applyFilters(). The top legend
-// chips no longer use this — they drive an exclusive "show only one shop"
-// filter through setSoloShop() instead.
+// Store buttons independently include or exclude a retailer. Prices are informational.
 function setStoreHidden(s, hide) {{
   if (hide) {{ hidden.add(s); }} else {{ hidden.delete(s); }}
   const chip = chips.find(c => c.dataset.store === s);
-  if (chip) chip.classList.toggle('off', hide);
+  if (chip) {{ chip.classList.toggle('off', hide); chip.setAttribute('aria-pressed', String(!hide)); chip.querySelector('.inclusion').textContent = hide ? '−' : '✓'; }}
   applyFilters();
   saveFilters();
-}}
-// Top legend chips: click-to-solo. Clicking a shop shows ONLY that shop (all
-// others are muted); clicking the already-soloed shop again clears the filter
-// and shows every shop. The per-product store-row clicks below keep their
-// independent toggle-mute behaviour (setStoreHidden).
-function setSoloShop(s) {{
-  chips.forEach(c => {{
-    const st = c.dataset.store;
-    if (s) {{
-      if (st === s) hidden.delete(st); else hidden.add(st);
-    }} else {{
-      hidden.delete(st);
-    }}
-    c.classList.toggle('off', hidden.has(st));
-  }});
-  applyFilters();
-  saveFilters();
-}}
-// The currently exclusive (solo) shop, or null when more than one (or none) is visible.
-function soloShop() {{
-  const visible = chips.map(c => c.dataset.store).filter(st => !hidden.has(st));
-  return visible.length === 1 ? visible[0] : null;
 }}
 chips.forEach(chip => {{
-  chip.onclick = () => {{
-    const s = chip.dataset.store;
-    setSoloShop(soloShop() === s ? null : s);
-  }};
-}});
-// Clicking a store icon in the Price column toggles that store's filter too.
-document.querySelectorAll('#t .ppcell').forEach(pc => {{
-  pc.style.cursor = 'pointer';
-  pc.onclick = (e) => {{
-    e.stopPropagation();
-    const s = pc.dataset.store;
-    setStoreHidden(s, !hidden.has(s));
-  }};
+  chip.onclick = () => setStoreHidden(chip.dataset.store, !hidden.has(chip.dataset.store));
 }});
 
-// The header date picker was removed — the body date-column squares are the
-// only date control now. The header just shows a static "Date" column label.
+// Global date controls and row click/drag share the same bounded selection.
 let offS = 0, offE = {picker_span};   // selected day offsets (0 = today)
 const SPAN_MAX = {picker_span};       // last day offset (full window)
 function syncView() {{
   const ds = offsetToIso(offS), de = offsetToIso(offE);
   rangeStart = ds; rangeEnd = de;
+  const startInput = document.getElementById('rangeStart'), endInput = document.getElementById('rangeEnd');
+  [startInput, endInput].forEach(input => {{ input.min = offsetToIso(0); input.max = offsetToIso(SPAN_MAX); }});
+  startInput.value = ds; endInput.value = de;
+  document.querySelectorAll('[data-range]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.range === 'today' ? offS === 0 && offE === 0 : button.dataset.range === 'week' ? offS === 0 && offE === Math.min(6, SPAN_MAX) : offS === 0 && offE === SPAN_MAX)));
+  document.getElementById('dateLabel').textContent = `Date · ${{ds}} – ${{de}}`;
   applyFilters();
   saveFilters();
 }}
@@ -1705,6 +1718,7 @@ function syncView() {{
 // both thresholds by where you start and stop. A plain click also works (start =
 // end, so it collapses to a single day, then drag extends it).
 function setRange(a, b) {{
+  a = Math.max(0, Math.min(SPAN_MAX, a)); b = Math.max(0, Math.min(SPAN_MAX, b));
   offS = Math.min(a, b); offE = Math.max(a, b);
   syncView();
 }}
@@ -1786,42 +1800,38 @@ function isoToOffset(iso) {{
 // fall outside the selected date range. Default OFF — every row stays visible
 // (dimmed where out of range) so the table never jumps.
 const hideBtn = document.getElementById('hideToggle');
-hideBtn.onclick = () => {{
-  hideIrrelevant = !hideIrrelevant;
-  hideBtn.classList.toggle('on', hideIrrelevant);
-  applyFilters();
-  saveFilters();
-}};
-
+const dimBtn = document.getElementById('dimToggle');
+function syncNonmatching() {{
+  hideBtn.setAttribute('aria-pressed', String(hideIrrelevant));
+  dimBtn.setAttribute('aria-pressed', String(!hideIrrelevant));
+}}
+[hideBtn, dimBtn].forEach(button => button.onclick = () => {{
+  hideIrrelevant = button === hideBtn;
+  syncNonmatching(); applyFilters(); saveFilters();
+}});
 const nutritionFilterBtn = document.getElementById('nutritionFilter');
-nutritionFilterBtn.onclick = () => {{
-  nutritionOnly = !nutritionOnly;
-  nutritionFilterBtn.classList.toggle('on', nutritionOnly);
-  nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
+nutritionFilterBtn.onchange = () => {{
+  nutritionOnly = nutritionFilterBtn.checked;
   t.classList.toggle('nutrition-only', nutritionOnly);
-  saveFilters();
+  applyFilters(); saveFilters();
 }};
 
 // Light / Dark / System theme switcher (persisted in localStorage).
-const themeSwitch = document.getElementById('themeSwitch');
 const THEME_KEY = 'grocery-theme';
 function applyTheme(mode) {{
+  document.documentElement.style.removeProperty('background-color');
+  document.documentElement.style.colorScheme = ['light', 'dark'].includes(mode) ? mode : 'light dark';
   if (mode === 'light' || mode === 'dark') {{
     document.documentElement.setAttribute('data-theme', mode);
   }} else {{
     document.documentElement.removeAttribute('data-theme'); // follow OS
   }}
-  themeSwitch.querySelectorAll('button').forEach(b => {{
-    b.classList.toggle('active', b.dataset.theme === mode);
-  }});
+  document.getElementById('appearance').value = ['light', 'dark'].includes(mode) ? mode : 'system';
 }}
-themeSwitch.querySelectorAll('button').forEach(b => {{
-  b.onclick = () => {{
-    const mode = b.dataset.theme;
-    applyTheme(mode);
-    try {{ localStorage.setItem(THEME_KEY, mode); }} catch (e) {{}}
-  }};
-}});
+document.getElementById('appearance').onchange = (e) => {{
+  const mode = e.target.value; applyTheme(mode);
+  try {{ localStorage.setItem(THEME_KEY, mode); }} catch (e) {{}}
+}};
 let saved = 'system';
 try {{ saved = localStorage.getItem(THEME_KEY) || 'system'; }} catch (e) {{}}
 applyTheme(saved);
@@ -1835,14 +1845,13 @@ if (savedFilterState && typeof savedFilterState === 'object') {{
   if (typeof savedFilterState.search === 'string')
     productSearch.value = savedFilterState.search;
   if (Array.isArray(savedFilterState.hiddenStores)) {{
-    savedFilterState.hiddenStores.forEach(s => hidden.add(s));
-    chips.forEach(chip => chip.classList.toggle('off', hidden.has(chip.dataset.store)));
+    savedFilterState.hiddenStores.forEach(s => {{ if (chips.some(chip => chip.dataset.store === s)) hidden.add(s); }});
+    chips.forEach(chip => {{ const hide = hidden.has(chip.dataset.store); chip.classList.toggle('off', hide); chip.setAttribute('aria-pressed', String(!hide)); chip.querySelector('.inclusion').textContent = hide ? '−' : '✓'; }});
   }}
   hideIrrelevant = savedFilterState.hideIrrelevant === true;
   nutritionOnly = savedFilterState.nutritionOnly === true;
-  hideBtn.classList.toggle('on', hideIrrelevant);
-  nutritionFilterBtn.classList.toggle('on', nutritionOnly);
-  nutritionFilterBtn.setAttribute('aria-pressed', String(nutritionOnly));
+  syncNonmatching();
+  nutritionFilterBtn.checked = nutritionOnly;
   t.classList.toggle('nutrition-only', nutritionOnly);
   if (Number.isInteger(savedFilterState.rangeStartOffset) && Number.isInteger(savedFilterState.rangeEndOffset)) {{
     offS = Math.max(0, Math.min(SPAN_MAX, savedFilterState.rangeStartOffset));
@@ -1850,6 +1859,8 @@ if (savedFilterState && typeof savedFilterState === 'object') {{
   }}
   rankingCard.hidden = savedFilterState.rankingVisible !== true;
   document.getElementById('rankToggle').classList.toggle('on', !rankingCard.hidden);
+  document.getElementById('rankToggle').setAttribute('aria-expanded', String(!rankingCard.hidden));
+  document.querySelector('#rankToggle .disclosure').textContent = rankingCard.hidden ? '▸' : '▾';
   if ([...rankingCategory.options].some(o => o.value === savedFilterState.rankingCategory))
     rankingCategory.value = savedFilterState.rankingCategory;
   refreshRankingNutrients();
@@ -1857,6 +1868,38 @@ if (savedFilterState && typeof savedFilterState === 'object') {{
     rankingNutrient.value = savedFilterState.rankingNutrient;
   syncView();
 }}
+const filtersToggle = document.getElementById('filtersToggle');
+const secondaryFilters = document.getElementById('secondaryFilters');
+secondaryFilters.hidden = matchMedia('(max-width: 600px)').matches;
+filtersToggle.setAttribute('aria-expanded', String(!secondaryFilters.hidden)); filtersToggle.querySelector('.disclosure').textContent = secondaryFilters.hidden ? '▸' : '▾';
+filtersToggle.onclick = () => {{ secondaryFilters.hidden = !secondaryFilters.hidden; filtersToggle.setAttribute('aria-expanded', String(!secondaryFilters.hidden)); filtersToggle.querySelector('.disclosure').textContent = secondaryFilters.hidden ? '▸' : '▾'; }};
+document.querySelectorAll('[data-range]').forEach(button => button.onclick = () => {{
+  setRange(0, button.dataset.range === 'today' ? 0 : button.dataset.range === 'week' ? Math.min(6, SPAN_MAX) : SPAN_MAX);
+}});
+document.getElementById('chooseRange').onclick = () => {{
+  const panel = document.getElementById('customRange'); panel.hidden = !panel.hidden;
+  document.getElementById('chooseRange').setAttribute('aria-expanded', String(!panel.hidden));
+}};
+['rangeStart', 'rangeEnd'].forEach(id => document.getElementById(id).onchange = () => {{
+  const input = document.getElementById(id);
+  if (!input.value) {{ syncView(); return; }}
+  const offset = isoToOffset(input.value);
+  if (!Number.isFinite(offset)) {{ syncView(); return; }}
+  if (id === 'rangeStart') setRange(offset, Math.max(offset, offE));
+  else setRange(Math.min(offS, offset), offset);
+}});
+document.getElementById('resetFilters').onclick = () => {{
+  clearTimeout(searchTimer); hidden.clear();
+  chips.forEach(chip => {{ chip.classList.remove('off'); chip.setAttribute('aria-pressed', 'true'); chip.querySelector('.inclusion').textContent = '✓'; }});
+  categoryFilter.value = [...categoryFilter.options].some(o => o.value === 'Ovoce a zelenina') ? 'Ovoce a zelenina' : (categoryFilter.options[0]?.value || '');
+  productSearch.value = ''; hideIrrelevant = false; nutritionOnly = false;
+  nutritionFilterBtn.checked = false; t.classList.remove('nutrition-only'); syncNonmatching();
+  rankingCard.hidden = true; document.getElementById('rankToggle').setAttribute('aria-expanded', 'false');
+  document.getElementById('rankToggle').classList.remove('on'); document.querySelector('#rankToggle .disclosure').textContent = '▸';
+  rankingCategory.selectedIndex = 0; refreshRankingNutrients(); rankingNutrient.selectedIndex = 0;
+  document.getElementById('customRange').hidden = true; document.getElementById('chooseRange').setAttribute('aria-expanded', 'false');
+  setRange(0, SPAN_MAX);
+}};
 </script>
 </body></html>"""
     return html

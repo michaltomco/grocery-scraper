@@ -168,6 +168,7 @@ class DashboardBrowserTests(unittest.TestCase):
     def setUp(self) -> None:
         self.context: BrowserContext = self.browser.new_context(viewport={"width": 1440, "height": 1000})
         self.page: Page = self.context.new_page()
+        self.page.set_default_timeout(5000)
         self.console_errors: list[str] = []
         self.page_errors: list[str] = []
         self.page.on("console", lambda message: self.console_errors.append(message.text) if message.type == "error" else None)
@@ -179,6 +180,154 @@ class DashboardBrowserTests(unittest.TestCase):
     def assert_browser_clean(self) -> None:
         self.assertEqual(self.console_errors, [], f"console errors: {self.console_errors}")
         self.assertEqual(self.page_errors, [], f"page errors: {self.page_errors}")
+
+    def test_exact_modes_handle_corrupt_storage_and_prices_do_not_filter(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until='networkidle')
+        self.page.evaluate("localStorage.setItem('grocery-nutrition-mode', '\"[broken')")
+        self.page.goto(f"{self.base_url}/products/exact/jablka_gala_1_kg__albert.html", wait_until='networkidle')
+        self.assertEqual(self.page.locator('#nutritionMode [data-mode="axis"]').get_attribute('aria-pressed'), 'true')
+        self.page.get_by_role('button', name='% daily intake', exact=True).click()
+        self.assertEqual(self.page.locator('.mode-rda').first.evaluate('el => getComputedStyle(el).display'), 'inline')
+        self.page.locator('.discount-price').click()
+        self.assertEqual(self.page.locator('#discountTable .muted').count(), 0)
+        self.page.goto(f"{self.base_url}/products/jablka.html", wait_until='networkidle')
+        self.page.locator('.discount-price').first.click()
+        self.assertEqual(self.page.locator('#discountTable .muted').count(), 0)
+        self.assert_browser_clean()
+
+    def test_appearance_switch_clears_preloaded_theme_styles(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until='networkidle')
+        self.page.get_by_role('combobox', name='Appearance', exact=True).select_option('dark')
+        self.page.reload(wait_until='networkidle')
+        self.page.get_by_role('combobox', name='Appearance', exact=True).select_option('light')
+        self.assertEqual(self.page.locator('html').evaluate('el => getComputedStyle(el).backgroundColor'), 'rgb(239, 241, 245)')
+        self.assertEqual(self.page.locator('html').evaluate('el => getComputedStyle(el).colorScheme'), 'light')
+        self.page.get_by_role('combobox', name='Appearance', exact=True).select_option('system')
+        self.assertEqual(self.page.locator('html').evaluate('el => el.style.backgroundColor'), '')
+        self.assertEqual(self.page.locator('html').evaluate('el => el.style.colorScheme'), 'light dark')
+        self.assert_browser_clean()
+
+    def test_appearance_header_and_disclosure_indicator(self) -> None:
+        self.page.set_viewport_size({'width': 390, 'height': 844})
+        self.page.goto(f"{self.base_url}/index.html", wait_until='networkidle')
+        self.assertEqual(self.page.get_by_role('combobox', name='Appearance', exact=True).count(), 1)
+        self.assertEqual(self.page.locator('#filtersToggle .disclosure').inner_text(), '▸')
+        self.page.locator('#filtersToggle').click()
+        self.assertEqual(self.page.locator('#filtersToggle .disclosure').inner_text(), '▾')
+        self.assert_browser_clean()
+
+    def test_detail_modes_are_plain_language_and_unavailable_modes_hidden(self) -> None:
+        self.page.goto(f"{self.base_url}/products/jablka.html", wait_until='networkidle')
+        self.assertEqual(self.page.get_by_role('button', name='Bars', exact=True).count(), 1)
+        self.page.get_by_role('button', name='% daily intake', exact=True).click()
+        self.assertEqual(self.page.get_by_role('button', name='% daily intake', exact=True).get_attribute('aria-pressed'), 'true')
+        self.assertIn('recommended daily intake', self.page.locator('#dailyIntakeHelp').inner_text())
+        self.page.get_by_role('button', name='Amounts', exact=True).click()
+        self.page.reload(wait_until='networkidle')
+        self.assertEqual(self.page.get_by_role('button', name='Amounts', exact=True).get_attribute('aria-pressed'), 'true')
+        self.page.goto(f"{self.base_url}/products/exact/chléb__albert.html", wait_until='networkidle')
+        self.assertEqual(self.page.locator('#nutritionMode:visible').count(), 0)
+        self.assert_browser_clean()
+
+    def test_mobile_filters_appearance_and_touch_targets(self) -> None:
+        self.page.set_viewport_size({'width': 390, 'height': 844})
+        self.page.goto(f"{self.base_url}/index.html", wait_until='networkidle')
+        disclosure = self.page.locator('#filtersToggle')
+        self.assertEqual(disclosure.get_attribute('aria-expanded'), 'false')
+        disclosure.click()
+        self.assertEqual(disclosure.get_attribute('aria-expanded'), 'true')
+        self.assertEqual(self.page.get_by_role('combobox', name='Appearance', exact=True).count(), 1)
+        self.page.get_by_role('combobox', name='Appearance', exact=True).select_option('light')
+        self.page.get_by_role('checkbox', name='With nutrition data').check()
+        self.assertIn('1', disclosure.inner_text())
+        self.page.get_by_role('button', name='Reset filters', exact=True).click()
+        self.assertEqual(self.page.locator('html').get_attribute('data-theme'), 'light')
+        self.page.reload(wait_until='networkidle')
+        disclosure.click()
+        self.assertEqual(self.page.get_by_role('combobox', name='Appearance', exact=True).input_value(), 'light')
+        metrics = self.page.evaluate('''() => ({width: innerWidth, body: document.body.scrollWidth, toolbar: document.querySelector('.filter-controls').scrollWidth, controls: document.querySelector('.controls').scrollWidth})''')
+        self.assertLessEqual(metrics['body'], metrics['width'], metrics)
+        self.assertLessEqual(metrics['toolbar'], metrics['width'], metrics)
+        self.assertLessEqual(metrics['controls'], metrics['width'], metrics)
+        category = self.page.locator('.category-filter').bounding_box()
+        search = self.page.locator('.search-filter').bounding_box()
+        self.assertGreater(search['y'], category['y'])
+        self.assertGreaterEqual(search['width'], 340)
+        for selector in ['.legend .chip', '#rankToggle', '.date-presets button', '#filtersToggle', '#appearance']:
+            for box in self.page.locator(selector).evaluate_all('els => els.filter(el => el.getClientRects().length).map(el => el.getBoundingClientRect().height)'):
+                self.assertGreaterEqual(box, 44, selector)
+        self.assert_browser_clean()
+
+    def test_date_presets_summary_custom_bounds_and_reset(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.assertEqual(self.page.get_by_role('button', name='Today', exact=True).count(), 1)
+        self.page.get_by_role('button', name='Today', exact=True).click()
+        start = self.page.locator('#rangeStart').input_value()
+        self.assertEqual(start, self.page.locator('#rangeEnd').input_value())
+        self.assertIn(start, self.page.locator('#filterSummary').inner_text())
+        self.assertIn('1 matching product', self.page.locator('#filterSummary').inner_text())
+        self.page.get_by_role('button', name='Next 7 days', exact=True).click()
+        self.assertEqual(self.page.evaluate("JSON.parse(localStorage.getItem('grocery-filters')).rangeEndOffset"), 6)
+        self.page.get_by_role('button', name='Choose range', exact=True).click()
+        self.assertTrue(self.page.locator('#rangeStart').is_visible())
+        self.assertEqual(self.page.locator('#rangeStart').get_attribute('min'), start)
+        self.page.locator('#rangeStart').fill(self.page.locator('#rangeEnd').get_attribute('max'))
+        self.assertEqual(self.page.locator('#rangeStart').input_value(), self.page.locator('#rangeEnd').input_value())
+        self.assertIn('0 matching products', self.page.locator('#filterSummary').inner_text())
+        self.page.get_by_role('button', name='Albert', exact=True).click()
+        self.page.get_by_role('button', name='Tesco', exact=True).click()
+        self.page.get_by_role('button', name='Full window', exact=True).click()
+        self.assertIn('0 matching products', self.page.locator('#filterSummary').inner_text())
+        self.page.locator('#categoryFilter').select_option(label='Pečivo')
+        self.page.locator('#productSearch').fill('nothing')
+        self.page.get_by_role('checkbox', name='With nutrition data').check()
+        self.page.get_by_role('button', name='Hide', exact=True).click()
+        self.page.get_by_role('button', name='Best nutrient value', exact=True).click()
+        self.page.get_by_role('button', name='Reset filters', exact=True).click()
+        self.assertEqual(self.page.locator('#categoryFilter').input_value(), 'Ovoce a zelenina')
+        self.assertEqual(self.page.locator('#productSearch').input_value(), '')
+        self.assertFalse(self.page.locator('#nutritionFilter').is_checked())
+        self.assertEqual(self.page.locator('#dimToggle').get_attribute('aria-pressed'), 'true')
+        self.assertTrue(self.page.locator('#rankingCard').is_hidden())
+        self.assertEqual(self.page.locator('.legend [aria-pressed="true"]').count(), 4)
+        self.assertIn('1 matching product', self.page.locator('#filterSummary').inner_text())
+        self.page.reload(wait_until='networkidle')
+        self.assertIn('1 matching product', self.page.locator('#filterSummary').inner_text())
+        self.assert_browser_clean()
+
+    def test_semantic_nonmatching_nutrition_and_ranking_controls(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.assertEqual(self.page.get_by_role('button', name='Dim', exact=True).count(), 1)
+        self.assertEqual(self.page.get_by_role('button', name='Dim', exact=True).get_attribute('aria-pressed'), 'true')
+        self.page.get_by_role('button', name='Hide', exact=True).click()
+        self.assertEqual(self.page.get_by_role('button', name='Hide', exact=True).get_attribute('aria-pressed'), 'true')
+        rank = self.page.get_by_role('button', name='Best nutrient value', exact=True)
+        before = self.page.locator('#t .pname').all_text_contents()
+        rank.click()
+        self.assertEqual(rank.get_attribute('aria-expanded'), 'true')
+        self.assertEqual(self.page.locator('#t .pname').all_text_contents(), before)
+        self.page.locator('#categoryFilter').select_option(label='Pečivo')
+        self.page.get_by_role('checkbox', name='With nutrition data').check()
+        self.assertEqual(self.page.locator('#t tbody tr:visible').count(), 0)
+        self.page.reload(wait_until='networkidle')
+        self.assertTrue(self.page.get_by_role('checkbox', name='With nutrition data').is_checked())
+        self.assertEqual(rank.get_attribute('aria-expanded'), 'true')
+        self.assertEqual(self.page.locator('#t tbody tr:visible').count(), 0)
+        self.assert_browser_clean()
+
+    def test_store_buttons_toggle_inclusion_and_prices_are_informational(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        store = self.page.get_by_role("button", name="Albert", exact=True)
+        self.assertEqual(store.get_attribute("aria-pressed"), "true")
+        store.focus()
+        self.page.keyboard.press("Space")
+        self.assertEqual(store.get_attribute("aria-pressed"), "false")
+        self.assertEqual(self.page.locator('.legend .chip[data-store="Tesco"]').get_attribute("aria-pressed"), "true")
+        self.page.locator('#t .ppcell[data-store="Albert"]:visible').first.click()
+        self.assertEqual(store.get_attribute("aria-pressed"), "false")
+        store.click()
+        self.assertEqual(store.get_attribute("aria-pressed"), "true")
+        self.assert_browser_clean()
 
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
@@ -192,7 +341,7 @@ class DashboardBrowserTests(unittest.TestCase):
             2,
         )
 
-        self.page.get_by_role("button", name="Light").click()
+        self.page.get_by_role("combobox", name="Appearance").select_option("light")
         self.assertEqual(self.page.locator("html").get_attribute("data-theme"), "light")
         self.assertEqual(self.page.evaluate("localStorage.getItem('grocery-theme')"), "light")
         self.page.reload(wait_until="networkidle")
@@ -200,14 +349,14 @@ class DashboardBrowserTests(unittest.TestCase):
 
         tesco_chip = self.page.locator('.legend .chip[data-store="Tesco"]')
         tesco_chip.click()
-        self.assertNotIn("off", tesco_chip.get_attribute("class") or "")
-        self.assertIn("off", self.page.locator('.legend .chip[data-store="Albert"]').get_attribute("class") or "")
+        self.assertIn("off", tesco_chip.get_attribute("class") or "")
+        self.assertNotIn("off", self.page.locator('.legend .chip[data-store="Albert"]').get_attribute("class") or "")
         self.assertEqual(
-            self.page.locator('.ppcell[data-store="Albert"].muted').count(),
-            self.page.locator('.ppcell[data-store="Albert"]').count(),
+            self.page.locator('.ppcell[data-store="Tesco"].muted').count(),
+            self.page.locator('.ppcell[data-store="Tesco"]').count(),
         )
 
-        self.page.get_by_text("Rank by nutrient", exact=True).click()
+        self.page.get_by_role("button", name="Best nutrient value", exact=True).click()
         self.assertFalse(self.page.locator("#rankingCard").is_hidden())
         self.page.locator("#rankingCategory").select_option(index=0)
         self.page.locator("#rankingNutrient").select_option(index=0)
@@ -224,16 +373,16 @@ class DashboardBrowserTests(unittest.TestCase):
     def test_filters_survive_a_page_reload(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
 
-        self.page.get_by_role("button", name="Nutrition only").click()
-        self.page.get_by_text("Hide irrelevant", exact=True).click()
-        self.page.get_by_text("Rank by nutrient", exact=True).click()
+        self.page.get_by_role("checkbox", name="With nutrition data").click()
+        self.page.get_by_role("button", name="Hide", exact=True).click()
+        self.page.get_by_role("button", name="Best nutrient value", exact=True).click()
         self.page.locator('.legend .chip[data-store="Tesco"]').click()
 
         self.page.reload(wait_until="networkidle")
 
-        self.assertTrue(self.page.locator("#nutritionFilter").get_attribute("aria-pressed") == "true")
-        self.assertIn("on", self.page.get_by_text("Hide irrelevant", exact=True).get_attribute("class") or "")
-        self.assertIn("on", self.page.get_by_text("Rank by nutrient", exact=True).get_attribute("class") or "")
+        self.assertTrue(self.page.locator("#nutritionFilter").is_checked())
+        self.assertEqual(self.page.locator("#hideToggle").get_attribute("aria-pressed"), "true")
+        self.assertIn("on", self.page.get_by_role("button", name="Best nutrient value", exact=True).get_attribute("class") or "")
         self.assert_browser_clean()
 
     def test_main_date_column_keeps_the_full_timeline_visible(self) -> None:
@@ -280,26 +429,6 @@ class DashboardBrowserTests(unittest.TestCase):
         mobile.close()
         self.assert_browser_clean()
 
-    def test_mobile_theme_controls_left_and_action_controls_right_on_one_row(self) -> None:
-        mobile = self.browser.new_context(viewport={"width": 390, "height": 844})
-        page = mobile.new_page()
-        errors: list[str] = []
-        page.on("console", lambda message: errors.append(message.text) if message.type == "error" else None)
-        page.on("pageerror", lambda exception: errors.append(str(exception)))
-        page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
-        controls = page.locator(".controls").bounding_box()
-        theme = page.locator("#themeSwitch").bounding_box()
-        actions = page.locator(".toggles").bounding_box()
-
-        self.assertIsNotNone(controls)
-        self.assertIsNotNone(theme)
-        self.assertIsNotNone(actions)
-        self.assertLess(abs(theme["x"] - controls["x"]), 2)
-        self.assertLess(abs((actions["x"] + actions["width"]) - (controls["x"] + controls["width"])), 2)
-        self.assertLess(abs(theme["y"] - actions["y"]), 2)
-        self.assertEqual(errors, [])
-        mobile.close()
-
     def test_product_search_filters_and_persists(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         search = self.page.locator("#productSearch")
@@ -320,7 +449,7 @@ class DashboardBrowserTests(unittest.TestCase):
         albert = self.page.locator('#t .ppcell[data-store="Albert"]:visible')
         self.assertEqual(albert.count(), 2, "Albert produce must not vanish under its retailer category name")
         self.assertEqual(self.page.locator('#t .dcell[data-store="Albert"]:visible').count(), 2)
-        self.page.get_by_text("Rank by nutrient", exact=True).click()
+        self.page.get_by_role("button", name="Best nutrient value", exact=True).click()
         self.assertEqual(self.page.locator('#rankingTable tbody tr').count(), 3)
         self.assert_browser_clean()
 
@@ -361,14 +490,14 @@ class DashboardBrowserTests(unittest.TestCase):
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
 
-        self.page.get_by_role("button", name="Nutrition only").click()
-        self.assertIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.page.get_by_role("checkbox", name="With nutrition data").click()
+        self.assertTrue(self.page.locator("#nutritionFilter").is_checked())
         self.assertIn("nutrition-only", self.page.locator("#t").get_attribute("class") or "")
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
 
-        self.page.get_by_role("button", name="Nutrition only").click()
-        self.assertNotIn("on", self.page.locator("#nutritionFilter").get_attribute("class") or "")
+        self.page.get_by_role("checkbox", name="With nutrition data").click()
+        self.assertFalse(self.page.locator("#nutritionFilter").is_checked())
         self.assertNotIn("nutrition-only", self.page.locator("#t").get_attribute("class") or "")
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
         self.assert_browser_clean()
@@ -422,7 +551,7 @@ class DashboardBrowserTests(unittest.TestCase):
         self.page.goto(f"{self.base_url}/products/exact/chléb__albert.html", wait_until="networkidle")
         self.assertIn(
             "Nutrition data unavailable",
-            self.page.locator("p.muted").inner_text(),
+            self.page.locator("p.muted").filter(has_text="Nutrition data unavailable").inner_text(),
         )
         self.assert_browser_clean()
 
