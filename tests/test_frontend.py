@@ -61,8 +61,9 @@ class DashboardBrowserTests(unittest.TestCase):
         write_csv(
             history,
             [
-                history_row(),
+                history_row(category="Tržnice u Alberta"),
                 history_row(
+                    category="Tržnice u Alberta",
                     product_id="apple-1",
                     price="24.9",
                     unit_price="24,90 Kč / 1 kg",
@@ -81,10 +82,17 @@ class DashboardBrowserTests(unittest.TestCase):
                     product_id="bread-1",
                     product_name="Chléb",
                     canonical_product_name="chleb",
-                    category="Pečivo",
+                    category="Albertovo pekařství",
                     price="29.9",
                     unit_price="29,90 Kč / 1 kg",
                     price_per_kg="29.9",
+                ),
+                history_row(
+                    store="Tesco",
+                    product_id="bread-2",
+                    product_name="Chléb",
+                    canonical_product_name="chleb",
+                    category="Pekárna",
                 ),
             ],
         )
@@ -306,6 +314,32 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "none")
         self.assert_browser_clean()
 
+    def test_produce_category_includes_native_albert_labels_and_ranking(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.assertEqual(self.page.locator("#categoryFilter").input_value(), "Ovoce a zelenina")
+        albert = self.page.locator('#t .ppcell[data-store="Albert"]:visible')
+        self.assertEqual(albert.count(), 2, "Albert produce must not vanish under its retailer category name")
+        self.assertEqual(self.page.locator('#t .dcell[data-store="Albert"]:visible').count(), 2)
+        self.page.get_by_text("Rank by nutrient", exact=True).click()
+        self.assertEqual(self.page.locator('#rankingTable tbody tr').count(), 3)
+        self.assert_browser_clean()
+
+    def test_saved_retailer_category_restores_to_shared_category(self) -> None:
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        for source, target, shown, hidden in (
+            ("Albertovo pekařství", "Pečivo", "chleb", "jablka"),
+            ("Pekárna", "Pečivo", "chleb", "jablka"),
+            ("Tržnice u Alberta", "Ovoce a zelenina", "jablka", "chleb"),
+        ):
+            with self.subTest(source=source):
+                self.page.evaluate("category => localStorage.setItem('grocery-filters', JSON.stringify({category}))", source)
+                self.page.reload(wait_until="networkidle")
+                self.assertEqual(self.page.locator("#categoryFilter").input_value(), target)
+                self.assertEqual(self.page.evaluate("JSON.parse(localStorage.getItem('grocery-filters')).category"), target)
+                self.assertTrue(self.page.locator(f'#t a[href="products/{shown}.html"]').is_visible())
+                self.assertFalse(self.page.locator(f'#t a[href="products/{hidden}.html"]').is_visible())
+        self.assert_browser_clean()
+
     def test_category_dropdown_filters_offer_lines(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         self.assertEqual(self.page.locator("#categoryFilter").count(), 1)
@@ -313,6 +347,10 @@ class DashboardBrowserTests(unittest.TestCase):
         bread = self.page.locator('#t tbody tr:has(a[href="products/chleb.html"])')
         apples = self.page.locator('#t tbody tr:has(a[href="products/jablka.html"])')
         self.assertEqual(bread.evaluate("row => getComputedStyle(row).display"), "table-row")
+        self.assertEqual(bread.locator('.ppcell:visible').count(), 2)
+        self.assertEqual(bread.locator('.dcell:visible').count(), 2)
+        self.assertEqual(bread.locator('.ppcell:visible').evaluate_all("cells => cells.map(c => c.dataset.sourceCategory).sort()"),
+                         ["Albertovo pekařství", "Pekárna"])
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "none")
         self.page.locator("#categoryFilter").select_option(label="Ovoce a zelenina")
         self.assertEqual(apples.evaluate("row => getComputedStyle(row).display"), "table-row")
@@ -381,7 +419,7 @@ class DashboardBrowserTests(unittest.TestCase):
         )
 
         # Unmatched SKU page shows the provenance-correct unavailable state (no fallback).
-        self.page.goto(f"{self.base_url}/products/exact/chléb.html", wait_until="networkidle")
+        self.page.goto(f"{self.base_url}/products/exact/chléb__albert.html", wait_until="networkidle")
         self.assertIn(
             "Nutrition data unavailable",
             self.page.locator("p.muted").inner_text(),

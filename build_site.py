@@ -45,6 +45,19 @@ PRODUCTS_EXACT_DIR = PRODUCTS_DIR / "exact"
 INDEX_HTML = SITE_DIR / "index.html"
 KUPI_PRICE_HISTORY_CSV = ROOT / "kupi_price_history.csv"
 
+# Presentation aliases only: source categories and offer identities stay intact.
+# Broad mixed sections (e.g. "Trvanlivé", "Nápoje", "Mléčné a chlazené")
+# cannot safely be split into narrower categories from the section name alone.
+DASHBOARD_CATEGORY_ALIASES = {
+    ("Albert", "Tržnice u Alberta"): "Ovoce a zelenina",
+    ("Albert", "Albertovo pekařství"): "Pečivo",
+    ("Tesco", "Pekárna"): "Pečivo",
+}
+
+
+def dashboard_category(store: str, category: str) -> str:
+    return DASHBOARD_CATEGORY_ALIASES.get((store, category), category)
+
 # Download each product image exactly once, keyed by product_id. Already-cached
 # files are never re-fetched. Each image is normalized onto a square white
 # canvas (largest-side scaled to 220px, centered, no cropping) so every
@@ -819,6 +832,7 @@ def build() -> str:
             current_entries[offer_key] = {
                 "product": product,
                 "category": category,
+                "filter_category": dashboard_category(store, category),
                 "store": store,
                 "val": disp_val if disp_val is not None else val,
                 "unit": unit,
@@ -1020,7 +1034,7 @@ def build() -> str:
             v = e["val"]
             if v is not None:
                 pp_cells.append(
-                    f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
+                    f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["filter_category"])}" data-source-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
                     f'<span class="pprice">{v:.2f} / {e["unit"]}</span>{logo}</div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
@@ -1039,7 +1053,7 @@ def build() -> str:
                     ))
                 day_html = group_weeks(day_items)
                 date_cells.append(
-                    f'<div class="dcell" data-store="{esc(e["store"])}" data-category="{esc(e["category"])}" data-line="{esc(line_id)}" '
+                    f'<div class="dcell" data-store="{esc(e["store"])}" data-category="{esc(e["filter_category"])}" data-source-category="{esc(e["category"])}" data-line="{esc(line_id)}" '
                     f'data-s="{esc(s)}" data-e="{esc(en)}" '
                     f'aria-label="{esc(e["store"])}: {esc(fmt_cz(dr))}" '
                     f'style="--store-color:{color}"><div class="timeline">{day_html}</div></div>'
@@ -1058,13 +1072,17 @@ def build() -> str:
     last_run = last_run or "unknown"
     n_products = len(table_rows)
     n_stores = len(stores_seen)
-    active_categories = {entry.get("category", "Ovoce a zelenina") for entry in current_entries.values()}
+    active_categories = {entry["filter_category"] for entry in current_entries.values()}
     ordered_categories = [label for label, _slug in KUPI_FOOD_CATEGORIES if label in active_categories]
     ordered_categories.extend(sorted(active_categories - set(ordered_categories)))
     category_options = "".join(
         f'<option value="{esc(category)}"{" selected" if category == "Ovoce a zelenina" else ""}>{esc(category)}</option>'
         for category in ordered_categories
     )
+    category_aliases_json = json.dumps(
+        {source: target for (_store, source), target in DASHBOARD_CATEGORY_ALIASES.items()},
+        ensure_ascii=False,
+    ).replace("</", "<\\/")
     ranking_data = []
     ranking_labels = {}
     ranking_rdas = {}
@@ -1106,7 +1124,7 @@ def build() -> str:
             ranking_data.append({
                 # Nutrition remains associated with the canonical product, while
                 # the ranking labels each offer with the store's exact name.
-                "product": entry.get("raw_name") or pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry.get("category", "Ovoce a zelenina"), "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
+                "product": entry.get("raw_name") or pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry["filter_category"], "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
                 "price": price, "basis": basis, "factor": nutrient_factor,
                 "start": start or "", "end": end or "",
                 "values": {label: nutrient.get("value") for label, nutrient in vals.items()
@@ -1447,6 +1465,7 @@ const hidden = new Set();
 let hideIrrelevant = false;  // when true, hide rows that don't match the date range (toggleable)
 let nutritionOnly = false;
 const categoryFilter = document.getElementById('categoryFilter');
+const categoryAliases = new Map(Object.entries({category_aliases_json}));
 const productSearch = document.getElementById('productSearch');
 const FILTERS_KEY = 'grocery-filters';
 let savedFilterState = null;
@@ -1810,8 +1829,9 @@ applyTheme(saved);
 // Restore the dashboard filters after all controls and their handlers exist.
 // Invalid or stale values are ignored so a changed build cannot get stuck.
 if (savedFilterState && typeof savedFilterState === 'object') {{
-  if ([...categoryFilter.options].some(o => o.value === savedFilterState.category))
-    categoryFilter.value = savedFilterState.category;
+  const restoredCategory = categoryAliases.get(savedFilterState.category) || savedFilterState.category;
+  if ([...categoryFilter.options].some(o => o.value === restoredCategory))
+    categoryFilter.value = restoredCategory;
   if (typeof savedFilterState.search === 'string')
     productSearch.value = savedFilterState.search;
   if (Array.isArray(savedFilterState.hiddenStores)) {{
