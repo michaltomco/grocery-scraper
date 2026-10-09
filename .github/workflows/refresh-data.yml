@@ -2,9 +2,9 @@ name: Refresh grocery data
 
 on:
   schedule:
-    # GitHub Actions schedules in UTC. The job below gates execution to 06:00
-    # Europe/Prague so this remains correct across CET/CEST daylight saving.
-    - cron: "0 * * * *"
+    # Retry hourly at an off-peak minute. Delayed jobs catch up after 06:00
+    # Europe/Prague; fresh snapshots prevent duplicate daily downloads.
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -24,28 +24,24 @@ jobs:
     env:
       PYTHONUNBUFFERED: '1'
     steps:
-      - id: time
-        name: Check Prague scrape time
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(TZ=Europe/Prague date +%H)" = "06" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Outside the 06:00 Europe/Prague scrape window; no data refresh needed."
-          fi
-
       - uses: actions/checkout@v4
-        if: steps.time.outputs.run == 'true'
         with:
           lfs: true
           persist-credentials: true
+          ref: main
+
+      - name: Update from main
+        run: git pull --rebase origin main
+
+      - id: time
+        name: Check Prague scrape time
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 refresh_schedule.py --event "$GITHUB_EVENT_NAME" --now "$(TZ=Europe/Prague date --iso-8601=seconds)" | tee -a "$GITHUB_OUTPUT"
 
       - uses: astral-sh/setup-uv@v7
         if: steps.time.outputs.run == 'true'
-
-      - name: Update from main
-        if: steps.time.outputs.run == 'true'
-        run: git pull --rebase origin main
 
       - name: Install locked dependencies
         if: steps.time.outputs.run == 'true'
