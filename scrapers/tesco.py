@@ -5,11 +5,14 @@ import json
 import math
 import os
 import re
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import requests
+
+from scrapers.http_retry import request_with_retry
 
 from scrapers.common import (
     FIELDNAMES, HISTORY_CSV, LOCAL_TIMEZONE, ROOT, append_history,
@@ -117,8 +120,13 @@ def extract_tesco_offers(products: list[dict], now: datetime | None = None) -> l
 
 
 def query(session: requests.Session, operation: str, document: str, variables: dict) -> dict:
-    response = session.post(API + operation, json={"query": document, "variables": variables}, timeout=45)
-    response.raise_for_status()
+    # Only the known read-only catalogue documents may be replayed as POSTs.
+    if {"GetTaxonomy": TAXONOMY_QUERY, "GetCategoryProducts": PRODUCT_QUERY}.get(operation) != document:
+        raise ValueError("Tesco retries require a known read-only catalogue query")
+    response = request_with_retry(
+        lambda: session.post(API + operation, json={"query": document, "variables": variables}, timeout=45),
+        label=f"Tesco {operation} {variables}",
+    )
     payload = response.json()
     if payload.get("errors") or payload.get("status", 200) != 200 or not payload.get("data"):
         raise ValueError(f"Tesco GraphQL request failed: {operation}")
@@ -143,6 +151,9 @@ def fetch_tesco_offers() -> list[dict]:
             seen = set()
             expected_total = None
             for page in range(1, 101):
+                # Leave a quiet second between catalogue requests, including
+                # department boundaries. Retry backoff is additional pacing.
+                time.sleep(1)
                 category = query(session, "GetCategoryProducts", PRODUCT_QUERY,
                                  {"facet": facet, "page": page, "count": 300})["category"]
                 info, items = category["info"], category["products"]

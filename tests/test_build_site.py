@@ -39,7 +39,7 @@ class DashboardBuilderTests(unittest.TestCase):
             build_site, "IMG_DIR", Path(directory)
         ), patch.object(build_site, "FAILED_IMAGES", set()), patch.object(
             build_site, "fallback_image", return_value="img/veg.png"
-        ), patch.object(build_site.urllib.request, "urlopen", side_effect=HTTPError(
+        ), patch.object(build_site.IMAGE_OPENER, "open", side_effect=HTTPError(
             "https://img.example.test/blocked.jpg", 403, "Forbidden", {}, None
         )) as fetch:
             for _ in range(3):
@@ -368,7 +368,7 @@ class DashboardBuilderTests(unittest.TestCase):
         self.assertIn('value="Ovoce a zelenina" selected', html)
         self.assertNotIn('value="all">All products', html)
         self.assertIn('data-category="Pečivo"', html)
-        cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg")
+        cache_image.assert_any_call("bread-1", "https://img.example.test/bread.jpg", "Albert")
 
 
 class HistoricalTrendTests(unittest.TestCase):

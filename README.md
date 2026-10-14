@@ -1,7 +1,10 @@
 # grocery-scraper
 
-Albert offers come from the public Můj Albert app API, and Lidl produce offers
-come directly from Lidl.cz. Billa and Tesco currently use Kupi.cz.
+Albert offers come from the public Můj Albert app API, Lidl produce offers
+come directly from Lidl.cz, and Tesco offers come from its public online catalogue.
+Billa's daily price scraper still uses Kupi.cz; the direct PDF prototype is not
+production-ready (see "Billa source status" below). Product-image builds do not
+fetch or reuse Kupi images as a fallback for direct retailer images.
 
 ## Direct Tesco Online scraper
 
@@ -108,6 +111,50 @@ unit prices. It does not collect Lidl Plus coupons. Unsupported conditional
 prices, invalid cards and empty pages fail before replacing the snapshot.
 `old_price` is the displayed crossed-out reference price, which may represent
 the lowest price in the preceding 30 days rather than a regular price.
+
+## Refresh reliability
+
+Albert GETs and Tesco's two read-only catalogue queries retry connection/timeouts
+and HTTP 408/429/500/502/503/504, with at most four attempts. Backoff is exponential;
+429/503 `Retry-After` seconds and HTTP dates are honored. Retry sleep is capped at
+30 seconds per delay and 60 seconds total per request. If the server asks for a
+longer wait, the refresh fails instead of retrying early. Diagnostics identify
+the retailer, request, attempt, and delay. Other HTTP errors and malformed
+JSON/schema data fail immediately. Tesco also leaves one second between
+catalogue requests, including department boundaries.
+
+These changes tolerate transient outages; they do not bypass blocks or make a
+persistently unreachable endpoint healthy. Exhausted retries still exit nonzero
+before that retailer's snapshot/history write. The orchestrator requires fresh
+snapshots from every retailer before merging, so an old snapshot is not presented
+as a successful refresh.
+
+## Product pictures
+
+Images are optional: missing or broken images never remove an offer. The builder
+uses the standard Python urllib client identity, checks actual image decoding,
+and caches thumbnails under a store/SKU/source-URL hash rather than reusing old
+product-ID-only files. Valid normalized thumbnails are reused without lossy
+re-encoding. Kupi image URLs are excluded, not used as a fallback.
+
+Grouped views select an available decoded direct image independently of the
+cheapest offer, and label it with its representative variant and store. Exact
+pages use only their own retailer/SKU image; an unavailable image stays a neutral
+placeholder. Dashboard and ranking pictures are requested only when visible,
+not for every hidden category or off-screen row.
+
+`site/image-coverage.json` and the build log report decoded direct images,
+missing URLs, excluded Kupi URLs, failed downloads/decodes, and host-outage skips.
+Coverage counts unique store/SKU/source identities, not offer rows. Image failures
+are retried on the next build, with bounded parallel downloads and a per-build
+transport-outage circuit breaker. Individual HTTP 404s do not block a whole host.
+
+Albert's app image service has returned missing-file errors, and the runner has
+also observed connection timeouts. No alternative exact-product image source is
+verified. Billa's leaflet images can be extracted, but the experimental parser
+cannot yet associate all prices, dates, units, conditions, and product regions
+reliably. Do not enable that parser or replace a full snapshot with a few
+hand-verified crops. The Billa daily source migration remains incomplete.
 
 ## Running
 

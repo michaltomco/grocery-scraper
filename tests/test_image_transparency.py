@@ -29,8 +29,8 @@ class ImageTransparencyTests(unittest.TestCase):
             image.save(source)
             with patch.object(build_site, 'IMG_DIR', root / 'cache'):
                 result = build_site.cache_image('avocado', source.as_uri())
-            self.assertEqual(result, 'img/avocado.png')
-            with Image.open(root / 'cache' / 'avocado.png') as output:
+            self.assertTrue(result.startswith('img/direct-'))
+            with Image.open(root / 'cache' / Path(result).name) as output:
                 self.assertGreaterEqual(min(output.getpixel((65, 65))), 250)
                 self.assertGreater(output.getpixel((110, 110))[1], 130)
 

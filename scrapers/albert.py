@@ -11,6 +11,8 @@ from urllib.parse import urlencode
 
 import requests
 
+from scrapers.http_retry import request_with_retry
+
 from scrapers.common import (
     FIELDNAMES,
     HISTORY_CSV,
@@ -51,8 +53,10 @@ def leaflet_url(store_id: str) -> str:
 
 
 def fetch_json(url: str) -> dict:
-    response = requests.get(url, headers=HEADERS, timeout=30)
-    response.raise_for_status()
+    response = request_with_retry(
+        lambda: requests.get(url, headers=HEADERS, timeout=30),
+        label=f"Albert GET {url}",
+    )
     payload = response.json()
     if not isinstance(payload, dict):
         raise ValueError("Albert returned an unexpected JSON response")

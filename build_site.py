@@ -10,10 +10,14 @@ thumbnail shares the same aspect ratio without cropping. Output is a single
 file with inline CSS/JS.
 """
 import csv
+import hashlib
 import json
 import re
 import shutil
 import urllib.request
+import urllib.error
+from urllib.parse import unquote, urlsplit
+from threading import Lock
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
@@ -65,13 +69,17 @@ def dashboard_category(store: str, category: str) -> str:
 # product's own white background. Returns a web path relative to the site root.
 THUMB = 220  # px, size of the normalized square canvas
 FALLBACK_IMAGE = IMG_DIR / "veg.png"
-FAILED_IMAGES: set[tuple[str, str]] = set()
+FAILED_IMAGES: set[tuple[str, str, str]] = set()
+IMAGE_HOST_FAILURES = defaultdict(int)
+IMAGE_DIAGNOSTICS = {}
+IMAGE_LOCK = Lock()
 
 
 def fallback_image() -> str:
     IMG_DIR.mkdir(parents=True, exist_ok=True)
-    if not FALLBACK_IMAGE.exists():
-        shutil.copyfile(ROOT / "veg.png", FALLBACK_IMAGE)
+    destination = IMG_DIR / "veg.png"
+    if not destination.exists():
+        shutil.copyfile(ROOT / "veg.png", destination)
     return "img/veg.png"
 
 
@@ -81,6 +89,7 @@ def normalize_image_file(path: Path) -> bool:
     try:
         from PIL import Image
         with Image.open(path) as im:
+            im.load()
             if im.size == (THUMB, THUMB) and im.mode == "RGB":
                 return True
             im = im.convert("RGBA")
@@ -93,28 +102,59 @@ def normalize_image_file(path: Path) -> bool:
         return False
 
 
-def cache_image(product_id: str, image_url: str) -> str:
-    key = (product_id, image_url)
+class ImageRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        host = unquote(urlsplit(newurl).hostname or "").lower().rstrip(".")
+        if host == "kupi.cz" or host.endswith(".kupi.cz"):
+            raise urllib.error.HTTPError(newurl, code, "excluded-kupi", headers, fp)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+IMAGE_OPENER = urllib.request.build_opener(ImageRedirectHandler())
+
+
+def cache_image(product_id: str, image_url: str, store: str = "") -> str:
+    key = (store, product_id, image_url)
     if key in FAILED_IMAGES:
         return fallback_image()
+    try:
+        host = unquote(urlsplit(image_url).hostname or "").lower().rstrip(".")
+    except ValueError as error:
+        IMAGE_DIAGNOSTICS[key] = f"{type(error).__name__}: {error}"
+        FAILED_IMAGES.add(key)
+        return fallback_image()
+    if host == "kupi.cz" or host.endswith(".kupi.cz"):
+        IMAGE_DIAGNOSTICS[key] = "excluded-kupi"
+        return fallback_image()
     if not image_url or any(marker in image_url.lower() for marker in ("no-image", "no_image", "/no_img/", "placeholder")):
+        IMAGE_DIAGNOSTICS[key] = "missing"
         return fallback_image()
     IMG_DIR.mkdir(parents=True, exist_ok=True)
-    ext = Path(image_url.split("?")[0]).suffix or ".jpg"
-    dest = IMG_DIR / f"{product_id}{ext}"
+    identity = hashlib.sha256(json.dumps(key).encode()).hexdigest()[:24]
+    ext = ".jpg"
+    dest = IMG_DIR / f"direct-{identity}{ext}"
+    if dest.exists() and normalize_image_file(dest):
+        IMAGE_DIAGNOSTICS[key] = "decoded-direct"
+        return f"img/{dest.name}"
     # If already cached, re-normalize the cached file itself (idempotent,
     # no re-download). Otherwise fetch to a temp raw file first.
-    src = dest if dest.exists() else None
-    raw = IMG_DIR / f".raw_{product_id}{ext}"
+    if IMAGE_HOST_FAILURES[host] >= 3:
+        IMAGE_DIAGNOSTICS[key] = "host-blocked"
+        FAILED_IMAGES.add(key)
+        return fallback_image()
+    src = None
+    raw = IMG_DIR / f".raw_{identity}{ext}"
     try:
         if src is None:
             if not raw.exists():
                 req = urllib.request.Request(
                     image_url,
-                    headers={"User-Agent": "Mozilla/5.0 (grocery-scraper)"},
+                    headers={"User-Agent": urllib.request.URLopener.version},
                 )
-                with urllib.request.urlopen(req, timeout=20) as resp, raw.open("wb") as out:
+                with IMAGE_OPENER.open(req, timeout=5) as resp, raw.open("wb") as out:
                     out.write(resp.read())
+                with IMAGE_LOCK:
+                    IMAGE_HOST_FAILURES[host] = 0
             src = raw
         from PIL import Image
         with Image.open(src) as im:
@@ -123,7 +163,16 @@ def cache_image(product_id: str, image_url: str) -> str:
             canvas = Image.new("RGB", (THUMB, THUMB), (255, 255, 255))
             canvas.paste(im, ((THUMB - im.width) // 2, (THUMB - im.height) // 2), im.getchannel("A"))
             canvas.save(dest, "JPEG", quality=90)
-    except Exception:
+    except Exception as error:
+        # HTTP status failures are SKU-specific, not evidence of a host outage.
+        transport = isinstance(error, (TimeoutError, ConnectionError, urllib.error.URLError)) and not isinstance(error, urllib.error.HTTPError)
+        if transport:
+            with IMAGE_LOCK:
+                IMAGE_HOST_FAILURES[host] += 1
+        elif isinstance(error, urllib.error.HTTPError):
+            with IMAGE_LOCK:
+                IMAGE_HOST_FAILURES[host] = 0
+        IMAGE_DIAGNOSTICS[key] = f"{type(error).__name__}: {error}"
         # Retry on the next build, not for every table/product-page rendering.
         FAILED_IMAGES.add(key)
         return fallback_image()
@@ -133,7 +182,33 @@ def cache_image(product_id: str, image_url: str) -> str:
                 raw.unlink()
             except OSError:
                 pass
+    IMAGE_DIAGNOSTICS[key] = "decoded-direct"
     return f"img/{dest.name}"
+
+
+DEFERRED_IMAGE_JS = "<script>\n// Never assign a URL to a hidden category or an off-screen row.\n(() => {\n  let pending = false;\n  function loadVisible() {\n    pending = false;\n    document.querySelectorAll('img[data-src]:not([src])').forEach(image => {\n      const box = image.getBoundingClientRect();\n      if (!image.getClientRects().length || box.bottom < 0 || box.top > innerHeight || box.right < 0 || box.left > innerWidth) return;\n      image.decoding = 'async';\n      image.onerror = () => {\n        image.onerror = null;\n        image.dataset.imageFailed = 'true';\n        image.src = 'img/veg.png';\n      };\n      image.src = image.dataset.src;\n    });\n  }\n  function schedule() {\n    if (!pending) { pending = true; requestAnimationFrame(loadVisible); }\n  }\n  new MutationObserver(schedule).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden']});\n  addEventListener('scroll', schedule, {passive:true, capture:true});\n  addEventListener('resize', schedule, {passive:true});\n  schedule();\n})();\n</script>"
+
+
+def image_coverage_report():
+    """Unique store/SKU/source coverage; failures never masquerade as pictures."""
+    counts = defaultdict(int)
+    failures = []
+    for (store, product_id, source_url), status in sorted(IMAGE_DIAGNOSTICS.items()):
+        outcome = status if status in {"decoded-direct", "missing", "excluded-kupi", "host-blocked"} else "failed"
+        counts[outcome] += 1
+        if outcome != "decoded-direct":
+            failures.append(dict(store=store, product_id=product_id, source_url=source_url, reason=status))
+    return dict(counts=dict(counts), failures=failures)
+
+
+def select_group_image(entries):
+    """A decoded direct representative, explicitly labelled when variants differ."""
+    for entry in entries:
+        image = cache_image(entry.get("product_id", ""), entry.get("image_url", ""), entry.get("store", ""))
+        if image != "img/veg.png":
+            label = "Representative image: " + entry.get("raw_name", "") + " · " + entry.get("store", "")
+            return image, label
+    return fallback_image(), "Product image unavailable"
 
 
 def normalize_kupi_graph_price(price: str, unit: str) -> tuple[float | None, str]:
@@ -667,8 +742,8 @@ def write_product_pages(products, nutrition, exact_page_slugs=None):
         entries = products[product]
         first = entries[0] if entries else {}
         pretty = display_name(product, first.get("raw_name", product))
-        img_path = cache_image(first.get("product_id", product), first.get("image_url", ""))
-        image_html = f'<img class="hero" src="../{esc(img_path)}" alt="{esc(pretty)}">' if img_path else ""
+        img_path, image_label = select_group_image(entries)
+        image_html = f'<img class="hero" decoding="async" src="../{esc(img_path)}" alt="{esc(pretty)}"><p class="dim">{esc(image_label)}</p>'
         source_image = str(first.get("image_url", "")).lower()
         if not source_image or any(m in source_image for m in ("no-image", "no_image", "/no_img/", "placeholder")):
             nutrition_entry = {}
@@ -717,7 +792,7 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
     for slug, info in sorted(exact_rows.items()):
         raw_name = info["raw_name"]
         pretty = info["pretty"]
-        img_path = cache_image(info.get("product_id", raw_name), info.get("image_url", ""))
+        img_path = cache_image(info.get("product_id", raw_name), info.get("image_url", ""), info.get("store", ""))
         image_html = f'<img class="hero" src="../../{esc(img_path)}">' if img_path else ""
         source_image = str(info.get("image_url", "")).lower()
         if not source_image or any(m in source_image for m in ("no-image", "no_image", "/no_img/", "placeholder")):
@@ -738,6 +813,9 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
         (PRODUCTS_EXACT_DIR / f"{slug}.html").write_text(page, encoding="utf-8")
 
 def build() -> str:
+    FAILED_IMAGES.clear()
+    IMAGE_HOST_FAILURES.clear()
+    IMAGE_DIAGNOSTICS.clear()
     if not HISTORY_CSV.exists():
         rows = []
     else:
@@ -753,13 +831,6 @@ def build() -> str:
     if tesco_online:
         rows = [r for r in rows if r.get("store") != "Tesco" or
                 r.get("product_id", "").startswith("tesco-online-")]
-        # Newly introduced Tesco IDs have no cached thumbnails. Bound the
-        # concurrency and populate both success and failure caches before the
-        # sequential rendering passes reuse those images.
-        images = {r["product_id"]: r.get("image_url", "") for r in rows
-                  if r.get("product_id", "").startswith("tesco-online-")}
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            list(pool.map(lambda item: cache_image(*item), images.items()))
 
     # Nutrition enrichment covers fresh produce (USDA/Open Food Facts) and the
     # hand-curated NutriData.cz records for other categories. Curated records are
@@ -938,6 +1009,14 @@ def build() -> str:
     for _kk, _vv in exact_nutrition.items():
         if _kk.startswith("exact:"):
             exact_nutrition_by_slug[slugify(_kk[6:])] = _vv
+    # Cache only the source identities that the generated pages will display,
+    # after both exact and grouped entries have been assembled.
+    # Eight workers bound in-flight outage requests (at most ten transport
+    # failures per host before the three-failure circuit has drained).
+    image_candidates = {(e.get("product_id", ""), e.get("image_url", ""), e.get("store", ""))
+                        for e in [*exact_rows.values(), *current_entries.values()]}
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(lambda candidate: cache_image(*candidate), sorted(image_candidates)))
     write_product_pages(products, nutrition, exact_page_slugs)
     write_exact_product_pages(exact_nutrition_by_slug, exact_rows)
 
@@ -1004,11 +1083,9 @@ def build() -> str:
                 )
         elif nutrition_entry.get("status") == "not_found":
             nutrition_html = '<span class="nutrition dim">Nutrition data unavailable</span>'
-        img_path = cache_image(
-            first.get("product_id", product), first.get("image_url", "")
-        )
+        img_path, image_label = select_group_image(entries)
         img_tag = (
-            f'<img class="thumb" src="{img_path}" width="40" height="40" alt="" aria-hidden="true">'
+            f'<img class="thumb" data-src="{img_path}" decoding="async" width="40" height="40" alt="" aria-hidden="true">'
             if img_path else '<span class="dim">no img</span>'
         )
         # Combined price+store cells, one per store (kept aligned). The logo
@@ -1062,7 +1139,7 @@ def build() -> str:
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\" data-has-nutrition=\"{'true' if has_nutrition else 'false'}\">"
             f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html" aria-label="{esc(pretty)}">'
-            f'{img_tag}<span class="pname">{esc(pretty)}</span></a></td>'
+            f'{img_tag}<span class="pname"><span class="product-name">{esc(pretty)}</span><small class="dim">{esc(image_label)}</small></span></a></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
             f'<td class="spark"><div class="sparkline">{spark_html}</div></td>'
@@ -1124,7 +1201,7 @@ def build() -> str:
             ranking_data.append({
                 # Nutrition remains associated with the canonical product, while
                 # the ranking labels each offer with the store's exact name.
-                "product": entry.get("raw_name") or pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", "")), "store": entry.get("store", ""), "category": entry["filter_category"], "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
+                "product": entry.get("raw_name") or pretty, "url": f"products/{product}.html", "image": cache_image(entry.get("product_id", product), entry.get("image_url", ""), entry.get("store", "")), "store": entry.get("store", ""), "category": entry["filter_category"], "storeLogo": store_logo(entry.get("store", "")), "storeColor": store_color(entry.get("store", "")),
                 "price": price, "basis": basis, "factor": nutrient_factor,
                 "start": start or "", "end": end or "",
                 "values": {label: nutrient.get("value") for label, nutrient in vals.items()
@@ -1511,7 +1588,7 @@ function searchKey(value) {{
   return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase();
 }}
 rows.forEach(row => {{
-  const name = row.querySelector('.pname');
+  const name = row.querySelector('.pname .product-name');
   row.dataset.searchName = searchKey(name ? name.textContent : '');
 }});
 function rowMatchesSearch(row) {{
@@ -1530,7 +1607,7 @@ function updateRanking() {{
     .filter(item => Number.isFinite(item.amount) && item.amount > 0 && Number.isFinite(item.rdas[label]) && item.rdas[label] > 0)
     .sort((a, b) => a.rdaCost - b.rdaCost)
     .slice(0, 10);
-  rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img src="${{item.image}}" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{rankingDateLabels[i]}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
+  rankingTableBody.innerHTML = ranked.map(item => `<tr class="${{(item.datedim && !hideIrrelevant ? 'ranking-datedim ' : '') + (item.storedim && !hideIrrelevant ? 'ranking-storedim' : '')}}"><td><a class="ranking-product" href="${{item.url}}"><img data-src="${{item.image}}" decoding="async" width="36" height="36" alt="" aria-hidden="true"><span>${{item.product}}</span></a></td><td><span class="ranking-store" data-store="${{item.store}}" aria-label="${{item.store}}"><span>${{(item.price * item.rdas[label] / item.amount).toFixed(2)}} Kč</span>${{item.storeLogo}}</span></td><td class="ranking-drange" style="--store-color:${{item.storeColor}}"><div class="timeline">${{rankingDates.map((day, i) => `<span class="day${{new Date(day + 'T00:00:00Z').getUTCDay() === 1 ? ' week-start' : ''}} ${{item.start <= day && (item.end || item.start) >= day ? 'active' : ''}}" data-date="${{day}}" title="${{item.store}} · ${{rankingDateLabels[i]}}">${{rankingDow[i]}}</span>`).join('')}}</div></td><td>${{item.price.toFixed(2)}} Kč / ${{item.basis}}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No matching RDA data</td></tr>';
   rankingTableBody.querySelectorAll('.ranking-store').forEach(store => store.onclick = () => setStoreHidden(store.dataset.store, !hidden.has(store.dataset.store)));
 }}
 document.getElementById('rankToggle').onclick = () => {{
@@ -1859,7 +1936,7 @@ if (savedFilterState && typeof savedFilterState === 'object') {{
 }}
 </script>
 </body></html>"""
-    return html
+    return html.replace("</body>", DEFERRED_IMAGE_JS + "</body>")
 
 
 def main() -> None:
@@ -1867,6 +1944,9 @@ def main() -> None:
     fallback_image()
     html = build()
     INDEX_HTML.write_text(html, encoding="utf-8")
+    report = image_coverage_report()
+    (SITE_DIR / "image-coverage.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("Image coverage (unique store/SKU/source): " + json.dumps(report["counts"], sort_keys=True))
     print(f"Wrote {INDEX_HTML.name} ({len(html)} bytes) into {SITE_DIR.name}/.")
 
 
