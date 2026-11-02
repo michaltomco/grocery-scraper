@@ -88,6 +88,16 @@ class MacroIntegrityTests(unittest.TestCase):
 
 
 class ExactIntegrityTests(unittest.TestCase):
+    def test_cached_exact_rejects_conflicting_flavour_despite_shared_brand(self):
+        entry = {'status': 'found', 'source_product': 'Jogurt jahodový Brand',
+                 'provenance': 'exact_match', 'source_url': 'https://example.org/yogurt',
+                 'values': {'Calories': {'value': 80, 'unit': 'kcal'}}}
+        with patch.object(nutrition, 'load_cache', return_value={'exact': {
+                'exact:Jogurt vanilkový Brand': entry}}):
+            result = nutrition.get_many_exact({'Jogurt vanilkový Brand'}, fetch_missing=False)
+        self.assertEqual(result['exact:Jogurt vanilkový Brand']['values'], {})
+        self.assertEqual(result['exact:Jogurt vanilkový Brand']['quarantined_record'], entry)
+
     def test_category_proxy_is_never_exact_nutrition(self):
         entry = {'status': 'found', 'provenance': 'category_proxy',
                  'source_product': 'Jogurt', 'source_url': 'https://example.org/jogurt',
@@ -135,6 +145,23 @@ from scrapers.common import canonical_product_name
 
 
 class ProduceGroupingIntegrityTests(unittest.TestCase):
+    def test_processing_quantity_cannot_disappear_into_raw_group(self):
+        for label in ('Ananas 1 l', 'Ananas 565/340 g', 'Paprika červená 1 l'):
+            with self.subTest(label=label):
+                slug = canonical_product_name(label)
+                self.assertNotIn(slug, {'ananas', 'paprika_cervena'})
+                self.assertIsNone(nutrition.resolve_nutrition_query(slug))
+        self.assertEqual(canonical_product_name('Ananas 1 ks'), 'ananas')
+
+    def test_live_canned_pineapple_and_pomegranate_are_not_raw_pineapple_or_apple(self):
+        for label in ('Giana Ananas kousky ve sladkém nálevu 565g',
+                      'Giana Ananas plátky v ananasové šťávě 565g'):
+            with self.subTest(label=label):
+                self.assertNotEqual(canonical_product_name(label), 'ananas')
+        self.assertEqual(canonical_product_name('Granátové jablko'), 'granatove_jablko')
+        self.assertEqual(canonical_product_name('Granátová jablka 1 ks'), 'granatove_jablko')
+        self.assertEqual(canonical_product_name('Jablka šťavnatá 1 kg'), 'jablka')
+
     def test_processed_pineapple_keeps_its_identity(self):
         for label in ('Caprio ANANAS 2 l', 'Relax ananas 1 l',
                       'CoolVitality jablko ananas směs 1 l', 'Rauch ananas džus 1 l',

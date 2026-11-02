@@ -669,10 +669,14 @@ def get_many_exact(labels: set[str], *, fetch_missing: bool = True) -> dict:
         key = f"exact:{label}"
         entry = exact_cache.get(key, {})
         issues = (identity_issues(label, entry) + nutrient_issues(entry.get("values", {}))) if entry.get("status") == "found" else []
-        if entry.get("status") == "found" and entry.get("provenance") != "exact_match":
-            issues.append("exact_provenance_required")
+        if entry.get("status") == "found":
+            if entry.get("provenance") != "exact_match":
+                issues.append("exact_provenance_required")
+            if exact_name_tokens(label) != exact_name_tokens(str(entry.get("source_product", ""))):
+                issues.append("exact_source_name_mismatch")
         if issues:
             exact_cache[key] = quarantine_entry(entry, issues)
+            changed = changed or fetch_missing
             continue
         if entry.get("status") in ("found", "not_found", "not_found_exact", "quarantined") and not entry.get("error"):
             continue

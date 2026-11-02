@@ -241,14 +241,14 @@ PROCESSED_PRODUCE_STEMS = (
     "kapsic", "presnidav", "pyre", "kompot", "susene", "susena", "suseny",
     "steril", "nakladan", "koreni", "mleta", "mlete", "hranol",
     "predvaren", "omack", "marinad", "dresink", "dip", "jogurt", "zmrzlin",
-    "caj", "kandovan",
+    "caj", "kandovan", "nalev", "zpracovan",
 )
 BEVERAGE_BRANDS = {"caprio", "relax", "rauch", "coolvitality"}
 
 
 def is_processed_produce_label(label: str) -> bool:
     text = strip_accents(label.lower()).replace("_", " ")
-    return bool(re.search(r"\d\s*(?:ml|l)\b|\d+\s*/\s*\d+\s*g\b", text)) or any(
+    return bool(re.search(r"\d\s*(?:ml|l)\b|\d+\s*/\s*\d+\s*g\b|\b(?:stava|stavy|stave|stavou)\b", text)) or any(
         word in BEVERAGE_BRANDS
         or (not word.startswith("nektarin") and word.startswith(PROCESSED_PRODUCE_STEMS))
         for word in text.split()
@@ -265,7 +265,18 @@ def canonical_product_name(product_name: str) -> str:
     # Keep compotes as their own products so, for example, Giana strawberry
     # compote never appears in the fresh-strawberries comparison.
     if processed:
-        return "_".join(word for word in text.split() if not word.isdigit())
+        slug = "_".join(word for word in text.split() if not word.isdigit())
+        # Package quantities may have been the only processing signal.
+        if not is_processed_produce_label(slug):
+            slug += "_zpracovane"
+        return slug
+
+    # Pomegranate is a different fruit, not an apple variety.
+    words = text.split()
+    if any(word.startswith("granatov") for word in words) and any(
+        word.startswith("jabl") for word in words
+    ):
+        return "granatove_jablko"
 
     canonical_words = []
     descriptors = []
