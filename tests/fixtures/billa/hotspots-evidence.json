@@ -1,0 +1,249 @@
+[
+  {
+    "pages": [
+      1
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/1/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      2,
+      3
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/2-3/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      4,
+      5
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/4-5/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      6,
+      7
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/6-7/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      8,
+      9
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/8-9/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      10,
+      11
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/10-11/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      12,
+      13
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/12-13/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      14,
+      15
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/14-15/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      16,
+      17
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/16-17/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      18,
+      19
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/18-19/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      20,
+      21
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/20-21/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      22,
+      23
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/22-23/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      24,
+      25
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/24-25/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      26,
+      27
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/26-27/hotspots_data.json",
+    "status": 200,
+    "body": [
+      {
+        "id": 159213970,
+        "type": "externalLink",
+        "title": null,
+        "showIndication": false,
+        "showTooltip": false,
+        "coverImageSource": null,
+        "version": null,
+        "position": {
+          "left": 0.55815,
+          "top": 0.83692,
+          "width": 0.38769,
+          "height": 0.05538,
+          "iconLeft": 0.5,
+          "iconTop": 0.5
+        },
+        "tabIndex": null,
+        "clickable": true,
+        "embeddedContent": false,
+        "dynamic": false,
+        "productThemeId": null,
+        "zIndex": null,
+        "rotation": null,
+        "url": "https://www.billa.cz/newsletter-prihlaseni"
+      }
+    ]
+  },
+  {
+    "pages": [
+      28,
+      29
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/28-29/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      30,
+      31
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/30-31/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      32,
+      33
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/32-33/hotspots_data.json",
+    "status": 200,
+    "body": []
+  },
+  {
+    "pages": [
+      34,
+      35
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/34-35/hotspots_data.json",
+    "status": 200,
+    "body": [
+      {
+        "id": 120478992,
+        "type": "externalLink",
+        "title": null,
+        "showIndication": false,
+        "showTooltip": true,
+        "coverImageSource": null,
+        "version": null,
+        "position": {
+          "left": 0.11037,
+          "top": 0.7468,
+          "width": 0.00474,
+          "height": 0.00148,
+          "iconLeft": 0.5,
+          "iconTop": 0.5
+        },
+        "tabIndex": null,
+        "clickable": true,
+        "embeddedContent": false,
+        "dynamic": false,
+        "productThemeId": null,
+        "zIndex": null,
+        "rotation": null,
+        "url": "http://www.billa.cz"
+      },
+      {
+        "id": 120478991,
+        "type": "externalLink",
+        "title": null,
+        "showIndication": false,
+        "showTooltip": true,
+        "coverImageSource": null,
+        "version": null,
+        "position": {
+          "left": 0.14517,
+          "top": 0.72961,
+          "width": 0.00474,
+          "height": 0.00148,
+          "iconLeft": 0.5,
+          "iconTop": 0.5
+        },
+        "tabIndex": null,
+        "clickable": true,
+        "embeddedContent": false,
+        "dynamic": false,
+        "productThemeId": null,
+        "zIndex": null,
+        "rotation": null,
+        "url": "http://www.billa.cz"
+      }
+    ]
+  },
+  {
+    "pages": [
+      36,
+      37
+    ],
+    "url": "https://view.publitas.com/billa-cz/velky-letak-29-10-3-11-2026/page/36-37/hotspots_data.json",
+    "status": 200,
+    "body": []
+  }
+]
