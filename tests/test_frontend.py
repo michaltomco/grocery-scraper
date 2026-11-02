@@ -6,7 +6,8 @@ live Kupi, nutrition, or image service is contacted.
 """
 
 from contextlib import ExitStack
-from datetime import date, timedelta
+from datetime import date as real_date, datetime, timedelta, timezone
+import json
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -19,6 +20,13 @@ from unittest.mock import patch
 import build_site
 from playwright.sync_api import Browser, BrowserContext, Page, sync_playwright
 from scrapers.common import FIELDNAMES, write_csv
+
+
+class date(real_date):
+    """Fixed fixture build day; no dependence on the CI runner's calendar."""
+    @classmethod
+    def today(cls):
+        return cls(2026, 11, 2)
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -61,6 +69,7 @@ class DashboardBrowserTests(unittest.TestCase):
         write_csv(
             history,
             [
+                history_row(store="Billa", date_range="2000-01-01 - 2000-01-02"),
                 history_row(category="Tržnice u Alberta"),
                 history_row(
                     category="Tržnice u Alberta",
@@ -96,6 +105,12 @@ class DashboardBrowserTests(unittest.TestCase):
                 ),
             ],
         )
+        write_csv(root / "albert.csv", [history_row()])
+        write_csv(root / "tesco.csv", [history_row(store="Tesco")])
+        write_csv(root / "billa.csv", [history_row(store="Billa", scraped_at="2000-01-01T06:00:00+01:00")])
+        status_file = root / "refresh_status.json"
+        status_file.write_text(json.dumps({"started_at": "2026-11-02T06:00:00+01:00", "merge": {"status": "merged"},
+            "retailers": {"Billa": {"status": "failed", "error": "ConnectionError: offline <source>"}}}))
         nutrition = {
             "jablka": {
                 "status": "found",
@@ -109,6 +124,8 @@ class DashboardBrowserTests(unittest.TestCase):
             }
         }
         cls.patches = ExitStack()
+        cls.patches.enter_context(patch.object(build_site, "date", date))
+        cls.patches.enter_context(patch.object(build_site, "REFRESH_STATUS_PATH", status_file, create=True))
         cls.patches.enter_context(patch.object(build_site, "HISTORY_CSV", history))
         cls.patches.enter_context(patch.object(build_site, "SITE_DIR", site_dir))
         cls.patches.enter_context(patch.object(build_site, "IMG_DIR", image_dir))
@@ -179,6 +196,31 @@ class DashboardBrowserTests(unittest.TestCase):
     def assert_browser_clean(self) -> None:
         self.assertEqual(self.console_errors, [], f"console errors: {self.console_errors}")
         self.assertEqual(self.page_errors, [], f"page errors: {self.page_errors}")
+
+    def test_store_count_excludes_expired_history_only_retailer(self):
+        self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
+        self.assertIn('2 stores with displayed offers', self.page.locator('.meta').first.inner_text())
+        self.assertEqual(self.page.locator('#t .ppcell[data-store="Billa"]').count(), 0)
+        self.assert_browser_clean()
+
+    def test_freshness_distinguishes_build_data_failure_and_stale_timeline(self):
+        browser_day = date.today() + timedelta(days=3)
+        self.page.clock.install(time=datetime.combine(browser_day, datetime.min.time(), tzinfo=timezone.utc))
+        for path in ('index.html', 'products/jablka.html', 'products/exact/jablka_gala_1_kg__albert.html'):
+            self.page.goto(f"{self.base_url}/{path}", wait_until="networkidle")
+            panel = self.page.locator('#refreshFreshness')
+            self.assertEqual(panel.count(), 1, 'Every page must disclose snapshot freshness')
+            self.assertIn('Site built:', panel.inner_text())
+            self.assertIn('not a data refresh', panel.inner_text())
+            self.assertIn(f'Timeline anchored to {date.today().isoformat()}', panel.inner_text())
+            self.assertIn('not current', self.page.locator('#timelineStaleWarning').inner_text())
+            billa = panel.locator('[data-retailer="Billa"]')
+            self.assertIn('failed', billa.inner_text())
+            self.assertIn('2000-01-01', billa.inner_text())
+            self.assertIn('offline <source>', billa.inner_text())
+            self.assertIn('stale', billa.inner_text().lower())
+            self.assertIn('unknown', panel.locator('[data-retailer="Lidl"]').inner_text())
+            self.assert_browser_clean()
 
     def test_dashboard_theme_filter_ranking_and_date_controls(self) -> None:
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")

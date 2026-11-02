@@ -17,6 +17,7 @@ class DailySourceTests(unittest.TestCase):
         response = Mock(text=cards_html(json.loads(FIXTURE.read_text())))
         with TemporaryDirectory() as directory, ExitStack() as stack:
             root = Path(directory)
+            stack.enter_context(patch('run.STATUS_PATH', root / 'refresh_status.json'))
             for scraper in (run.albert, run.billa, run.lidl, run.tesco):
                 path = root / f'{scraper.CONFIG.store.lower()}.csv'
                 stack.enter_context(patch.object(scraper, 'CONFIG', replace(scraper.CONFIG, csv_path=path)))

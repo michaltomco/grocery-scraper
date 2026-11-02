@@ -54,18 +54,36 @@ jobs:
         run: uv run python run.py
 
       - name: Build dashboard
+        id: build
         if: steps.scrape.outputs.merged == 'true'
         env:
           USDA_API_KEY: ${{ secrets.USDA_API_KEY }}
         run: uv run python build_site.py
 
+      - name: Preserve refresh status artifact
+        if: always() && (steps.scrape.outcome == 'success' || steps.scrape.outcome == 'failure')
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-status
+          path: refresh_status.json
+          if-no-files-found: warn
+
       - name: Commit refreshed data
         id: commit
-        if: steps.scrape.outputs.merged == 'true'
+        if: always() && (steps.scrape.outcome == 'success' || steps.scrape.outcome == 'failure')
+        env:
+          MERGED: ${{ steps.scrape.outputs.merged }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
         run: |
+          # A status-only commit deploys the previously committed safe snapshots.
+          # Never stage partially written merge output or a failed site build.
+          test -f refresh_status.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add albert.csv billa.csv lidl.csv tesco.csv all_discounts.csv history.csv nutrition_cache.json site/img
+          git add refresh_status.json
+          if [ "$MERGED" = true ] && [ "$BUILD_OUTCOME" = success ]; then
+            git add albert.csv billa.csv lidl.csv tesco.csv all_discounts.csv history.csv nutrition_cache.json site/img
+          fi
           if git diff --cached --quiet; then
             echo "No refreshed data changes to commit."
           else
@@ -75,7 +93,7 @@ jobs:
           fi
 
       - name: Trigger website deployment
-        if: steps.commit.outputs.changed == 'true'
+        if: always() && steps.commit.outcome == 'success' && steps.commit.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${{ github.repository }}/actions/workflows/pages.yml/dispatches" -f ref=main

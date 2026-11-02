@@ -125,9 +125,14 @@ catalogue requests, including department boundaries.
 
 These changes tolerate transient outages; they do not bypass blocks or make a
 persistently unreachable endpoint healthy. Exhausted retries still exit nonzero
-before that retailer's snapshot/history write. The orchestrator requires fresh
-snapshots from every retailer before merging, so an old snapshot is not presented
-as a successful refresh.
+before that retailer's snapshot/history write. The orchestrator attempts every
+retailer independently, restores failed snapshots/history without changing their
+original dates, and merges when at least one retailer succeeds. Partial updates
+can publish, but any failed retailer still makes the job fail. Even an all-source
+outage commits `refresh_status.json` without staging damaged merge output.
+
+See [refresh observability](docs/refresh-observability.md) for the status schema,
+GitHub summaries, safe commit gates, per-retailer freshness and anchored timelines.
 
 ## Product pictures
 

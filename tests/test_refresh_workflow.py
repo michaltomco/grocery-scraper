@@ -14,7 +14,9 @@ class RefreshWorkflowTests(unittest.TestCase):
         build = next(step for step in steps if "name: Build dashboard" in step)
         self.assertIn("steps.scrape.outputs.merged == 'true'", build)
         commit = next(step for step in steps if "name: Commit refreshed data" in step)
-        self.assertIn("steps.scrape.outputs.merged == 'true'", commit)
+        self.assertIn("MERGED: ${{ steps.scrape.outputs.merged }}", commit)
+        self.assertIn('if [ "$MERGED" = true ] && [ "$BUILD_OUTCOME" = success ]; then', commit)
+        self.assertIn('git add refresh_status.json', commit)
         final = steps[-1]
         self.assertIn("steps.scrape.outcome == 'failure'", final)
         self.assertIn("always()", final)

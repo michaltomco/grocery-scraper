@@ -34,6 +34,30 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def test_missing_price_unit_stays_unknown_instead_of_assuming_piece(self):
+        row = history_row(store="Lidl", product_id="11150766", product_name="Banány",
+                          price="21.9", unit_price="", price_per_kg="", price_per_piece="")
+        self.assertEqual(build_site.normalized_offer_value(row, '21.9'), (21.9, ''))
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_csv(root / 'history.csv', [row])
+            with patch.object(build_site, 'HISTORY_CSV', root / 'history.csv'), patch.object(
+                build_site, 'PRODUCTS_DIR', root / 'products'
+            ), patch.object(build_site, 'PRODUCTS_EXACT_DIR', root / 'products/exact'), patch.object(
+                build_site, 'get_many', return_value={}
+            ), patch.object(build_site, 'get_many_exact', return_value={}), patch.object(
+                build_site, 'cache_image', return_value='img/veg.png'
+            ):
+                html = build_site.build()
+            grouped = (root / 'products/banany.html').read_text()
+            for page in (html, grouped):
+                self.assertIn('21.90 (unit unknown)', page)
+                self.assertNotIn('21.90 / ks', page)
+                self.assertNotIn('21.90 / kg', page)
+            exact = next((root / 'products/exact').glob('*.html')).read_text()
+            self.assertIn('21.9', exact)
+            self.assertNotIn('21.90 (unit unknown)', exact, 'Exact pages keep the source price unadorned')
+
     def test_failed_images_are_not_retried_for_each_view(self) -> None:
         with TemporaryDirectory() as directory, patch.object(
             build_site, "IMG_DIR", Path(directory)
@@ -170,7 +194,7 @@ class DashboardBuilderTests(unittest.TestCase):
                 html = build_site.build()
 
         self.assertIn("Jablka", html)
-        self.assertIn("Last run:", html)
+        self.assertIn("Latest history observation:", html)
 
     def test_build_shows_active_offers_and_excludes_expired_ones(self) -> None:
         today = date.today()
@@ -197,7 +221,7 @@ class DashboardBuilderTests(unittest.TestCase):
 
         self.assertIn('href="products/jablka.html"', html)
         self.assertNotIn('href="products/mrkev.html"', html)
-        self.assertIn(f"Last run: {today.isoformat()}", html)
+        self.assertIn(f"Latest history observation: {today.isoformat()}", html)
 
     def test_build_keeps_overlapping_same_store_offers_for_the_next_two_weeks(self) -> None:
         today = date.today()

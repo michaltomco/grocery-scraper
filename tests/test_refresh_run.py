@@ -5,6 +5,7 @@ from dataclasses import replace
 from datetime import datetime, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import json
 import unittest
 from unittest.mock import patch
 
@@ -27,6 +28,29 @@ class RefreshRunTests(unittest.TestCase):
             self.stack.enter_context(patch.object(scraper, "CONFIG", replace(scraper.CONFIG, csv_path=path)))
             self.stack.enter_context(patch.object(scraper, "main", side_effect=self.writer(scraper)))
         self.merge = self.stack.enter_context(patch("run.merge"))
+        self.status = self.root / "refresh_status.json"
+        self.stack.enter_context(patch("run.STATUS_PATH", self.status, create=True))
+
+    def test_status_records_true_snapshot_dates_even_on_all_failed_outage(self):
+        old = "2026-10-11T06:00:00+02:00"
+        for scraper in self.scrapers:
+            write_csv(scraper.CONFIG.csv_path, [{"store": scraper.CONFIG.store, "scraped_at": old}])
+            scraper.main.side_effect = ConnectionError("source unavailable")
+        summary = self.root / "summary"
+        with patch.dict("os.environ", {"GITHUB_STEP_SUMMARY": str(summary)}):
+            with self.assertRaises(RuntimeError):
+                run.main()
+        self.assertTrue(self.status.exists(), "Outages must produce committed machine-readable status")
+        status = json.loads(self.status.read_text())
+        self.assertEqual(status["merge"]["status"], "skipped")
+        self.assertEqual(len(status["retailers"]), 4)
+        for item in status["retailers"].values():
+            self.assertEqual(item["status"], "failed")
+            self.assertEqual(item["scraped_at"], old)
+            self.assertEqual(item["oldest_scraped_at"], old)
+            self.assertIn("source unavailable", item["error"])
+        self.assertIn("0 refreshed", summary.read_text())
+        self.assertIn("4 failed", summary.read_text())
 
     def writer(self, scraper):
         def scrape():
@@ -87,6 +111,28 @@ class RefreshRunTests(unittest.TestCase):
             with self.assertRaisesRegex(OSError, "merge failed"):
                 run.main()
         self.assertFalse(output.exists())
+
+    def test_corrupt_retained_snapshot_does_not_block_other_retailer_attempts(self):
+        self.paths[0].write_bytes(b'\xff\xfeinvalid CSV')
+        with patch.object(run.albert, 'main', side_effect=ConnectionError('offline')):
+            with self.assertRaisesRegex(RuntimeError, 'Albert.*offline'):
+                run.main()
+        self.assertEqual(self.calls, ['Billa', 'Lidl', 'Tesco'])
+        status = json.loads(self.status.read_text())
+        self.assertIsNone(status['retailers']['Albert']['scraped_at'])
+        self.assertEqual(status['retailers']['Albert']['status'], 'failed')
+        self.assertEqual(self.paths[0].read_bytes(), b'\xff\xfeinvalid CSV')
+
+    def test_merge_error_is_saved_while_retailer_success_remains_distinct(self):
+        self.merge.side_effect = OSError("broken merge")
+        with self.assertRaisesRegex(OSError, "broken merge"):
+            run.main()
+        self.assertTrue(self.status.exists())
+        status = json.loads(self.status.read_text())
+        self.assertEqual(status["merge"], {"status": "failed", "error": "OSError: broken merge"})
+        for item in status["retailers"].values():
+            self.assertEqual(item["status"], "refreshed")
+            self.assertEqual(item["scraped_at"], today_timestamp())
 
     def test_failed_retailer_restores_history(self) -> None:
         history = self.root / "history.csv"

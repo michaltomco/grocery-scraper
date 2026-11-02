@@ -1,6 +1,7 @@
 """Daily Prague refresh gate: delayed schedules can catch up after 06:00."""
 import argparse
 import csv
+import os
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -38,4 +39,18 @@ if __name__ == "__main__":
                         default=datetime.now(PRAGUE))
     args = parser.parse_args()
     due = refresh_due(args.now, args.event)
+    if summary := os.environ.get("GITHUB_STEP_SUMMARY"):
+        local_now = args.now.astimezone(PRAGUE)
+        reason = ("manual override" if args.event == "workflow_dispatch" else
+                  "before 06:00 Europe/Prague" if local_now.hour < 6 else
+                  "one or more snapshots missing, invalid or not refreshed today" if due else
+                  "all four snapshots already refreshed today")
+        with Path(summary).open("a") as stream:
+            stream.write(f"## Refresh gate\n{local_now.isoformat()} — {reason}.\n\n")
+            if due:
+                stream.write("Proceeding to retailer attempts (not a refresh success).\n")
+            else:
+                stream.write("0 refreshed · 0 failed · 4 skipped. No download, merge or data-date change.\n\n")
+                for store in ("Albert", "Billa", "Lidl", "Tesco"):
+                    stream.write(f"- {store}: skipped — {reason}\n")
     print(f"run={str(due).lower()}")

@@ -21,6 +21,7 @@ from threading import Lock
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
 from pathlib import Path
 
 from scrapers.common import (
@@ -48,6 +49,88 @@ PRODUCTS_DIR = SITE_DIR / "products"
 PRODUCTS_EXACT_DIR = PRODUCTS_DIR / "exact"
 INDEX_HTML = SITE_DIR / "index.html"
 KUPI_PRICE_HISTORY_CSV = ROOT / "kupi_price_history.csv"
+REFRESH_STATUS_PATH = ROOT / "refresh_status.json"
+
+
+def freshness_panel() -> str:
+    paths = [REFRESH_STATUS_PATH] + [HISTORY_CSV.parent / f"{store}.csv" for store in ("albert", "billa", "lidl", "tesco")]
+    signature = tuple((p.stat().st_mtime_ns, p.stat().st_size) if p.exists() else None for p in paths)
+    return _freshness_panel(HISTORY_CSV.parent, REFRESH_STATUS_PATH, date.today().isoformat(), signature)
+
+
+@lru_cache(maxsize=8)
+def _freshness_panel(snapshot_root, status_path, anchor, signature) -> str:
+    """Read snapshots once per build, not once for every exact SKU page."""
+    try:
+        status = json.loads(status_path.read_text())
+    except (OSError, ValueError):
+        status = {}
+    retailers = status.get("retailers", {})
+    items = []
+    for store in ("Albert", "Billa", "Lidl", "Tesco"):
+        # Legacy deployments have no status file: the CSV remains authoritative.
+        snapshot = snapshot_root / f"{store.lower()}.csv"
+        stamps = []
+        try:
+            rows = read_csv(snapshot) if snapshot.exists() else []
+            for row in rows:
+                stamp = datetime.fromisoformat(row.get("scraped_at", ""))
+                if stamp.tzinfo is None:
+                    raise ValueError("Timestamp has no timezone")
+                stamps.append(stamp)
+        except (OSError, ValueError, TypeError, csv.Error):
+            stamps = []
+        oldest = min(stamps).isoformat() if stamps else ""
+        newest = max(stamps).isoformat() if stamps else ""
+        attempt = retailers.get(store, {})
+        result = attempt.get("status", "unknown (no recorded attempt)")
+        error = attempt.get("error") or ""
+        observed = f"{oldest} → {newest}" if stamps else "unknown (snapshot missing or invalid)"
+        items.append(f'<li data-retailer="{store}" data-oldest-scraped-at="{esc(oldest)}">'
+                     f'<strong>{store}</strong>: data scraped_at {esc(observed)}; '
+                     f'last attempt: {esc(result)}'
+                     f'{" — " + esc(error) if error else ""} '
+                     '<strong class="freshness-state">(freshness unverified)</strong></li>')
+    merge = status.get("merge", {})
+    merge_message = f"Merge: {merge.get('status', 'unknown')}"
+    if merge.get("error"):
+        merge_message += f" — {merge['error']}"
+    built = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return f'''<section id="refreshFreshness" class="meta" aria-label="Data freshness" data-anchor="{anchor}">
+<p>Site built: <time>{esc(built)}</time> (deployment build, not a data refresh).</p>
+<p>Timeline anchored to {anchor} (build day); offer selection is fixed to this date.</p>
+<p id="timelineStaleWarning" role="status">If this date is not today, the timeline is not current. Reloading does not refresh retailer data.</p>
+<p>Last refresh attempt: {esc(status.get("started_at") or "unknown")}. {esc(merge_message)}.</p>
+<ul>{''.join(items)}</ul>
+</section>
+<script>
+(() => {{
+  const panel = document.getElementById('refreshFreshness');
+  function pragueDay(value) {{
+    const parts = new Intl.DateTimeFormat('en', {{timeZone:'Europe/Prague', year:'numeric', month:'2-digit', day:'2-digit'}}).formatToParts(value);
+    const part = key => parts.find(p => p.type === key).value;
+    return `${{part('year')}}-${{part('month')}}-${{part('day')}}`;
+  }}
+  function updateFreshness() {{
+    const today = pragueDay(new Date());
+    const stale = today !== panel.dataset.anchor;
+    document.getElementById('timelineStaleWarning').textContent = stale
+      ? `Warning: timeline is not current. Today in Prague is ${{today}}; offers and date squares are anchored to ${{panel.dataset.anchor}}. Reloading does not refresh data.`
+      : 'Timeline uses today’s build-day anchor. Data freshness is reported separately below.';
+    panel.querySelectorAll('[data-retailer]').forEach(item => {{
+      const stamp = item.dataset.oldestScrapedAt;
+      const parsed = stamp ? new Date(stamp) : null;
+      const day = parsed && !Number.isNaN(parsed.getTime()) ? pragueDay(parsed) : '';
+      item.querySelector('.freshness-state').textContent = !day ? '(freshness unknown)' : day < today
+        ? '(stale: data predates today)' : day > today ? '(invalid: future data date)' : '(data dated today)';
+    }});
+  }}
+  updateFreshness();
+  document.addEventListener('visibilitychange', updateFreshness);
+  setInterval(updateFreshness, 60000);
+}})();
+</script>'''
+
 
 # Presentation aliases only: source categories and offer identities stay intact.
 # Broad mixed sections (e.g. "Trvanlivé", "Nápoje", "Mléčné a chlazené")
@@ -290,12 +373,13 @@ def normalized(row: dict) -> tuple[float | None, str]:
         )
     if vol is not None:
         return vol, vol_unit
-    # Fallback: some scraped rows only carry a generic `price` (no per_kg/per_piece).
-    # Infer the unit from the product name ("1 kg" -> kg, otherwise per piece).
+    # A generic price with no explicit unit is a raw source price, not per piece.
     generic = number(row.get("price", ""))
     if generic is not None:
         name = (row.get("product_name") or row.get("canonical_product_name") or "")
-        unit = "kg" if re.search(r"\b\d+(?:[,.]\d+)?\s*kg\b", name, re.IGNORECASE) else "ks"
+        unit = "kg" if re.search(r"\b\d+(?:[,.]\d+)?\s*kg\b", name, re.IGNORECASE) else (
+            "ks" if re.search(r"\b\d+(?:[,.]\d+)?\s*ks\b", name, re.IGNORECASE) else ""
+        )
         return generic, unit
     return None, ""
 
@@ -727,6 +811,7 @@ def render_product_page(pretty, image_html, nutrition_sections, source_html,
 <script>{head_js_inline}</script>
 <style>{PRODUCT_PAGE_CSS}</style></head><body>
 <p><a class="back-button" href="{esc(back_href)}">Back</a></p>
+{freshness_panel()}
 <div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
 <div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>{esc(table_title)}</h2><table id="discountTable"><thead><tr><th>{esc(table_head)}</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
 <div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
@@ -756,7 +841,7 @@ def write_product_pages(products, nutrition, exact_page_slugs=None):
             val = e.get("val")
             if val is None:
                 return "-"
-            return f"{val:.2f} / {e.get('unit', '')}"
+            return f"{val:.2f} / {e['unit']}" if e.get('unit') else f"{val:.2f} (unit unknown)"
 
         discount_rows = "".join(
             (
@@ -813,6 +898,7 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
         (PRODUCTS_EXACT_DIR / f"{slug}.html").write_text(page, encoding="utf-8")
 
 def build() -> str:
+    _freshness_panel.cache_clear()
     FAILED_IMAGES.clear()
     IMAGE_HOST_FAILURES.clear()
     IMAGE_DIAGNOSTICS.clear()
@@ -868,7 +954,6 @@ def build() -> str:
     # overlapping current/next-week offer from the same store disappears.
     current_entries: dict[tuple[str, ...], dict] = {}
     series: dict[tuple[str, str, str], list[tuple[datetime, float]]] = defaultdict(list)
-    stores_seen: set[str] = set()
     for r in rows:
         store = r.get("store", "")
         category = r.get("category") or "Ovoce a zelenina"
@@ -876,7 +961,6 @@ def build() -> str:
         # canonicalizer enhancements (e.g. avocado subcategories) take
         # effect even for rows whose CSV column predates the change.
         product = canonical_product_name(r.get("product_name", ""))
-        stores_seen.add(store)
         val, unit = normalized_offer_value(r, r.get("price", ""))
         ts = parse_ts(r.get("scraped_at", ""))
         if val is not None and unit:
@@ -1110,9 +1194,10 @@ def build() -> str:
             # Price cell is only meaningful when we have a parsed value.
             v = e["val"]
             if v is not None:
+                price_label = f'{v:.2f} / {e["unit"]}' if e["unit"] else f'{v:.2f} (unit unknown)'
                 pp_cells.append(
                     f'<div class="ppcell" data-store="{esc(e["store"])}" data-category="{esc(e["filter_category"])}" data-source-category="{esc(e["category"])}" data-line="{esc(line_id)}">'
-                    f'<span class="pprice">{v:.2f} / {e["unit"]}</span>{logo}</div>'
+                    f'<span class="pprice">{esc(price_label)}</span>{logo}</div>'
                 )
             # Render date cells only for a fully parseable range. A malformed
             # upstream value remains visible as a price row rather than crashing
@@ -1148,7 +1233,7 @@ def build() -> str:
 
     last_run = last_run or "unknown"
     n_products = len(table_rows)
-    n_stores = len(stores_seen)
+    n_stores = len({entry["store"] for entry in current_entries.values() if entry["store"]})
     active_categories = {entry["filter_category"] for entry in current_entries.values()}
     ordered_categories = [label for label, _slug in KUPI_FOOD_CATEGORIES if label in active_categories]
     ordered_categories.extend(sorted(active_categories - set(ordered_categories)))
@@ -1478,8 +1563,9 @@ td.prod.prodfade {{ opacity: .28; transition: opacity .15s; }}
   <p class="muted ranking-help">Top 10 discounts by lowest cost for 100% RDA. Per-piece offers are included only when their package weight is explicit.</p>
   <table id="rankingTable"><thead><tr><th>Product</th><th>Price per 100% RDA</th><th>Discount days</th><th>Price</th></tr></thead><tbody></tbody></table>
 </div>
-<div class="meta">Last run: {esc(last_run)} &middot; {n_products} products &middot;
- {n_stores} stores</div>
+<div class="meta">Latest history observation: {esc(last_run)} &middot; {n_products} products &middot;
+ {n_stores} stores with displayed offers</div>
+{freshness_panel()}
 {'<p class="meta">Tesco prices are online reference-store offers. Clubcard prices require membership.</p>' if tesco_online else ''}
 <div class="legend">
   <span class="chip" data-store="Lidl">{store_logo("Lidl")} Lidl</span>
