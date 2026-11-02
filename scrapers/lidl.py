@@ -81,7 +81,10 @@ def extract_lidl_products(html: str) -> list[dict]:
         end = datetime.fromtimestamp(card["storeEndDate"], LOCAL_TIMEZONE).date()
         if not name or end < start:
             raise ValueError("Invalid Lidl product name or validity dates")
-        unit_price = lidl_unit_price(pricing.get("basePrice", {}).get("text", ""), price)
+        # Some cards state the sales quantity only in packaging (e.g. 1 kg
+        # bananas or one pomelo). Never infer pieces merely from a missing unit.
+        unit_text = pricing.get("basePrice", {}).get("text") or pricing.get("packaging", {}).get("text", "")
+        unit_price = lidl_unit_price(unit_text, price)
         normalized = normalize_unit_price(unit_price)
         discount = pricing.get("discount", {})
         old_price = pricing.get("oldPrice") or discount.get("deletedPrice") or ""

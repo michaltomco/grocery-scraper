@@ -43,6 +43,15 @@ class LidlTests(unittest.TestCase):
         self.assertEqual(rocket["price_per_kg"], 159.2)
         self.assertEqual(basil["price_per_piece"], 34.9)
 
+    def test_explicit_packaging_supplies_unit_when_base_price_is_absent(self) -> None:
+        for packaging, kg, piece in (("1 kg", 19.9, ""), ("kus", "", 19.9)):
+            with self.subTest(packaging=packaging):
+                pricing = {**self.cards[0]["price"], "packaging": {"text": packaging}}
+                pricing.pop("basePrice", None)
+                row = extract_lidl_products(cards_html([{**self.cards[0], "price": pricing}]))[0]
+                self.assertEqual(row["price_per_kg"], kg)
+                self.assertEqual(row["price_per_piece"], piece)
+
     def test_duplicates_collapse_but_distinct_validity_is_preserved(self) -> None:
         changed = {**self.cards[0], "storeEndDate": self.cards[0]["storeEndDate"] + 86400}
         rows = extract_lidl_products(cards_html([self.cards[0], self.cards[0], changed]))
