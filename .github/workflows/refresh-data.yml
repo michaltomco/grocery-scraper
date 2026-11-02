@@ -47,17 +47,21 @@ jobs:
         if: steps.time.outputs.run == 'true'
         run: uv sync --locked
 
-      - name: Scrape Lidl.cz and Kupi, then build dashboard
+      - name: Refresh retailers independently
+        id: scrape
         if: steps.time.outputs.run == 'true'
+        continue-on-error: true
+        run: uv run python run.py
+
+      - name: Build dashboard
+        if: steps.scrape.outputs.merged == 'true'
         env:
           USDA_API_KEY: ${{ secrets.USDA_API_KEY }}
-        run: |
-          uv run python run.py
-          uv run python build_site.py
+        run: uv run python build_site.py
 
       - name: Commit refreshed data
         id: commit
-        if: steps.time.outputs.run == 'true'
+        if: steps.scrape.outputs.merged == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -75,3 +79,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${{ github.repository }}/actions/workflows/pages.yml/dispatches" -f ref=main
+
+      - name: Report refresh failures
+        if: always() && steps.scrape.outcome == 'failure'
+        run: |
+          echo "::error::Refresh failed for one or more retailers, or merging failed. See scraper logs; failed retailer snapshots were preserved."
+          exit 1
