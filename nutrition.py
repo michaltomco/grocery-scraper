@@ -11,6 +11,67 @@ from pathlib import Path
 
 import requests
 
+from scrapers.common import (
+    CANONICAL_WORDS, canonical_product_name, is_processed_produce_label, strip_accents,
+)
+
+
+def exact_name_tokens(label: str) -> set[str]:
+    """Ignore ordering, punctuation and package size, never flavour/brand words."""
+    text = strip_accents(label.lower())
+    text = re.sub(r"\b\d+(?:[,.]\d+)?\s*(?:kg|g|ks|ml|l)\b", " ", text)
+    return set(re.findall(r"[a-z0-9]+", text))
+
+
+def identity_issues(label: str, entry: dict) -> list[str]:
+    """Provable family/preparation conflicts; lexical uncertainty is audited separately."""
+    source = str(entry.get("source_product", ""))
+    if entry.get("provenance") == "exact_match" and not (exact_name_tokens(label) & exact_name_tokens(source)):
+        return ["unrelated_exact_source_name"]
+    raw_key = canonical_product_name(label)
+    produce_keys = set(CANONICAL_WORDS.values()) | {"svestky", "maliny", "hrusky", "limety"}
+    if raw_key in produce_keys and not is_processed_produce_label(label):
+        if is_processed_produce_label(source):
+            return ["raw_produce_vs_processed_source"]
+    if is_processed_produce_label(label) and entry.get("source", "").startswith("USDA") and "raw" in source.lower():
+        return ["processed_product_vs_raw_profile"]
+    return []
+
+
+def nutrient_issues(values: dict) -> list[str]:
+    """Conservative physical checks, not an exact Atwater calorie estimator."""
+    import math
+
+    issues = []
+    for label, record in values.items():
+        value = record.get("value")
+        if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+            issues.append(f"invalid_nutrient:{label}")
+        elif record.get("unit", "").lower() == "g" and value > 100:
+            issues.append(f"over_100g:{label}")
+    if issues:
+        return issues
+    def amount(label, unit):
+        record = values.get(label, {})
+        return record.get("value") if record.get("unit", "").lower() == unit else None
+    kcal = amount("Calories", "kcal")
+    kj = amount("Energy", "kj")
+    if kcal is not None and kj is not None and abs(kcal * 4.184 - kj) > max(25, kj * .15):
+        issues.append("inconsistent_energy_units")
+    energy = kcal if kcal is not None else kj / 4.184 if kj is not None else None
+    # Protein and fat alone establish a safe lower bound. Avoid carbohydrate
+    # equality assumptions (polyols, fiber and organic acids vary by database).
+    lower_bound = 4 * (amount("Protein", "g") or 0) + 9 * (amount("Fat", "g") or 0)
+    if energy is not None and energy + 5 < lower_bound * .5:
+        issues.append("energy_below_macronutrient_minimum")
+    return issues
+
+
+def quarantine_entry(entry: dict, issues: list[str]) -> dict:
+    """Return a non-destructive, unavailable view; retain evidence outside values."""
+    return {**entry, "status": "quarantined", "values": {},
+            "validation_issues": issues, "quarantined_record": entry}
+
 
 ROOT = Path(__file__).resolve().parent
 CACHE_PATH = ROOT / "nutrition_cache.json"
@@ -130,7 +191,8 @@ SUBSTRING_ALIASES = {
 
 
 def resolve_nutrition_query(product: str) -> str | None:
-    if product in UNSUPPORTED_NUTRITION_PRODUCTS or product.startswith("kompot_"):
+    if (product in UNSUPPORTED_NUTRITION_PRODUCTS
+            or is_processed_produce_label(product)):
         return None
     query = QUERY_ALIASES.get(product)
     if query is not None:
@@ -352,7 +414,7 @@ def fetch_usda_nutrition(query: str) -> dict:
                     value = round(value / 4.184, 2)
                     unit = "kcal"
                 values[label] = {"value": value, "unit": unit}
-        if values:
+        if values and not nutrient_issues(values):
             candidates.append((len(values), food, values))
     if not candidates:
         return {}
@@ -363,23 +425,28 @@ def fetch_usda_nutrition(query: str) -> dict:
         return (grape_fruit, item[0])
 
     _, food, values = max(candidates, key=candidate_score)
-    return {"values": values, "source": "USDA FoodData Central", "source_product": food.get("description", "")}
-
+    result = {"values": values, "source": "USDA FoodData Central",
+              "source_product": food.get("description", ""), "provenance": "raw_produce_profile"}
+    if str(food.get("fdcId", "")).isdigit():
+        result["source_url"] = f"https://fdc.nal.usda.gov/food-details/{food['fdcId']}/nutrients"
+    return result
 
 def fetch_nutrition_exact(label: str) -> dict:
     """Strict exact-label nutrition lookup.
 
-    Searches Open Food Facts for an exact (case-insensitive match against
-    ``label`` and keeps only candidates whose product name contains the label
-    substring. Returns a ``not_found`` record when no exact branded product is
-    matched -- never falls back to a generic or unrelated source. The NutriData
-    curated registry is checked first for an exact product-name hit.
+    Searches Open Food Facts using the complete label and requires equal name
+    tokens after accent, punctuation, ordering and package-size normalization.
+    Brand and variant words are never discarded. A fruit name embedded in a
+    pouch/drink label is not an exact match. Returns ``not_found`` rather than
+    falling back to a generic source. Curated records require exact provenance.
     """
     # NutriData curated records are keyed by exact Czech product slug; match
     # the raw retail product name against the curated source_name verbatim.
     curated = _load_nutridata()
     for key, entry in curated.items():
-        if entry.get("source_product", "").lower() == label.lower():
+        if (entry.get("source_product", "").lower() == label.lower()
+                and entry.get("provenance") == "exact_match"
+                and not nutrient_issues(entry.get("values", {}))):
             return entry
     # Exact Open Food Facts label lookup (no substring/generic fallback).
     return _off_exact(label)
@@ -400,12 +467,11 @@ def _off_exact(label: str) -> dict:
         products = response.json().get("products", [])
     except (requests.RequestException, ValueError):
         return {"status": "error", "values": {}, "schema_version": CACHE_VERSION}
-    label_lower = label.lower()
     for item in products:
         name = str(item.get("product_name", "")).lower()
-        if name == label_lower or label_lower in name:
+        if exact_name_tokens(name) == exact_name_tokens(label):
             values = _extract(item)
-            if values:
+            if values and not nutrient_issues(values):
                 return {
                     "status": "found",
                     "source": "Open Food Facts",
@@ -432,6 +498,7 @@ def fetch_nutrition(product: str) -> dict:
     primary = fetch_usda_nutrition(query)
     if primary:
         return {
+            **primary,
             "status": "found", "query": query, "source": primary["source"],
             "source_product": primary.get("source_product", ""),
             "values": primary["values"], "schema_version": CACHE_VERSION,
@@ -452,6 +519,7 @@ def fetch_nutrition(product: str) -> dict:
         fallback = fetch_usda_nutrition(query)
         if fallback:
             return {
+                **fallback,
                 "status": "found", "query": query, "source": fallback["source"],
                 "source_product": fallback.get("source_product", ""),
                 "values": fallback["values"], "schema_version": CACHE_VERSION,
@@ -469,6 +537,7 @@ def fetch_nutrition(product: str) -> dict:
         fallback = fetch_usda_nutrition(query)
         if fallback:
             return {
+                **fallback,
                 "status": "found", "query": query, "source": fallback["source"],
                 "source_product": fallback.get("source_product", ""),
                 "values": fallback["values"], "schema_version": CACHE_VERSION,
@@ -504,6 +573,7 @@ def fetch_nutrition(product: str) -> dict:
             # available, replace the entire Open Food Facts fallback rather
             # than retaining potentially incompatible branded-product macros.
             return {
+                **fallback,
                 "status": "found",
                 "query": query,
                 "source": fallback["source"],
@@ -523,7 +593,8 @@ def get_many(products: set[str], *, fetch_missing: bool = True) -> dict:
     curated = _load_nutridata()
     if curated:
         for key, entry in curated.items():
-            cache[key] = entry
+            if not identity_issues(key.replace("_", " "), entry) and not nutrient_issues(entry.get("values", {})):
+                cache[key] = entry
     changed = False
     for product in sorted(products):
         # Successful and definitive misses are cached. Transient request
@@ -531,6 +602,17 @@ def get_many(products: set[str], *, fetch_missing: bool = True) -> dict:
         # FoodData Central Vitamin A, IU values as dietary Vitamin A; refresh
         # those entries so the direct Vitamin A, RAE value replaces them.
         entry = cache.get(product, {})
+        if entry.get("status") == "found":
+            issues = identity_issues(product.replace("_", " "), entry) + nutrient_issues(entry.get("values", {}))
+            if issues:
+                if fetch_missing and resolve_nutrition_query(product) is not None:
+                    cache[product] = fetch_nutrition(product)
+                    changed = True
+                else:
+                    cache[product] = quarantine_entry(entry, issues)
+                continue
+        if entry.get("status") == "quarantined":
+            continue
         # Curated NutriData records are frozen: never re-fetch, never refresh.
         if entry.get("nutridata_curated"):
             continue
@@ -586,7 +668,13 @@ def get_many_exact(labels: set[str], *, fetch_missing: bool = True) -> dict:
             continue
         key = f"exact:{label}"
         entry = exact_cache.get(key, {})
-        if entry.get("status") in ("found", "not_found", "not_found_exact") and not entry.get("error"):
+        issues = (identity_issues(label, entry) + nutrient_issues(entry.get("values", {}))) if entry.get("status") == "found" else []
+        if entry.get("status") == "found" and entry.get("provenance") != "exact_match":
+            issues.append("exact_provenance_required")
+        if issues:
+            exact_cache[key] = quarantine_entry(entry, issues)
+            continue
+        if entry.get("status") in ("found", "not_found", "not_found_exact", "quarantined") and not entry.get("error"):
             continue
         if not fetch_missing:
             continue

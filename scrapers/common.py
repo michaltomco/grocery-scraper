@@ -235,7 +235,28 @@ def strip_accents(text: str) -> str:
     )
 
 
+# Signals of a different food/preparation, not fresh-produce descriptors.
+PROCESSED_PRODUCE_STEMS = (
+    "dzus", "juice", "napoj", "nektar", "smoothie", "sirup", "limonad",
+    "kapsic", "presnidav", "pyre", "kompot", "susene", "susena", "suseny",
+    "steril", "nakladan", "koreni", "mleta", "mlete", "hranol",
+    "predvaren", "omack", "marinad", "dresink", "dip", "jogurt", "zmrzlin",
+    "caj", "kandovan",
+)
+BEVERAGE_BRANDS = {"caprio", "relax", "rauch", "coolvitality"}
+
+
+def is_processed_produce_label(label: str) -> bool:
+    text = strip_accents(label.lower()).replace("_", " ")
+    return bool(re.search(r"\d\s*(?:ml|l)\b|\d+\s*/\s*\d+\s*g\b", text)) or any(
+        word in BEVERAGE_BRANDS
+        or (not word.startswith("nektarin") and word.startswith(PROCESSED_PRODUCE_STEMS))
+        for word in text.split()
+    )
+
+
 def canonical_product_name(product_name: str) -> str:
+    processed = is_processed_produce_label(product_name)
     text = strip_accents(product_name.lower())
     text = re.sub(r"\b\d+(?:[,.]\d+)?\s*(?:kg|g|ks|ml|l)\b", " ", text)
     text = re.sub(r"[^a-z0-9 ]+", " ", text)
@@ -243,7 +264,7 @@ def canonical_product_name(product_name: str) -> str:
     # A preserved fruit is not equivalent to its fresh-produce counterpart.
     # Keep compotes as their own products so, for example, Giana strawberry
     # compote never appears in the fresh-strawberries comparison.
-    if "kompot" in text.split():
+    if processed:
         return "_".join(word for word in text.split() if not word.isdigit())
 
     canonical_words = []

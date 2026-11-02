@@ -464,129 +464,140 @@
     "schema_version": 13
   },
   "bramborove_hranolky_menu_inspirace": {
-    "status": "found",
+    "status": "quarantined",
     "query": "potato",
     "source": "USDA FoodData Central",
     "source_product": "Potatoes, flesh and skin, raw",
-    "values": {
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
+    "values": {},
+    "schema_version": 13,
+    "validation_issues": [
+      "processed_product_vs_raw_profile"
+    ],
+    "quarantined_record": {
+      "status": "found",
+      "query": "potato",
+      "source": "USDA FoodData Central",
+      "source_product": "Potatoes, flesh and skin, raw",
+      "values": {
+        "Vitamin D": {
+          "value": 0.0,
+          "unit": "ug"
+        },
+        "Omega-9 fat": {
+          "value": 0.0,
+          "unit": "g"
+        },
+        "Omega-6 fat": {
+          "value": 0.03,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 0.09,
+          "unit": "g"
+        },
+        "Vitamin E": {
+          "value": 0.0,
+          "unit": "mg"
+        },
+        "Calcium": {
+          "value": 12.0,
+          "unit": "mg"
+        },
+        "Vitamin B2": {
+          "value": 0.03,
+          "unit": "mg"
+        },
+        "Magnesium": {
+          "value": 23.0,
+          "unit": "mg"
+        },
+        "Phosphorus": {
+          "value": 57.0,
+          "unit": "mg"
+        },
+        "Manganese": {
+          "value": 0.15,
+          "unit": "mg"
+        },
+        "Vitamin K": {
+          "value": 2.0,
+          "unit": "ug"
+        },
+        "Vitamin B12": {
+          "value": 0.0,
+          "unit": "ug"
+        },
+        "Calories": {
+          "value": 76.96,
+          "unit": "kcal"
+        },
+        "Vitamin A": {
+          "value": 0.0,
+          "unit": "ug"
+        },
+        "Vitamin C": {
+          "value": 19.7,
+          "unit": "mg"
+        },
+        "Sodium": {
+          "value": 6.0,
+          "unit": "mg"
+        },
+        "Vitamin B9": {
+          "value": 15.0,
+          "unit": "ug"
+        },
+        "Protein": {
+          "value": 2.05,
+          "unit": "g"
+        },
+        "Copper": {
+          "value": 0.11,
+          "unit": "mg"
+        },
+        "Fiber": {
+          "value": 2.1,
+          "unit": "g"
+        },
+        "Iron": {
+          "value": 0.81,
+          "unit": "mg"
+        },
+        "Vitamin B1": {
+          "value": 0.08,
+          "unit": "mg"
+        },
+        "Carbs": {
+          "value": 17.5,
+          "unit": "g"
+        },
+        "Vitamin B3": {
+          "value": 1.06,
+          "unit": "mg"
+        },
+        "Vitamin B5": {
+          "value": 0.29,
+          "unit": "mg"
+        },
+        "Vitamin B6": {
+          "value": 0.3,
+          "unit": "mg"
+        },
+        "Potassium": {
+          "value": 425.0,
+          "unit": "mg"
+        },
+        "Zinc": {
+          "value": 0.3,
+          "unit": "mg"
+        },
+        "Selenium": {
+          "value": 0.4,
+          "unit": "ug"
+        }
       },
-      "Omega-9 fat": {
-        "value": 0.0,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.03,
-        "unit": "g"
-      },
-      "Fat": {
-        "value": 0.09,
-        "unit": "g"
-      },
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 12.0,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.03,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 23.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 57.0,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.15,
-        "unit": "mg"
-      },
-      "Vitamin K": {
-        "value": 2.0,
-        "unit": "ug"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Calories": {
-        "value": 76.96,
-        "unit": "kcal"
-      },
-      "Vitamin A": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Vitamin C": {
-        "value": 19.7,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 6.0,
-        "unit": "mg"
-      },
-      "Vitamin B9": {
-        "value": 15.0,
-        "unit": "ug"
-      },
-      "Protein": {
-        "value": 2.05,
-        "unit": "g"
-      },
-      "Copper": {
-        "value": 0.11,
-        "unit": "mg"
-      },
-      "Fiber": {
-        "value": 2.1,
-        "unit": "g"
-      },
-      "Iron": {
-        "value": 0.81,
-        "unit": "mg"
-      },
-      "Vitamin B1": {
-        "value": 0.08,
-        "unit": "mg"
-      },
-      "Carbs": {
-        "value": 17.5,
-        "unit": "g"
-      },
-      "Vitamin B3": {
-        "value": 1.06,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.29,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.3,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 425.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.3,
-        "unit": "mg"
-      },
-      "Selenium": {
-        "value": 0.4,
-        "unit": "ug"
-      }
-    },
-    "schema_version": 13
+      "schema_version": 13
+    }
   },
   "bramborove_platky_menu_inspirace": {
     "status": "found",
@@ -3000,133 +3011,144 @@
     "schema_version": 13
   },
   "kukurice_predvarena": {
-    "status": "found",
+    "status": "quarantined",
     "query": "corn",
     "source": "USDA FoodData Central",
     "source_product": "Corn, sweet, yellow, raw",
-    "values": {
-      "Vitamin D": {
-        "value": 0.0,
-        "unit": "ug"
+    "values": {},
+    "schema_version": 13,
+    "validation_issues": [
+      "processed_product_vs_raw_profile"
+    ],
+    "quarantined_record": {
+      "status": "found",
+      "query": "corn",
+      "source": "USDA FoodData Central",
+      "source_product": "Corn, sweet, yellow, raw",
+      "values": {
+        "Vitamin D": {
+          "value": 0.0,
+          "unit": "ug"
+        },
+        "Vitamin B1": {
+          "value": 0.15,
+          "unit": "mg"
+        },
+        "Vitamin B2": {
+          "value": 0.06,
+          "unit": "mg"
+        },
+        "Vitamin B9": {
+          "value": 42.0,
+          "unit": "ug"
+        },
+        "Fiber": {
+          "value": 2.0,
+          "unit": "g"
+        },
+        "Iron": {
+          "value": 0.52,
+          "unit": "mg"
+        },
+        "Magnesium": {
+          "value": 37.0,
+          "unit": "mg"
+        },
+        "Phosphorus": {
+          "value": 89.0,
+          "unit": "mg"
+        },
+        "Sodium": {
+          "value": 15.0,
+          "unit": "mg"
+        },
+        "Copper": {
+          "value": 0.05,
+          "unit": "mg"
+        },
+        "Manganese": {
+          "value": 0.16,
+          "unit": "mg"
+        },
+        "Protein": {
+          "value": 3.27,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 1.35,
+          "unit": "g"
+        },
+        "Vitamin B3": {
+          "value": 1.77,
+          "unit": "mg"
+        },
+        "Calcium": {
+          "value": 2.0,
+          "unit": "mg"
+        },
+        "Potassium": {
+          "value": 270.0,
+          "unit": "mg"
+        },
+        "Zinc": {
+          "value": 0.46,
+          "unit": "mg"
+        },
+        "Vitamin B5": {
+          "value": 0.72,
+          "unit": "mg"
+        },
+        "Vitamin B6": {
+          "value": 0.09,
+          "unit": "mg"
+        },
+        "Omega-3 fat": {
+          "value": 0.01,
+          "unit": "g"
+        },
+        "Omega-9 fat": {
+          "value": 0.0,
+          "unit": "g"
+        },
+        "Omega-6 fat": {
+          "value": 0.0,
+          "unit": "g"
+        },
+        "Vitamin K": {
+          "value": 0.3,
+          "unit": "ug"
+        },
+        "Vitamin A": {
+          "value": 9.0,
+          "unit": "ug"
+        },
+        "Calories": {
+          "value": 86.0,
+          "unit": "kcal"
+        },
+        "Carbs": {
+          "value": 18.7,
+          "unit": "g"
+        },
+        "Vitamin E": {
+          "value": 0.0,
+          "unit": "mg"
+        },
+        "Vitamin C": {
+          "value": 6.8,
+          "unit": "mg"
+        },
+        "Vitamin B12": {
+          "value": 0.0,
+          "unit": "ug"
+        },
+        "Selenium": {
+          "value": 0.6,
+          "unit": "ug"
+        }
       },
-      "Vitamin B1": {
-        "value": 0.15,
-        "unit": "mg"
-      },
-      "Vitamin B2": {
-        "value": 0.06,
-        "unit": "mg"
-      },
-      "Vitamin B9": {
-        "value": 42.0,
-        "unit": "ug"
-      },
-      "Fiber": {
-        "value": 2.0,
-        "unit": "g"
-      },
-      "Iron": {
-        "value": 0.52,
-        "unit": "mg"
-      },
-      "Magnesium": {
-        "value": 37.0,
-        "unit": "mg"
-      },
-      "Phosphorus": {
-        "value": 89.0,
-        "unit": "mg"
-      },
-      "Sodium": {
-        "value": 15.0,
-        "unit": "mg"
-      },
-      "Copper": {
-        "value": 0.05,
-        "unit": "mg"
-      },
-      "Manganese": {
-        "value": 0.16,
-        "unit": "mg"
-      },
-      "Protein": {
-        "value": 3.27,
-        "unit": "g"
-      },
-      "Fat": {
-        "value": 1.35,
-        "unit": "g"
-      },
-      "Vitamin B3": {
-        "value": 1.77,
-        "unit": "mg"
-      },
-      "Calcium": {
-        "value": 2.0,
-        "unit": "mg"
-      },
-      "Potassium": {
-        "value": 270.0,
-        "unit": "mg"
-      },
-      "Zinc": {
-        "value": 0.46,
-        "unit": "mg"
-      },
-      "Vitamin B5": {
-        "value": 0.72,
-        "unit": "mg"
-      },
-      "Vitamin B6": {
-        "value": 0.09,
-        "unit": "mg"
-      },
-      "Omega-3 fat": {
-        "value": 0.01,
-        "unit": "g"
-      },
-      "Omega-9 fat": {
-        "value": 0.0,
-        "unit": "g"
-      },
-      "Omega-6 fat": {
-        "value": 0.0,
-        "unit": "g"
-      },
-      "Vitamin K": {
-        "value": 0.3,
-        "unit": "ug"
-      },
-      "Vitamin A": {
-        "value": 9.0,
-        "unit": "ug"
-      },
-      "Calories": {
-        "value": 86.0,
-        "unit": "kcal"
-      },
-      "Carbs": {
-        "value": 18.7,
-        "unit": "g"
-      },
-      "Vitamin E": {
-        "value": 0.0,
-        "unit": "mg"
-      },
-      "Vitamin C": {
-        "value": 6.8,
-        "unit": "mg"
-      },
-      "Vitamin B12": {
-        "value": 0.0,
-        "unit": "ug"
-      },
-      "Selenium": {
-        "value": 0.6,
-        "unit": "ug"
-      }
-    },
-    "schema_version": 13
+      "schema_version": 13
+    }
   },
   "kvetak": {
     "status": "found",
@@ -4276,44 +4298,58 @@
     "schema_version": 13
   },
   "okurka": {
-    "status": "found",
+    "status": "quarantined",
     "query": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
     "source": "NutriData.cz",
     "source_product": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
     "source_url": "https://nutridata.cz/Eatable/View?guid=e713093dc9bd42f08dd5f36e3b8a3278",
     "provenance": "category_proxy",
-    "values": {
-      "Energy": {
-        "value": 87.0,
-        "unit": "kJ"
-      },
-      "Carbs": {
-        "value": 4.6,
-        "unit": "g"
-      },
-      "Fat": {
-        "value": 0.1,
-        "unit": "g"
-      },
-      "Protein": {
-        "value": 0.4,
-        "unit": "g"
-      },
-      "Fiber": {
-        "value": 0.35,
-        "unit": "g"
-      },
-      "Sugars": {
-        "value": 1.43,
-        "unit": "g"
-      },
-      "Sodium": {
-        "value": 317.0,
-        "unit": "mg"
-      }
-    },
+    "values": {},
     "schema_version": 13,
-    "nutridata_curated": true
+    "nutridata_curated": true,
+    "validation_issues": [
+      "raw_produce_vs_processed_source"
+    ],
+    "quarantined_record": {
+      "status": "found",
+      "query": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
+      "source": "NutriData.cz",
+      "source_product": "Okurky sterilované, okurek, 7-9cm, Hamé, průměr, sladkokyselý nálev",
+      "source_url": "https://nutridata.cz/Eatable/View?guid=e713093dc9bd42f08dd5f36e3b8a3278",
+      "provenance": "category_proxy",
+      "values": {
+        "Energy": {
+          "value": 87.0,
+          "unit": "kJ"
+        },
+        "Carbs": {
+          "value": 4.6,
+          "unit": "g"
+        },
+        "Fat": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "Protein": {
+          "value": 0.4,
+          "unit": "g"
+        },
+        "Fiber": {
+          "value": 0.35,
+          "unit": "g"
+        },
+        "Sugars": {
+          "value": 1.43,
+          "unit": "g"
+        },
+        "Sodium": {
+          "value": 317.0,
+          "unit": "mg"
+        }
+      },
+      "schema_version": 13,
+      "nutridata_curated": true
+    }
   },
   "ostruziny": {
     "status": "found",
@@ -9537,58 +9573,70 @@
       "schema_version": 13
     },
     "exact:Jablka": {
-      "status": "found",
+      "status": "quarantined",
       "source": "Open Food Facts",
       "source_product": "Kapsička s příchutí jahod, jablka a liči",
       "source_url": "https://world.openfoodfacts.org/api/v0/product/8586019163346.html",
       "provenance": "exact_match",
-      "values": {
-        "Calories": {
-          "value": 63.0,
-          "unit": "kcal"
+      "values": {},
+      "schema_version": 13,
+      "validation_issues": [
+        "raw_produce_vs_processed_source"
+      ],
+      "quarantined_record": {
+        "status": "found",
+        "source": "Open Food Facts",
+        "source_product": "Kapsička s příchutí jahod, jablka a liči",
+        "source_url": "https://world.openfoodfacts.org/api/v0/product/8586019163346.html",
+        "provenance": "exact_match",
+        "values": {
+          "Calories": {
+            "value": 63.0,
+            "unit": "kcal"
+          },
+          "Energy": {
+            "value": 265.0,
+            "unit": "kJ"
+          },
+          "Protein": {
+            "value": 0.9,
+            "unit": "g"
+          },
+          "Carbs": {
+            "value": 14.0,
+            "unit": "g"
+          },
+          "Fat": {
+            "value": 0.4,
+            "unit": "g"
+          },
+          "Saturated fat": {
+            "value": 0.2,
+            "unit": "g"
+          },
+          "Fiber": {
+            "value": 2.8,
+            "unit": "g"
+          },
+          "Sugars": {
+            "value": 11.0,
+            "unit": "g"
+          },
+          "Salt": {
+            "value": 0.01,
+            "unit": "g"
+          },
+          "Sodium": {
+            "value": 0.0,
+            "unit": "g"
+          },
+          "Vitamin C": {
+            "value": 0.01,
+            "unit": "mg"
+          }
         },
-        "Energy": {
-          "value": 265.0,
-          "unit": "kJ"
-        },
-        "Protein": {
-          "value": 0.9,
-          "unit": "g"
-        },
-        "Carbs": {
-          "value": 14.0,
-          "unit": "g"
-        },
-        "Fat": {
-          "value": 0.4,
-          "unit": "g"
-        },
-        "Saturated fat": {
-          "value": 0.2,
-          "unit": "g"
-        },
-        "Fiber": {
-          "value": 2.8,
-          "unit": "g"
-        },
-        "Sugars": {
-          "value": 11.0,
-          "unit": "g"
-        },
-        "Salt": {
-          "value": 0.01,
-          "unit": "g"
-        },
-        "Sodium": {
-          "value": 0.0,
-          "unit": "g"
-        },
-        "Vitamin C": {
-          "value": 0.01,
-          "unit": "mg"
-        }
-      },
-      "schema_version": 13
+        "schema_version": 13
+      }
     },
     "exact:Acidofilní mléko Mlékárna Kunín 300 g": {
       "status": "found",
@@ -9721,38 +9769,50 @@
       "schema_version": 13
     },
     "exact:Anglická slanina speciál 100 g": {
-      "status": "found",
+      "status": "quarantined",
       "source": "Ferpotravina.cz",
       "source_product": "Anglická slanina speciál",
       "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-special",
       "provenance": "exact_match",
-      "values": {
-        "Calories": {
-          "value": 0.0,
-          "unit": "kcal"
+      "values": {},
+      "schema_version": 13,
+      "validation_issues": [
+        "energy_below_macronutrient_minimum"
+      ],
+      "quarantined_record": {
+        "status": "found",
+        "source": "Ferpotravina.cz",
+        "source_product": "Anglická slanina speciál",
+        "source_url": "https://www.ferpotravina.cz/slanina/anglicka-slanina-special",
+        "provenance": "exact_match",
+        "values": {
+          "Calories": {
+            "value": 0.0,
+            "unit": "kcal"
+          },
+          "Protein": {
+            "value": 14.8,
+            "unit": "g"
+          },
+          "Carbs": {
+            "value": 2.9,
+            "unit": "g"
+          },
+          "Sugar": {
+            "value": 0.5,
+            "unit": "g"
+          },
+          "Saturated Fat": {
+            "value": 8.6,
+            "unit": "g"
+          },
+          "Sodium": {
+            "value": 2.3,
+            "unit": "g"
+          }
         },
-        "Protein": {
-          "value": 14.8,
-          "unit": "g"
-        },
-        "Carbs": {
-          "value": 2.9,
-          "unit": "g"
-        },
-        "Sugar": {
-          "value": 0.5,
-          "unit": "g"
-        },
-        "Saturated Fat": {
-          "value": 8.6,
-          "unit": "g"
-        },
-        "Sodium": {
-          "value": 2.3,
-          "unit": "g"
-        }
-      },
-      "schema_version": 13
+        "schema_version": 13
+      }
     },
     "exact:Aperitiv Aperitivo Bitterol 0.7 l": {
       "status": "not_found",
@@ -18508,42 +18568,54 @@
       "schema_version": 13
     },
     "exact:Smetana ke šlehání 30% Primo Zott 200 g": {
-      "status": "found",
+      "status": "quarantined",
       "source": "Ferpotravina.cz",
       "source_product": "Zott smetana ke šlehání",
       "source_url": "https://www.ferpotravina.cz/smetana/zott-smetana-ke-slehani",
       "provenance": "exact_match",
-      "values": {
-        "Calories": {
-          "value": 70.0,
-          "unit": "kcal"
+      "values": {},
+      "schema_version": 13,
+      "validation_issues": [
+        "energy_below_macronutrient_minimum"
+      ],
+      "quarantined_record": {
+        "status": "found",
+        "source": "Ferpotravina.cz",
+        "source_product": "Zott smetana ke šlehání",
+        "source_url": "https://www.ferpotravina.cz/smetana/zott-smetana-ke-slehani",
+        "provenance": "exact_match",
+        "values": {
+          "Calories": {
+            "value": 70.0,
+            "unit": "kcal"
+          },
+          "Protein": {
+            "value": 2.3,
+            "unit": "g"
+          },
+          "Carbs": {
+            "value": 3.4,
+            "unit": "g"
+          },
+          "Sugar": {
+            "value": 3.4,
+            "unit": "g"
+          },
+          "Fat": {
+            "value": 30.0,
+            "unit": "g"
+          },
+          "Saturated Fat": {
+            "value": 20.1,
+            "unit": "g"
+          },
+          "Sodium": {
+            "value": 0.1,
+            "unit": "g"
+          }
         },
-        "Protein": {
-          "value": 2.3,
-          "unit": "g"
-        },
-        "Carbs": {
-          "value": 3.4,
-          "unit": "g"
-        },
-        "Sugar": {
-          "value": 3.4,
-          "unit": "g"
-        },
-        "Fat": {
-          "value": 30.0,
-          "unit": "g"
-        },
-        "Saturated Fat": {
-          "value": 20.1,
-          "unit": "g"
-        },
-        "Sodium": {
-          "value": 0.1,
-          "unit": "g"
-        }
-      },
-      "schema_version": 13
+        "schema_version": 13
+      }
     },
     "exact:Smetana ke šlehání 33% Bohemilk Opočno 250 ml": {
       "status": "found",
@@ -22328,54 +22400,66 @@
       "schema_version": 13
     },
     "exact:Švestky": {
-      "status": "found",
+      "status": "quarantined",
       "source": "Open Food Facts",
       "source_product": "Sušené švestky",
       "source_url": "https://world.openfoodfacts.org/api/v0/product/8586018181174.html",
       "provenance": "exact_match",
-      "values": {
-        "Calories": {
-          "value": 252.0,
-          "unit": "kcal"
+      "values": {},
+      "schema_version": 13,
+      "validation_issues": [
+        "raw_produce_vs_processed_source"
+      ],
+      "quarantined_record": {
+        "status": "found",
+        "source": "Open Food Facts",
+        "source_product": "Sušené švestky",
+        "source_url": "https://world.openfoodfacts.org/api/v0/product/8586018181174.html",
+        "provenance": "exact_match",
+        "values": {
+          "Calories": {
+            "value": 252.0,
+            "unit": "kcal"
+          },
+          "Energy": {
+            "value": 1060.0,
+            "unit": "kJ"
+          },
+          "Protein": {
+            "value": 1.6,
+            "unit": "g"
+          },
+          "Carbs": {
+            "value": 53.6,
+            "unit": "g"
+          },
+          "Fat": {
+            "value": 1.1,
+            "unit": "g"
+          },
+          "Saturated fat": {
+            "value": 0.4,
+            "unit": "g"
+          },
+          "Fiber": {
+            "value": 10.5,
+            "unit": "g"
+          },
+          "Sugars": {
+            "value": 42.4,
+            "unit": "g"
+          },
+          "Salt": {
+            "value": 0.1,
+            "unit": "g"
+          },
+          "Sodium": {
+            "value": 0.04,
+            "unit": "g"
+          }
         },
-        "Energy": {
-          "value": 1060.0,
-          "unit": "kJ"
-        },
-        "Protein": {
-          "value": 1.6,
-          "unit": "g"
-        },
-        "Carbs": {
-          "value": 53.6,
-          "unit": "g"
-        },
-        "Fat": {
-          "value": 1.1,
-          "unit": "g"
-        },
-        "Saturated fat": {
-          "value": 0.4,
-          "unit": "g"
-        },
-        "Fiber": {
-          "value": 10.5,
-          "unit": "g"
-        },
-        "Sugars": {
-          "value": 42.4,
-          "unit": "g"
-        },
-        "Salt": {
-          "value": 0.1,
-          "unit": "g"
-        },
-        "Sodium": {
-          "value": 0.04,
-          "unit": "g"
-        }
-      },
-      "schema_version": 13
+        "schema_version": 13
+      }
     },
     "exact:Švestky 1 kg": {
       "status": "not_found",
