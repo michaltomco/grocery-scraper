@@ -264,7 +264,7 @@ def run_codex(attempt, prompt, model=None, timeout=180):
     argv = [python, str(Path(__file__).resolve().with_name('nutrition_web_reviewer.py')),
             '--model', model, '--timeout', str(timeout)]
     write_json(attempt / 'command.json', {
-        'engine': 'hermes-web-v1', 'provider': 'openai-codex', 'model': model,
+        'engine': 'hermes-web-v2', 'provider': 'openai-codex', 'model': model,
         'argv': argv, 'allowed_tools': ['web_extract', 'web_search'],
         'timeout_seconds': timeout, 'prompt_transport': 'stdin', 'shell': False})
     home = os.environ.get('HOME', str(Path.home()))
@@ -306,7 +306,7 @@ def checked_queue(queue):
 def review_cache_key(candidate, model=None, input_result=None):
     """Single cache identity for runner, resumption and artifact collection."""
     return digest({'candidate': candidate['fingerprint'], 'model': model or 'gpt-6.1-sol',
-                   'engine': 'external' if input_result is not None else 'hermes-web-v1',
+                   'engine': 'external' if input_result is not None else 'hermes-web-v2',
                    'input_result': digest(input_result) if input_result is not None else None})
 
 

@@ -50,7 +50,11 @@ def register_web_backend():
     """
     from agent.web_search_registry import register_provider
     from plugins.web.firecrawl.provider import FirecrawlWebSearchProvider
+    from plugins.web.perplexity.provider import PerplexityWebSearchProvider
     register_provider(FirecrawlWebSearchProvider())
+    # Managed web search routes to Perplexity; extraction routes to Firecrawl.
+    # Both are fixed bundled implementations, not arbitrary plugin discovery.
+    register_provider(PerplexityWebSearchProvider())
 
 
 def research(prompt, model=DEFAULT_MODEL, timeout=180, agent_factory=None):

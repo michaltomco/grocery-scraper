@@ -292,7 +292,7 @@ class TransportTests(unittest.TestCase):
                 self.assertEqual(transport.call_count, 1)
             command = nr.read_json(attempt / 'command.json')
             self.assertEqual(command['provider'], 'openai-codex')
-            self.assertEqual(command['engine'], 'hermes-web-v1')
+            self.assertEqual(command['engine'], 'hermes-web-v2')
             self.assertEqual(command['allowed_tools'], ['web_extract', 'web_search'])
             self.assertIn('verified_tools', (attempt / 'engine.log').read_text())
 
@@ -325,7 +325,7 @@ class TransportTests(unittest.TestCase):
         nr = module()
         candidate = nr.build_queue({'records': [PAIR]})['candidates'][0]
         expected = nr.digest({'candidate': candidate['fingerprint'], 'model': 'gpt-6.1-sol',
-                              'engine': 'hermes-web-v1', 'input_result': None})
+                              'engine': 'hermes-web-v2', 'input_result': None})
         self.assertEqual(nr.review_cache_key(candidate), expected)
         self.assertEqual(nr.review_cache_key(candidate, model='gpt-6.1-sol'), expected)
         self.assertNotEqual(nr.review_cache_key(candidate, input_result={}), expected)

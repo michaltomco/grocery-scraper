@@ -88,15 +88,22 @@ class HelperTests(unittest.TestCase):
         import types
         from unittest.mock import Mock, patch
         provider = object()
+        search_provider = object()
         registry = types.ModuleType('agent.web_search_registry')
         setattr(registry, 'register_provider', Mock())
         packaged = types.ModuleType('plugins.web.firecrawl.provider')
         setattr(packaged, 'FirecrawlWebSearchProvider', Mock(return_value=provider))
+        search = types.ModuleType('plugins.web.perplexity.provider')
+        setattr(search, 'PerplexityWebSearchProvider', Mock(return_value=search_provider))
         with patch.dict('sys.modules', {'agent.web_search_registry': registry,
-                                       'plugins.web.firecrawl.provider': packaged}):
+                                       'plugins.web.firecrawl.provider': packaged,
+                                       'plugins.web.perplexity.provider': search}):
             helper.register_web_backend()
-        getattr(registry, 'register_provider').assert_called_once_with(provider)
+        self.assertEqual(getattr(registry, 'register_provider').call_count, 2)
+        self.assertEqual([c.args[0] for c in getattr(registry, 'register_provider').call_args_list],
+                         [provider, search_provider])
         getattr(packaged, 'FirecrawlWebSearchProvider').assert_called_once_with()
+        getattr(search, 'PerplexityWebSearchProvider').assert_called_once_with()
 
     def test_only_assistant_final_from_web_only_agent(self):
         helper = importlib.import_module('nutrition_web_reviewer')
