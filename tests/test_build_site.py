@@ -34,6 +34,20 @@ def history_row(**overrides: object) -> dict[str, object]:
 
 
 class DashboardBuilderTests(unittest.TestCase):
+    def setUp(self):
+        # Never let stale generated pages make a missing output appear to pass.
+        directory = TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        for attribute, relative in (
+            ("SITE_DIR", "."), ("PRODUCTS_DIR", "products"),
+            ("PRODUCTS_EXACT_DIR", "products/exact"), ("IMG_DIR", "img"),
+            ("INDEX_HTML", "index.html"),
+        ):
+            patcher = patch.object(build_site, attribute, root / relative)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
     def test_missing_price_unit_stays_unknown_instead_of_assuming_piece(self):
         row = history_row(store="Lidl", product_id="11150766", product_name="Banány",
                           price="21.9", unit_price="", price_per_kg="", price_per_piece="")
@@ -169,7 +183,8 @@ class DashboardBuilderTests(unittest.TestCase):
             ):
                 html = build_site.build()
             exact_page = build_site.PRODUCTS_EXACT_DIR / "mléko_trvanlivé_1_l.html"
-            product_page = build_site.PRODUCTS_DIR / "mleko_trvanlive.html"
+            product_page = build_site.PRODUCTS_DIR / "mleko_trvanlive_zpracovane.html"
+            self.assertFalse((build_site.PRODUCTS_DIR / "mleko_trvanlive.html").exists())
             exact_html = exact_page.read_text(encoding="utf-8")
             product_html = product_page.read_text(encoding="utf-8")
         # Main (index) and product pages both recalculate to a per-litre price
