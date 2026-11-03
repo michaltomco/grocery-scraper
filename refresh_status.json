@@ -1,47 +1,47 @@
 {
   "schema_version": 1,
-  "started_at": "2026-11-03T07:55:24+01:00",
+  "started_at": "2026-11-03T16:15:26+01:00",
   "retailers": {
     "Albert": {
-      "started_at": "2026-11-03T07:55:24+01:00",
+      "started_at": "2026-11-03T16:15:26+01:00",
       "status": "failed",
       "error": "ConnectionError: HTTPSConnectionPool(host='albertloyaltycz-albert-service-app-prod.delhaize.eu', port=443): Max retries exceeded with url: /public/store/v2 (Caused by NameResolutionError(\"HTTPSConnection(host='albertloyaltycz-albert-service-app-prod.delhaize.eu', port=443): Failed to resolve 'albertloyaltycz-albert-service-app-prod.delhaize.eu' ([Errno -5] No address associated with hostname)\"))",
       "rows": 1604,
       "scraped_at": "2026-10-11T14:57:47+02:00",
       "oldest_scraped_at": "2026-10-11T14:57:47+02:00",
-      "finished_at": "2026-11-03T07:55:38+01:00"
+      "finished_at": "2026-11-03T16:15:40+01:00"
     },
     "Billa": {
-      "started_at": "2026-11-03T07:55:38+01:00",
+      "started_at": "2026-11-03T16:15:40+01:00",
       "status": "failed",
       "error": "BillaScrapeError: BILLA direct source offer parser is not validated: https://www.billa.cz/letaky-billa supplies PDFs with mixed validity periods and graphical loyalty conditions; shop.billa.cz redirects to a partner-delivery page. Refresh disabled; existing snapshot and history left untouched. No third-party fallback.",
       "rows": 772,
       "scraped_at": "2026-10-11T14:59:04+02:00",
       "oldest_scraped_at": "2026-10-11T14:57:51+02:00",
-      "finished_at": "2026-11-03T07:55:38+01:00"
+      "finished_at": "2026-11-03T16:15:40+01:00"
     },
     "Lidl": {
-      "started_at": "2026-11-03T07:55:38+01:00",
+      "started_at": "2026-11-03T16:15:40+01:00",
       "status": "refreshed",
       "error": null,
       "rows": 10,
-      "scraped_at": "2026-11-03T07:55:39+01:00",
-      "oldest_scraped_at": "2026-11-03T07:55:39+01:00",
-      "finished_at": "2026-11-03T07:55:42+01:00"
+      "scraped_at": "2026-11-03T16:15:40+01:00",
+      "oldest_scraped_at": "2026-11-03T16:15:40+01:00",
+      "finished_at": "2026-11-03T16:15:42+01:00"
     },
     "Tesco": {
-      "started_at": "2026-11-03T07:55:42+01:00",
+      "started_at": "2026-11-03T16:15:42+01:00",
       "status": "refreshed",
       "error": null,
       "rows": 2807,
-      "scraped_at": "2026-11-03T07:56:40+01:00",
-      "oldest_scraped_at": "2026-11-03T07:56:40+01:00",
-      "finished_at": "2026-11-03T07:56:42+01:00"
+      "scraped_at": "2026-11-03T16:16:42+01:00",
+      "oldest_scraped_at": "2026-11-03T16:16:42+01:00",
+      "finished_at": "2026-11-03T16:16:44+01:00"
     }
   },
   "merge": {
     "status": "merged",
     "error": null
   },
-  "finished_at": "2026-11-03T07:56:42+01:00"
+  "finished_at": "2026-11-03T16:16:44+01:00"
 }
