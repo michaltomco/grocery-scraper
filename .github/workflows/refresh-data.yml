@@ -92,6 +92,21 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Create immutable nutrition review inputs
+        id: snapshot
+        if: always() && steps.scrape.outputs.merged == 'true' && steps.build.outcome == 'success' && steps.commit.outcome == 'success'
+        run: |
+          rm -rf nutrition-review-inputs
+          python3 nutrition_post_refresh.py snapshot --data-dir "$GITHUB_WORKSPACE" --out-dir nutrition-review-inputs
+
+      - name: Upload immutable nutrition review inputs
+        if: always() && steps.scrape.outputs.merged == 'true' && steps.build.outcome == 'success' && steps.commit.outcome == 'success' && steps.snapshot.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutrition-review-inputs
+          path: nutrition-review-inputs/
+          if-no-files-found: error
+
       - name: Trigger website deployment
         if: always() && steps.commit.outcome == 'success' && steps.commit.outputs.changed == 'true'
         env:

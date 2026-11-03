@@ -1,0 +1,90 @@
+name: Nutrition advisory review
+
+on:
+  workflow_run:
+    workflows: ['Refresh grocery data']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run real cached Laya and build queue without Codex calls'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: grocery-nutrition-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    if: >-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: [self-hosted, linux, x64, grocery-scraper]
+    timeout-minutes: 45
+    env:
+      PYTHONUNBUFFERED: '1'
+      GH_TOKEN: ${{ github.token }}
+      NUTRITION_REVIEW_LIMIT: ${{ vars.NUTRITION_REVIEW_LIMIT || '3' }}
+      NUTRITION_REVIEW_STATE_DIR: ${{ vars.NUTRITION_REVIEW_STATE_DIR }}
+      LAYA_PYTHON: ${{ vars.LAYA_PYTHON }}
+      HERMES_REVIEW_PYTHON: ${{ vars.HERMES_REVIEW_PYTHON }}
+      LAYA_SCORER: ${{ vars.LAYA_SCORER }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          lfs: true
+          persist-credentials: false
+
+      - name: Initialize artifact output
+        run: |
+          mkdir -p nutrition-review-output
+          touch nutrition-review-output/automation.log
+
+      - name: Gate exact triggering extraction
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          TRIGGER_RUN_ID: ${{ github.event.workflow_run.id }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ "$EVENT_NAME" = workflow_run ]; then
+            python3 nutrition_post_refresh.py download-trigger --repository "$REPOSITORY" --run-id "$TRIGGER_RUN_ID" --github-output "$GITHUB_OUTPUT"
+          else
+            python3 nutrition_post_refresh.py gate --status refresh_status.json --github-output "$GITHUB_OUTPUT"
+          fi
+
+      - uses: astral-sh/setup-uv@v7
+        if: steps.gate.outputs.run == 'true'
+
+      - name: Install only locked project dependencies
+        if: steps.gate.outputs.run == 'true'
+        run: uv sync --locked
+
+      - name: Cached Laya and bounded sourced investigation
+        if: steps.gate.outputs.run == 'true'
+        env:
+          DRY_RUN: ${{ inputs.dry_run || false }}
+          DATA_DIR: ${{ steps.gate.outputs.data_dir }}
+          HF_HUB_OFFLINE: '1'
+          TRANSFORMERS_OFFLINE: '1'
+        run: |
+          args=()
+          if [ "$DRY_RUN" = true ]; then args+=(--dry-run); fi
+          uv run python nutrition_post_refresh.py run --data-dir "$DATA_DIR" --code-dir "$GITHUB_WORKSPACE" "${args[@]}"
+
+      - name: Publish advisory artifacts, including failures and skips
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nutrition-review-${{ github.run_id }}
+          path: nutrition-review-output/
+          if-no-files-found: warn
+          retention-days: 14
