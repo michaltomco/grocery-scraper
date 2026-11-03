@@ -24,8 +24,12 @@ are bounded, and empty/invalid results fail before snapshot/history writes.
 ## Scope and evidence
 
 Albert's official `aktualni-letaky` Next data was inspected on 2026-11-03.
-Store 583 was explicitly listed under generic supermarket publications 3470643
-and 3497124. This is not proof of applicability for other stores. Explicit
+Store 583 was explicitly listed by its configured branch name under generic
+supermarket publications 3470643 and 3497124; the sanitized extraction is retained
+in `tests/fixtures/albert_official_store_applicability.json` with the raw Next-data
+hash. This is not proof of applicability for other stores. Template acceptance
+also requires the reviewed publication IDs and exact PDF date ranges, not just
+reusable weekly slugs. Explicit
 selection of another branch never silently falls back to generic SM offers.
 Re-check the official branch mapping if store selection or regional leaflet
 structure changes.

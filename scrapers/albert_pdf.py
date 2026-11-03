@@ -43,6 +43,10 @@ _TEMPLATES = {
     ),
 }
 _PRICE_FONT = 'AlbertDraft22Crossed-Reg'
+_AUDITED = {
+    '44sm_akcni_letak': (date(2026, 10, 29), date(2026, 11, 3), '3470643'),
+    '45sm_akcni_letak': (date(2026, 11, 4), date(2026, 11, 10), '3497124'),
+}
 
 
 def _read_cover(pdf_bytes: bytes) -> dict:
@@ -70,10 +74,15 @@ def extract_pdf_products(pdf_bytes: bytes, publication_slug: str, source_url: st
     Transport, branch applicability and publication discovery belong to caller.
     No completeness claim: interior pages are NEVER parsed by this template.
     """
+    audited = _AUDITED.get(publication_slug)
+    if audited is None:
+        raise ValueError('No audited Albert publication template')
     source = urlsplit(source_url)
     if source.scheme != 'https' or source.netloc not in ('view.publitas.com', 'letaky.albert.cz'):
         raise ValueError('Albert PDF source must be an official HTTPS URL')
     if source.netloc == 'view.publitas.com' and re.fullmatch(r'/90263/\d+/pdfs/[^/]+\.pdf', source.path):
+        if source.path.split('/')[2] != audited[2]:
+            raise ValueError('PDF identity differs from audited Albert publication')
         page_url = urlunsplit(source._replace(fragment='page=1'))
     else:
         base = f'/albert/{publication_slug}' if source.netloc == 'view.publitas.com' else f'/{publication_slug}'
@@ -95,6 +104,8 @@ def extract_pdf_products(pdf_bytes: bytes, publication_slug: str, source_url: st
     start, end = date(year, month, day), date(year, end_month, end_day)
     if end < start:
         raise ValueError('Albert cover validity range is reversed')
+    if (start, end) != audited[:2]:
+        raise ValueError('Cover dates differ from audited Albert publication')
     template = _TEMPLATES.get(publication_slug, ())
     for span in spans:
         # Ignore the explicit cover range, printing/legal footnote, and the

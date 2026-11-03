@@ -61,6 +61,16 @@ class AlbertPDFTests(unittest.TestCase):
         self.assertEqual(butter['unit_price'], '11.16 Kč / 100 g')
         self.assertEqual(beer['unit_price'], '17.8 Kč / 1 l')
 
+    def test_reused_weekly_slug_does_not_accept_another_year_or_publication(self):
+        changed = copy.deepcopy(self.cover)
+        for span in changed['spans']:
+            if span['bbox'][1] < 30:
+                span['text'] = span['text'].replace('2026', '2027')
+        with self.assertRaisesRegex(ValueError, 'audited'):
+            self.extract(changed)
+        with self.assertRaisesRegex(ValueError, 'audited'):
+            self.extract(source_url='https://view.publitas.com/90263/9999999/pdfs/example.pdf')
+
     def test_unknown_loyalty_fails_closed(self):
         self.cover['spans'] = [s for s in self.cover['spans']
                                if 'dostupná všem zákazníkům' not in s['text']]

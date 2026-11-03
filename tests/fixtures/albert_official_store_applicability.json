@@ -1,0 +1,28 @@
+{
+  "source_url": "https://www.albert.cz/aktualni-letaky",
+  "captured_on": "2026-11-03",
+  "raw_next_data_sha256": "efdb639d991c525272a8ec3b51c77ff8241ea9c30600cf6561f0612247404586",
+  "configured_store_id": "583",
+  "configured_branch": "Praha 5, Zlatý Anděl, Plzeňská 344/1",
+  "note": "Configured numeric store ID comes from the existing app source configuration; the official leaflet Next data identifies applicability by localized branch name, not numeric store ID. Website start metadata is not purchase-valid PDF start.",
+  "publication_applicability": [
+    {
+      "apollo_key": "Leaflet:3470643",
+      "publication_id": "3470643",
+      "locationType": "SUPERMARKET",
+      "viewUrl": "https://letaky.albert.cz/44sm_akcni_letak/",
+      "validityStartDateFormatted": "28.10.2026",
+      "validityEndDateFormatted": "03.11.2026",
+      "matching_stores": [{"__typename": "LeafletStore", "localizedName": "Praha 5, Zlatý Anděl"}]
+    },
+    {
+      "apollo_key": "Leaflet:3497124",
+      "publication_id": "3497124",
+      "locationType": "SUPERMARKET",
+      "viewUrl": "https://letaky.albert.cz/45sm_akcni_letak/",
+      "validityStartDateFormatted": "04.11.2026",
+      "validityEndDateFormatted": "10.11.2026",
+      "matching_stores": [{"__typename": "LeafletStore", "localizedName": "Praha 5, Zlatý Anděl"}]
+    }
+  ]
+}
