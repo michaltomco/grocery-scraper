@@ -229,11 +229,14 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(len(list(Path(tmp).rglob('prompt.txt'))), 3)
             self.assertEqual(len(list(Path(tmp).rglob('raw-final.json'))), 3)
             # Broken cached decisions never become trusted skip markers.
-            decision = next(Path(tmp).rglob('decision.json'))
+            # Select a decision in this queue, not an arbitrary filesystem entry
+            # (which could belong to the changed-source queue above).
+            decision = Path(tmp) / nr.review_cache_key(queue['candidates'][0]) / 'decision.json'
+            self.assertTrue(decision.is_file())
             decision.write_text('{}')
             with patch.object(nr, 'run_codex', side_effect=response) as transport:
                 nr.review_queue(queue, Path(tmp), limit=2)
-                self.assertGreaterEqual(transport.call_count, 1)
+                self.assertEqual(transport.call_count, 1)
 
     def test_ingestion_null_never_invokes_engine_and_strict_json(self):
         nr = module()
