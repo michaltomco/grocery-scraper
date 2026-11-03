@@ -74,7 +74,7 @@ def research(prompt, model=DEFAULT_MODEL, timeout=180, agent_factory=None):
         print('tool_start: ' + name, file=sys.stderr, flush=True)
     agent = agent_factory(
         provider='openai-codex', model=model, enabled_toolsets=['web'],
-        max_iterations=4, quiet_mode=True, skip_context_files=True,
+        max_iterations=8, quiet_mode=True, skip_context_files=True,
         skip_memory=True, skip_background_review=True, load_soul_identity=False,
         run_budget_seconds=timeout, tool_start_callback=tool_start)
     assert_catalog(agent)

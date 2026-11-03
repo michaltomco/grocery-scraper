@@ -127,7 +127,7 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(options['provider'], 'openai-codex')
         self.assertEqual(options['model'], 'gpt-6.1-sol')
         self.assertEqual(options['enabled_toolsets'], ['web'])
-        self.assertEqual(options['max_iterations'], 4)
+        self.assertEqual(options['max_iterations'], 8)
         for flag in ('quiet_mode', 'skip_context_files', 'skip_memory', 'skip_background_review'):
             self.assertIs(options[flag], True)
         self.assertIs(options['load_soul_identity'], False)
