@@ -24,13 +24,13 @@ This is a public repository. Never route pull-request or fork code to this runne
 
 ## Daily sources
 
-`run.py` uses `scrapers.lidl.main()` as the default Lidl source. It fetches the public Lidl.cz produce page directly and writes `lidl.csv` plus history; it does not fall back to Kupi for Lidl. This direct source currently covers only `Ovoce a zelenina`, not the other Lidl food categories previously available through Kupi. Albert, Billa, and Tesco continue using Kupi across the configured food categories. Both scheduled and manual refreshes use the same entry point.
+`run.py` uses direct retailer sources: Lidl.cz for produce, the Albert app feed, and Tesco Online. Albert network outages can use [official Publitas PDF recovery](albert-publitas-recovery.md), restricted to store 583 and five audited cover cards from each of publications `44sm_akcni_letak` and `45sm_akcni_letak`. This is partial recovery, not full leaflet coverage; new publications require parser review. Billa is deliberately disabled until its direct offer parser is validated, preserving its previous snapshot. None of the daily sources falls back to Kupi. Scheduled and manual refreshes use the same entry point.
 
 ## Refresh and publication
 
 The hourly schedule checks for the 06:00 Europe/Prague window, including daylight saving time. Manual dispatch bypasses the time check. Python output is unbuffered and the refresh job has a 45-minute timeout.
 
-A category/page fetch error must fail the scrape, not write a partial store snapshot. Previously saved snapshots are retained on fetch failure. The orchestrator also rejects unchanged, empty, stale, or malformed-timestamp snapshots before merging. A failed scrape stops the job before build/commit/deploy.
+A category/page fetch error must fail the scrape, not silently truncate a store snapshot. The documented Albert PDF recovery is an explicitly bounded exception: only reviewed cover cards are supported and coverage is reported as partial. Previously saved snapshots are retained on source/parser failure. The orchestrator rejects unchanged, empty, stale, or malformed-timestamp snapshots before merging. A failed retailer does not stop later retailers: healthy snapshots can be merged, built and published, while the overall workflow remains failed to expose the source problem.
 
 After a successful changed-data push, the workflow explicitly dispatches `pages.yml` using `GITHUB_TOKEN` with `actions: write`; pushes made with that token do not themselves trigger the Pages push workflow. The deployment job rebuilds from main. No changed data means no deployment dispatch.
 

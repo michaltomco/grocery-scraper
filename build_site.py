@@ -796,7 +796,7 @@ def detail_timeline(date_range, store, today_iso):
 
 def render_product_page(pretty, image_html, nutrition_sections, source_html,
                         discount_rows, previous_html, next_html, today_iso,
-                        back_href="../index.html", table_head="Name", table_title="Current discounts"):
+                        back_href="../index.html", table_head="Name", table_title="Current discounts", offer_evidence=""):
     head_js_inline = (
         "try { const t=localStorage.getItem('grocery-theme'); "
         "if (t==='light' || t==='dark') { document.documentElement.setAttribute('data-theme', t); "
@@ -814,6 +814,7 @@ def render_product_page(pretty, image_html, nutrition_sections, source_html,
 {freshness_panel()}
 <div class="title-row"><h1>{esc(pretty)}</h1><div class="produce-nav">{previous_html}{next_html}</div></div>
 <div class="product-summary"><div class="product-visual">{image_html}</div><div class="card"><h2>{esc(table_title)}</h2><table id="discountTable"><thead><tr><th>{esc(table_head)}</th><th>Store</th><th>Price</th><th>Discount days</th></tr></thead><tbody>{discount_rows}</tbody></table></div></div>
+{offer_evidence}
 <div class="card"><div class="nutrition-heading"><h2>Nutrition per 100 g</h2><div class="nutrition-mode" id="nutritionMode"><button data-mode="axis">Axis</button><button data-mode="rda">RDA</button><button data-mode="raw">Raw</button></div></div><div class="nutrition-grid">{nutrition_sections}</div>{source_html}</div>
 </body>{PRODUCT_PAGE_HEAD_JS}{filter_js}</html>"""
 
@@ -864,6 +865,23 @@ def write_product_pages(products, nutrition, exact_page_slugs=None):
         (PRODUCTS_DIR / f"{product}.html").write_text(page, encoding="utf-8")
 
 
+def albert_pdf_evidence(info):
+    """Expose bounded-recovery provenance without decorating exact price cells."""
+    if info.get("store") != "Albert" or not info.get("product_id", "").startswith("albert-pdf-"):
+        return ""
+    url = str(info.get("url", ""))
+    source = urlsplit(url)
+    if source.scheme != "https" or source.netloc != "view.publitas.com" or not source.path.startswith("/90263/"):
+        return ""
+    return (
+        '<div class="card offer-evidence"><small>Partial leaflet coverage: audited cover selection.'
+        f'<br>Retailer unit price: {esc(info.get("unit_price", ""))}'
+        f'<br>Conditions: {esc(info.get("discount_label", ""))}'
+        f'<br><a href="{esc(url)}" rel="noopener noreferrer">Official Albert leaflet · page 1</a>'
+        '</small></div>'
+    )
+
+
 def write_exact_product_pages(exact_nutrition, exact_rows):
     """Write one detail page per exact retailer SKU label.
 
@@ -894,7 +912,7 @@ def write_exact_product_pages(exact_nutrition, exact_rows):
             f'<td>{detail_timeline(info.get("date_range", ""), info.get("store", ""), today_iso)}</td></tr>'
         )
         canonical_name = info.get("canonical_product_name", slug)
-        page = render_product_page(pretty, image_html, nutrition_sections, source_html, discount_rows, "", "", today_iso, back_href=f"../{canonical_name}.html", table_title=pretty + " · exact offer")
+        page = render_product_page(pretty, image_html, nutrition_sections, source_html, discount_rows, "", "", today_iso, back_href=f"../{canonical_name}.html", table_title=pretty + " · exact offer", offer_evidence=albert_pdf_evidence(info))
         (PRODUCTS_EXACT_DIR / f"{slug}.html").write_text(page, encoding="utf-8")
 
 def build() -> str:
@@ -1084,6 +1102,9 @@ def build() -> str:
                 "store": _store,
                 "val": _real_price,
                 "unit": stated_offer_unit(_r.get("unit_price", "")),
+                "unit_price": _r.get("unit_price", ""),
+                "discount_label": _r.get("discount_label", ""),
+                "url": _r.get("url", ""),
                 "date_range": _r.get("date_range", ""),
                 "_ts": _ts,
             }

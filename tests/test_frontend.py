@@ -197,6 +197,26 @@ class DashboardBrowserTests(unittest.TestCase):
         self.assertEqual(self.console_errors, [], f"console errors: {self.console_errors}")
         self.assertEqual(self.page_errors, [], f"page errors: {self.page_errors}")
 
+    def test_albert_pdf_exact_evidence_is_readable_and_price_stays_unadorned(self):
+        info = dict(raw_name='Česká chuť Vejce z podestýlky M 18 ks',
+                    pretty='Česká chuť Vejce z podestýlky M', store='Albert',
+                    canonical_product_name='vejce', product_id='albert-pdf-44sm_akcni_letak-p1-test',
+                    image_url='', val=44.9, date_range='2026-10-29 - 2026-11-03',
+                    unit_price='2.5 Kč / 1 ks', discount_label='5 bal. / den',
+                    url='https://view.publitas.com/90263/3470643/pdfs/evidence.pdf#page=1')
+        build_site.write_exact_product_pages({}, {'albert_pdf_regression': info})
+        self.page.goto(self.base_url + '/products/exact/albert_pdf_regression.html')
+        evidence = self.page.locator('.offer-evidence')
+        self.assertTrue(evidence.is_visible())
+        self.assertIn('Partial leaflet coverage', evidence.inner_text())
+        self.assertIn('5 bal. / den', evidence.inner_text())
+        self.assertIn('2.5 Kč / 1 ks', evidence.inner_text())
+        self.assertEqual(self.page.locator('.discount-price').inner_text(), '44.9')
+        self.assertEqual(evidence.get_by_role('link').get_attribute('href'), info['url'])
+        self.assertGreater(evidence.bounding_box()['width'], 500)
+        self.assertEqual(self.page.locator('#discountTable .offer-evidence').count(), 0)
+        self.assert_browser_clean()
+
     def test_store_count_excludes_expired_history_only_retailer(self):
         self.page.goto(f"{self.base_url}/index.html", wait_until="networkidle")
         self.assertIn('2 stores with displayed offers', self.page.locator('.meta').first.inner_text())

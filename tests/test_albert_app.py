@@ -186,6 +186,31 @@ class AlbertAppTests(unittest.TestCase):
                 albert.fetch_albert_products(("829",))
             fetch.assert_not_called()
 
+    def test_app_network_outage_uses_official_pdf_recovery_for_verified_store(self) -> None:
+        expected = self.rows("583")
+        with patch("scrapers.albert.fetch_albert_stores", side_effect=requests.ConnectionError("DNS")), patch(
+            "scrapers.albert.fetch_publitas_products", return_value=expected, create=True
+        ) as fallback:
+            self.assertEqual(albert.fetch_albert_products(("583",)), expected)
+        fallback.assert_called_once_with(("583",))
+
+    def test_malformed_app_data_does_not_silently_switch_source(self) -> None:
+        with patch("scrapers.albert.fetch_albert_stores", side_effect=ValueError("schema")), patch(
+            "scrapers.albert.fetch_publitas_products", create=True
+        ) as fallback:
+            with self.assertRaisesRegex(ValueError, "schema"):
+                albert.fetch_albert_products(("583",))
+        fallback.assert_not_called()
+
+    def test_invalid_app_json_does_not_silently_switch_source(self) -> None:
+        error = requests.exceptions.JSONDecodeError("invalid", "x", 0)
+        with patch("scrapers.albert.fetch_albert_stores", side_effect=error), patch(
+            "scrapers.albert.fetch_publitas_products"
+        ) as fallback:
+            with self.assertRaises(requests.exceptions.JSONDecodeError):
+                albert.fetch_albert_products(("583",))
+        fallback.assert_not_called()
+
     def test_http_status_and_response_shape_are_checked(self) -> None:
         response = Mock()
         response.raise_for_status.side_effect = requests.HTTPError("403")

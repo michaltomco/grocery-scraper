@@ -1,4 +1,4 @@
-"""Public Můj Albert app leaflet offers, with explicit physical-store selection."""
+"""Albert app offers with conservative official-Publitas outage recovery."""
 
 import argparse
 import math
@@ -12,6 +12,7 @@ from urllib.parse import urlencode
 import requests
 
 from scrapers.http_retry import request_with_retry
+from scrapers.albert_publitas import fetch_publitas_products
 
 from scrapers.common import (
     FIELDNAMES,
@@ -212,6 +213,19 @@ def selected_store_ids(store_ids: tuple[str, ...] | None = None) -> tuple[str, .
 
 
 def fetch_albert_products(store_ids: tuple[str, ...] | None = None) -> list[dict]:
+    ids = selected_store_ids(store_ids)
+    try:
+        return fetch_app_products(ids)
+    except requests.exceptions.JSONDecodeError:
+        raise
+    except requests.RequestException as error:
+        if ids != ("583",):
+            raise
+        print(f"Albert app unavailable ({type(error).__name__}); trying official Publitas PDF recovery")
+        return fetch_publitas_products(ids)
+
+
+def fetch_app_products(store_ids: tuple[str, ...]) -> list[dict]:
     ids = selected_store_ids(store_ids)
     stores = {store["storeId"]: store for store in fetch_albert_stores()}
     unknown = set(ids) - stores.keys()

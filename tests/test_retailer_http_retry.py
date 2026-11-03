@@ -157,8 +157,12 @@ class RetailerHttpRetryTests(unittest.TestCase):
                 with patch.object(albert.requests, 'get', side_effect=requests.ConnectTimeout('connect')) as get, patch.object(tesco.requests, 'Session', return_value=context), patch('time.sleep') as sleep, redirect_stderr(diagnostics):
                     with self.assertRaises(requests.RequestException):
                         retailer.main(snapshot, history)
-                self.assertEqual((get if retailer is albert else session.post).call_count, 4)
-                self.assertEqual([c.args[0] for c in sleep.call_args_list], [2, 4, 8])
+                attempts = 8 if retailer is albert else 4
+                self.assertEqual((get if retailer is albert else session.post).call_count, attempts)
+                self.assertEqual([c.args[0] for c in sleep.call_args_list], [2, 4, 8] * (2 if retailer is albert else 1))
+                if retailer is albert:
+                    from scrapers.albert_publitas import LIST_URL
+                    self.assertEqual([call.args[0] for call in get.call_args_list], [albert.STORES_URL] * 4 + [LIST_URL] * 4)
                 self.assertIn('retries exhausted at attempt 4/4', diagnostics.getvalue())
                 self.assertEqual(snapshot.read_bytes(), b'previous snapshot\n')
                 self.assertEqual(history.read_bytes(), b'previous history\n')

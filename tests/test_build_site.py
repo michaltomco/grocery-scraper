@@ -48,6 +48,29 @@ class DashboardBuilderTests(unittest.TestCase):
             patcher.start()
             self.addCleanup(patcher.stop)
 
+    def test_albert_pdf_exact_page_exposes_official_evidence_and_conditions(self):
+        row = history_row(product_id='albert-pdf-44sm_akcni_letak-p1-test',
+                          product_name='Česká chuť Vejce z podestýlky M 18 ks',
+                          price='44.9', price_per_kg='', unit_price='2.5 Kč / 1 ks',
+                          discount_label='5 bal. / den | <script>bad()</script>',
+                          url='https://view.publitas.com/90263/3470643/pdfs/evidence.pdf#page=1')
+        with TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.csv'
+            write_csv(history, [row])
+            with patch.object(build_site, 'HISTORY_CSV', history), patch.object(
+                build_site, 'get_many', return_value={}
+            ), patch.object(build_site, 'get_many_exact', return_value={}), patch.object(
+                build_site, 'cache_image', return_value=''):
+                build_site.build()
+            page = next(build_site.PRODUCTS_EXACT_DIR.glob('*.html')).read_text()
+        self.assertIn('href="https://view.publitas.com/90263/3470643/pdfs/evidence.pdf#page=1"', page)
+        self.assertIn('5 bal. / den', page)
+        self.assertIn('2.5 Kč / 1 ks', page)
+        self.assertIn('Partial leaflet coverage', page)
+        self.assertIn('&lt;script&gt;bad()&lt;/script&gt;', page)
+        self.assertNotIn('<script>bad()</script>', page)
+        self.assertIn('<td class="discount-price">44.9</td>', page)
+
     def test_missing_price_unit_stays_unknown_instead_of_assuming_piece(self):
         row = history_row(store="Lidl", product_id="11150766", product_name="Banány",
                           price="21.9", unit_price="", price_per_kg="", price_per_piece="")
