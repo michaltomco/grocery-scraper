@@ -1245,7 +1245,7 @@ def build() -> str:
         table_rows.append(
             f"<tr data-start=\"{esc(union_start or '')}\" data-end=\"{esc(union_end or '')}\" data-has-nutrition=\"{'true' if has_nutrition else 'false'}\">"
             f'<td class="prod"><a class="product-link" href="products/{esc(product)}.html" aria-label="{esc(pretty)}">'
-            f'{img_tag}<span class="pname"><span class="product-name">{esc(pretty)}</span><small class="dim">{esc(image_label)}</small></span></a></td>'
+            f'{img_tag}<span class="pname"><span class="product-name">{esc(pretty)}</span></span></a></td>'
             f'<td class="pricelist">{"".join(pp_cells)}</td>'
             f'<td class="drange">{"".join(date_cells)}</td>'
             f'<td class="spark"><div class="sparkline">{spark_html}</div></td>'

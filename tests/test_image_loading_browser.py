@@ -64,7 +64,11 @@ class ImageLoadingBrowserTests(unittest.TestCase):
         page.on('pageerror', lambda e: errors.append(str(e)))
         page.goto(f'http://127.0.0.1:{self.server.server_port}/', wait_until='networkidle')
         page.locator('#categoryFilter').select_option(label='Ovoce a zelenina')
-        self.assertIn('Representative image:', page.locator('#t .pname').first.inner_text())
+        self.assertNotIn('Representative image:', page.locator('#t .pname').first.inner_text())
+        product_href = page.locator('#t .pname').first.locator('xpath=..').get_attribute('href')
+        detail = context.new_page()
+        detail.goto(f'http://127.0.0.1:{self.server.server_port}/' + product_href, wait_until='networkidle')
+        self.assertIn('Representative image:', detail.locator('.product-visual').inner_text())
         for query, count in [('Representative image', 0), ('Albert', 0), ('Fixture', 70), ('Chléb', 1)]:
             with self.subTest(query=query):
                 page.locator('#productSearch').fill('')
