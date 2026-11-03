@@ -86,9 +86,12 @@ MCP discovery, hooks, repository rules, memory and Soul context are not enabled.
 
 **Important backend detail:** this Hermes build implements web providers in its
 bundled `plugins.web` package, and safe mode skips their discovery too. The
-helper explicitly instantiates only the installed, bundled
-`plugins.web.firecrawl.provider.FirecrawlWebSearchProvider` and registers that
-web backend with the core registry. It does not invoke plugin registration
+helper explicitly instantiates the installed, bundled
+`plugins.web.firecrawl.provider.FirecrawlWebSearchProvider` and
+`plugins.web.perplexity.provider.PerplexityWebSearchProvider` and registers those
+web backends with the core registry. Managed search can route to Perplexity while
+extraction uses Firecrawl; registering extraction alone leaves search unavailable.
+It does not invoke plugin registration
 hooks or scan/load user plugins. The backend's normal web HTTP/gateway behavior
 and auth resolution remain in use. This is fixed trusted backend code, not an
 additional model tool or arbitrary MCP server registration. Without it a tool
