@@ -1,47 +1,47 @@
 {
   "schema_version": 1,
-  "started_at": "2026-11-08T08:26:32+01:00",
+  "started_at": "2026-11-08T16:18:40+01:00",
   "retailers": {
     "Albert": {
-      "started_at": "2026-11-08T08:26:32+01:00",
+      "started_at": "2026-11-08T16:18:41+01:00",
       "status": "refreshed",
       "error": null,
       "rows": 5,
-      "scraped_at": "2026-11-08T08:26:51+01:00",
-      "oldest_scraped_at": "2026-11-08T08:26:51+01:00",
-      "finished_at": "2026-11-08T08:26:57+01:00"
+      "scraped_at": "2026-11-08T16:19:04+01:00",
+      "oldest_scraped_at": "2026-11-08T16:19:04+01:00",
+      "finished_at": "2026-11-08T16:19:17+01:00"
     },
     "Billa": {
-      "started_at": "2026-11-08T08:26:57+01:00",
+      "started_at": "2026-11-08T16:19:17+01:00",
       "status": "failed",
       "error": "BillaScrapeError: BILLA direct source offer parser is not validated: https://www.billa.cz/letaky-billa supplies PDFs with mixed validity periods and graphical loyalty conditions; shop.billa.cz redirects to a partner-delivery page. Refresh disabled; existing snapshot and history left untouched. No third-party fallback.",
       "rows": 772,
       "scraped_at": "2026-10-11T14:59:04+02:00",
       "oldest_scraped_at": "2026-10-11T14:57:51+02:00",
-      "finished_at": "2026-11-08T08:26:57+01:00"
+      "finished_at": "2026-11-08T16:19:17+01:00"
     },
     "Lidl": {
-      "started_at": "2026-11-08T08:26:57+01:00",
+      "started_at": "2026-11-08T16:19:17+01:00",
       "status": "refreshed",
       "error": null,
       "rows": 6,
-      "scraped_at": "2026-11-08T08:26:58+01:00",
-      "oldest_scraped_at": "2026-11-08T08:26:58+01:00",
-      "finished_at": "2026-11-08T08:27:02+01:00"
+      "scraped_at": "2026-11-08T16:19:17+01:00",
+      "oldest_scraped_at": "2026-11-08T16:19:17+01:00",
+      "finished_at": "2026-11-08T16:19:24+01:00"
     },
     "Tesco": {
-      "started_at": "2026-11-08T08:27:02+01:00",
+      "started_at": "2026-11-08T16:19:25+01:00",
       "status": "refreshed",
       "error": null,
       "rows": 2779,
-      "scraped_at": "2026-11-08T08:27:58+01:00",
-      "oldest_scraped_at": "2026-11-08T08:27:58+01:00",
-      "finished_at": "2026-11-08T08:28:03+01:00"
+      "scraped_at": "2026-11-08T16:20:31+01:00",
+      "oldest_scraped_at": "2026-11-08T16:20:31+01:00",
+      "finished_at": "2026-11-08T16:20:37+01:00"
     }
   },
   "merge": {
     "status": "merged",
     "error": null
   },
-  "finished_at": "2026-11-08T08:28:03+01:00"
+  "finished_at": "2026-11-08T16:20:38+01:00"
 }
