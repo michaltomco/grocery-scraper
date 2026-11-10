@@ -1,47 +1,47 @@
 {
   "schema_version": 1,
-  "started_at": "2026-11-09T19:52:04+01:00",
+  "started_at": "2026-11-10T10:57:22+01:00",
   "retailers": {
     "Albert": {
-      "started_at": "2026-11-09T19:52:04+01:00",
+      "started_at": "2026-11-10T10:57:22+01:00",
       "status": "failed",
       "error": "ValueError: No audited Albert publication template",
       "rows": 5,
       "scraped_at": "2026-11-08T21:31:32+01:00",
       "oldest_scraped_at": "2026-11-08T21:31:32+01:00",
-      "finished_at": "2026-11-09T19:52:19+01:00"
+      "finished_at": "2026-11-10T10:57:38+01:00"
     },
     "Billa": {
-      "started_at": "2026-11-09T19:52:19+01:00",
+      "started_at": "2026-11-10T10:57:38+01:00",
       "status": "failed",
       "error": "BillaScrapeError: BILLA direct source offer parser is not validated: https://www.billa.cz/letaky-billa supplies PDFs with mixed validity periods and graphical loyalty conditions; shop.billa.cz redirects to a partner-delivery page. Refresh disabled; existing snapshot and history left untouched. No third-party fallback.",
       "rows": 772,
       "scraped_at": "2026-10-11T14:59:04+02:00",
       "oldest_scraped_at": "2026-10-11T14:57:51+02:00",
-      "finished_at": "2026-11-09T19:52:19+01:00"
+      "finished_at": "2026-11-10T10:57:38+01:00"
     },
     "Lidl": {
-      "started_at": "2026-11-09T19:52:19+01:00",
+      "started_at": "2026-11-10T10:57:38+01:00",
       "status": "failed",
       "error": "ValueError: No Lidl product cards found; existing snapshot preserved",
       "rows": 6,
       "scraped_at": "2026-11-08T21:31:39+01:00",
       "oldest_scraped_at": "2026-11-08T21:31:39+01:00",
-      "finished_at": "2026-11-09T19:52:20+01:00"
+      "finished_at": "2026-11-10T10:57:39+01:00"
     },
     "Tesco": {
-      "started_at": "2026-11-09T19:52:20+01:00",
+      "started_at": "2026-11-10T10:57:39+01:00",
       "status": "refreshed",
       "error": null,
-      "rows": 2772,
-      "scraped_at": "2026-11-09T19:53:19+01:00",
-      "oldest_scraped_at": "2026-11-09T19:53:19+01:00",
-      "finished_at": "2026-11-09T19:53:24+01:00"
+      "rows": 2760,
+      "scraped_at": "2026-11-10T10:58:48+01:00",
+      "oldest_scraped_at": "2026-11-10T10:58:48+01:00",
+      "finished_at": "2026-11-10T10:58:53+01:00"
     }
   },
   "merge": {
     "status": "merged",
     "error": null
   },
-  "finished_at": "2026-11-09T19:53:24+01:00"
+  "finished_at": "2026-11-10T10:58:53+01:00"
 }
